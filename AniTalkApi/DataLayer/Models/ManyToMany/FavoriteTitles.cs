@@ -2,9 +2,9 @@
 
 public class FavoriteTitles
 {
-    public int UserId { get; set; }
+    public int UserId { get; init; }
 
-    public int TitleId { get; set; }
+    public int TitleId { get; init; }
 
     public int Order { get; set; }
 

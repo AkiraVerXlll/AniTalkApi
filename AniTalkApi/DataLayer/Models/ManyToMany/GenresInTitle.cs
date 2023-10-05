@@ -2,9 +2,9 @@
 
 public class GenresInTitle
 {
-    public int TitleId { get; set; }
+    public int TitleId { get; init; }
 
-    public int GenreId { get; set; }
+    public int GenreId { get; init; }
 
     public int Order { get; set; }
 

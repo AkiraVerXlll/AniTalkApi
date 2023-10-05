@@ -6,13 +6,13 @@ namespace AniTalkApi.DataLayer.Models;
 public class Genre
 {
     [Key]
-    public int Id { get; set; }
+    public int Id { get; init; }
 
-    public int Name { get; set; }
+    public int Name { get; init; }
 
     #region Dependencies
     
-    public List<GenresInTitle> GenresInTitle { get; set; }
+    public List<GenresInTitle> GenresInTitle { get; init; }
 
     #endregion
 }

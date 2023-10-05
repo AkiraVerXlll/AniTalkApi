@@ -6,15 +6,15 @@ namespace AniTalkApi.DataLayer.Models;
 public class Author
 {
     [Key]
-    public int Id { get; set; }
+    public int Id { get; init; }
 
-    public int PersonalInformationId { get; set; }
+    public int PersonalInformationId { get; init; }
 
     #region Dependencies
 
-    public PersonalInformation PersonalInformation { get; set; }
+    public PersonalInformation PersonalInformation { get; init; }
 
-    public List<TitleAuthors> Works { get; set; }
+    public List<TitleAuthors> Works { get; init; }
 
     #endregion
 }

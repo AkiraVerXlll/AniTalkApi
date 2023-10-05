@@ -31,3 +31,15 @@ E:\AniTalk\AniTalkApi\AniTalkApi\obj\Debug\net7.0\refint\AniTalkApi.dll
 E:\AniTalk\AniTalkApi\AniTalkApi\obj\Debug\net7.0\AniTalkApi.pdb
 E:\AniTalk\AniTalkApi\AniTalkApi\obj\Debug\net7.0\AniTalkApi.genruntimeconfig.cache
 E:\AniTalk\AniTalkApi\AniTalkApi\obj\Debug\net7.0\ref\AniTalkApi.dll
+E:\AniTalk\AniTalkApi\AniTalkApi\bin\Debug\net7.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+E:\AniTalk\AniTalkApi\AniTalkApi\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.dll
+E:\AniTalk\AniTalkApi\AniTalkApi\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.Abstractions.dll
+E:\AniTalk\AniTalkApi\AniTalkApi\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.Relational.dll
+E:\AniTalk\AniTalkApi\AniTalkApi\bin\Debug\net7.0\Microsoft.IdentityModel.JsonWebTokens.dll
+E:\AniTalk\AniTalkApi\AniTalkApi\bin\Debug\net7.0\Microsoft.IdentityModel.Logging.dll
+E:\AniTalk\AniTalkApi\AniTalkApi\bin\Debug\net7.0\Microsoft.IdentityModel.Protocols.dll
+E:\AniTalk\AniTalkApi\AniTalkApi\bin\Debug\net7.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+E:\AniTalk\AniTalkApi\AniTalkApi\bin\Debug\net7.0\Microsoft.IdentityModel.Tokens.dll
+E:\AniTalk\AniTalkApi\AniTalkApi\bin\Debug\net7.0\Npgsql.dll
+E:\AniTalk\AniTalkApi\AniTalkApi\bin\Debug\net7.0\Npgsql.EntityFrameworkCore.PostgreSQL.dll
+E:\AniTalk\AniTalkApi\AniTalkApi\bin\Debug\net7.0\System.IdentityModel.Tokens.Jwt.dll

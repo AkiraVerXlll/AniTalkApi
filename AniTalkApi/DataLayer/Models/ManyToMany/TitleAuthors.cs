@@ -4,9 +4,9 @@ namespace AniTalkApi.DataLayer.Models.ManyToMany;
 
 public class TitleAuthors
 {
-    public int AuthorId { get; set; }
+    public int AuthorId { get; init; }
 
-    public int TitleId { get; set; }
+    public int TitleId { get; init; }
 
     public AuthorType AuthorType { get; set; }
 

@@ -2,9 +2,9 @@
 
 public class TagsInTitle
 {
-    public int TitleId { get; set; }
+    public int TitleId { get; init; }
 
-    public int TagId { get; set; }
+    public int TagId { get; init; }
 
     public int Order { get; set; }
 

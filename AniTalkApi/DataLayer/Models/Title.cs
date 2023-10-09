@@ -16,7 +16,7 @@ public class Title
     [Required]
     public string Description { get; set; }
 
-    public string CoverId { get; set; }
+    public int CoverId { get; set; }
 
     [Column(TypeName = "date")]
     [Required]

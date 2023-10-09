@@ -43,3 +43,8 @@ E:\AniTalk\AniTalkApi\AniTalkApi\bin\Debug\net7.0\Microsoft.IdentityModel.Tokens
 E:\AniTalk\AniTalkApi\AniTalkApi\bin\Debug\net7.0\Npgsql.dll
 E:\AniTalk\AniTalkApi\AniTalkApi\bin\Debug\net7.0\Npgsql.EntityFrameworkCore.PostgreSQL.dll
 E:\AniTalk\AniTalkApi\AniTalkApi\bin\Debug\net7.0\System.IdentityModel.Tokens.Jwt.dll
+E:\AniTalk\AniTalkApi\AniTalkApi\bin\Debug\net7.0\Humanizer.dll
+E:\AniTalk\AniTalkApi\AniTalkApi\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.Design.dll
+E:\AniTalk\AniTalkApi\AniTalkApi\bin\Debug\net7.0\Microsoft.Extensions.DependencyModel.dll
+E:\AniTalk\AniTalkApi\AniTalkApi\bin\Debug\net7.0\Mono.TextTemplating.dll
+E:\AniTalk\AniTalkApi\AniTalkApi\bin\Debug\net7.0\System.CodeDom.dll

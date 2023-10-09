@@ -38,7 +38,9 @@ public class User
 
     public List<FavoriteTitles> FavoriteTitles { get; init; }
 
-    public List<Relationships> Relationships { get; init; }
+    public List<Relationships> RelationshipsAsMainUser { get; init; }
+
+    public List<Relationships> RelationshipsAsSubjectUser { get; init; }
 
     public List<Review> Reviews { get; init; }
 

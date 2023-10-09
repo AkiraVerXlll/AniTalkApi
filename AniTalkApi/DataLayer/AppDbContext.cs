@@ -16,7 +16,7 @@ public class AppDbContext : DbContext
         _connectionString = configuration
                                 .GetConnectionString(connectionStringName) 
                             ?? throw new ArgumentNullException
-                                ($"Connection string \"{connectionStringName}\" is empty");
+                                ($"Invalid onnection string \"{connectionStringName}\"");
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -104,6 +104,10 @@ public class AppDbContext : DbContext
             .HasIndex(u => u.Email)
             .IsUnique();
 
+        modelBuilder.Entity<User>()
+            .HasIndex(u => u.PersonalInformationId)
+            .IsUnique();
+
         modelBuilder.Entity<Tag>()
             .HasIndex(t => t.Name)
             .IsUnique();
@@ -137,6 +141,20 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<Message>()
             .HasIndex(m => m.SendingTime);
+
+        #endregion
+
+        #region ForeignKeys
+
+        modelBuilder.Entity<User>()
+            .HasMany(u => u.RelationshipsAsMainUser)
+            .WithOne(r => r.MainUser)
+            .HasForeignKey(r => r.MainUserId);
+
+        modelBuilder.Entity<User>()
+            .HasMany(u => u.RelationshipsAsSubjectUser)
+            .WithOne(r => r.RelationshipsWithUser)
+            .HasForeignKey(r => r.RelationshipsWithUserId);
 
         #endregion
     }

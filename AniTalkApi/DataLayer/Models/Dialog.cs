@@ -14,13 +14,13 @@ public class Dialog
 
     #region Dependencies
 
-    public Image Avatar { get; set; }
+    public Image Avatar { get; init; }
 
-    public List<UsersInDialog> UsersInDialogs;
+    public List<UsersInDialog> UsersInDialogs { get; init; }
 
-    public List<Message> Messages;
+    public List<Message> Messages { get; init; }
 
-    public Forum? Forum { get; set; }
+    public Forum? Forum { get; init; }
 
     #endregion
 }

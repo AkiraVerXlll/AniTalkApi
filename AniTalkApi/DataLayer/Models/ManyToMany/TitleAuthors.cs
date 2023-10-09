@@ -14,9 +14,9 @@ public class TitleAuthors
 
     #region Dependencies
 
-    public Title Title { get; set; }
+    public Title Title { get; init; }
 
-    public Author Author { get; set; }
+    public Author Author { get; init; }
 
     #endregion
 }

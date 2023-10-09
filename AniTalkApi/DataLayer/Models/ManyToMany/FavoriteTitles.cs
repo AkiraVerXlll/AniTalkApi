@@ -24,9 +24,9 @@ public class FavoriteTitles
 
     #region Dependencies
 
-    public Title Title { get; set; }
+    public Title Title { get; init; }
 
-    public User User { get; set; }
+    public User User { get; init; }
 
     #endregion
 }

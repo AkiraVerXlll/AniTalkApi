@@ -21,9 +21,9 @@ public class TagsInTitle
 
     #region Dependencies
 
-    public Tag Tag { get; set; }
+    public Tag Tag { get; init; }
     
-    public Title Title { get; set; }
+    public Title Title { get; init; }
     
     #endregion
 }

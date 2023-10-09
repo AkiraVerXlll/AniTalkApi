@@ -9,7 +9,7 @@ public class PersonalInformation
     [Key]
     public int Id { get; init; }
 
-    public int AvatarId { get; set; }
+    public int AvatarId { get; init; }
 
     [MaxLength(30)]
     public string Name { get; set; }
@@ -33,11 +33,11 @@ public class PersonalInformation
 
     #region Dependencies
 
-    public User? User { get; set; }
+    public User? User { get; init; }
 
-    public Author? Author { get; set; } 
+    public Author? Author { get; init; } 
 
-    public Image Avatar { get; set; }
+    public Image Avatar { get; init; }
 
     #endregion
 }

@@ -5,9 +5,9 @@ namespace AniTalkApi.DataLayer.Models;
 public class Forum
 {
     [Key]
-    public int DialogId { get; set; }
+    public int DialogId { get; init; }
 
-    public int TitleId { get; set; }
+    public int TitleId { get; init; }
 
     [Required]
     public string Topic { get; set; }
@@ -16,9 +16,9 @@ public class Forum
 
     #region Dependencies
 
-    public Dialog Dialog { get; set; }
+    public Dialog Dialog { get; init; }
 
-    public Title Title { get; set; }
+    public Title Title { get; init; }
 
     #endregion
 }

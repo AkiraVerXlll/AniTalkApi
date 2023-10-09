@@ -10,9 +10,9 @@ public class TitleTypes
 
     #region Dependencies
 
-    public Title Title { get; set; }
+    public Title Title { get; init; }
 
-    public TitleType TitleType { get; set; }
+    public TitleType TitleType { get; init; }
 
     #endregion
 }

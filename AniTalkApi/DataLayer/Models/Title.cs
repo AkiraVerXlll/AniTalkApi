@@ -26,21 +26,21 @@ public class Title
 
     #region Dependencies
 
-    public Image Cover { get; set; }
+    public Image Cover { get; init; }
 
-    public List<TitleTypes> TitleTypes { get; set; }
+    public List<TitleTypes> TitleTypes { get; init; }
 
-    public List<GenresInTitle> Genres { get; set; }
+    public List<GenresInTitle> Genres { get; init; }
 
-    public List<TagsInTitle> Tags { get; set; }
+    public List<TagsInTitle> Tags { get; init; }
 
-    public List<TitleAuthors> TitleAuthors { get; set; }
+    public List<TitleAuthors> TitleAuthors { get; init; }
 
-    public List<FavoriteTitles> FavoriteTitlesOf { get; set; }
+    public List<FavoriteTitles> FavoriteTitlesOf { get; init; }
 
-    public List<Review> Reviews { get; set; }
+    public List<Review> Reviews { get; init; }
 
-    public List<Forum> Forums { get; set; }
+    public List<Forum> Forums { get; init; }
 
     #endregion
 }

@@ -2,15 +2,15 @@
 
 public class UsersInDialog
 {
-    public int UserId { get; set; }
+    public int UserId { get; init; }
 
-    public int DialogId { get; set; }
+    public int DialogId { get; init; }
 
     #region Dependencies
 
-    public User User { get; set; }
+    public User User { get; init; }
 
-    public Dialog Dialog { get; set; }
+    public Dialog Dialog { get; init; }
 
     #endregion
 }

@@ -15,9 +15,9 @@ public class Relationships
 
     #region Dependencies
 
-    public User MainUser { get; set; }
+    public User MainUser { get; init; }
 
-    public User RelationshipsWithUser { get; set; }
+    public User RelationshipsWithUser { get; init; }
 
     #endregion
 }

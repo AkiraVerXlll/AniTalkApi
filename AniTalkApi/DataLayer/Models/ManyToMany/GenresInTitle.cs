@@ -21,9 +21,9 @@ public class GenresInTitle
 
     #region Dependencies
 
-    public Genre Genre { get; set; }
+    public Genre Genre { get; init; }
 
-    public Title Title { get; set; }
+    public Title Title { get; init; }
 
     #endregion
 }

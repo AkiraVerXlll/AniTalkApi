@@ -23,9 +23,9 @@ public class Review
 
     #region Dependencies
 
-    public User User { get; set; }
+    public User User { get; init; }
 
-    public Title Title { get; set; }
+    public Title Title { get; init; }
 
     #endregion
 }

@@ -6,8 +6,9 @@ namespace AniTalkApi.DataLayer.Models;
 public class Tag
 {
     [Key]
-    public int Id { get; set; }
+    public int Id { get; init; }
 
+    [Required]
     public int Name { get; set; }
 
     #region Dependencies

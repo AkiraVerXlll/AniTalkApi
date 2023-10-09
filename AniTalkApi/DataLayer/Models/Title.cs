@@ -8,15 +8,18 @@ namespace AniTalkApi.DataLayer.Models;
 public class Title
 {
     [Key]
-    public int Id { get; set; }
+    public int Id { get; init; }
 
+    [Required]
     public string Name { get; set; }
 
+    [Required]
     public string Description { get; set; }
 
     public string CoverId { get; set; }
 
     [Column(TypeName = "date")]
+    [Required]
     public DateTime ReleaseDate { get; set; }
     
     public TitleStatus TitleStatus { get; set; }
@@ -36,6 +39,8 @@ public class Title
     public List<FavoriteTitles> FavoriteTitlesOf { get; set; }
 
     public List<Review> Reviews { get; set; }
+
+    public List<Forum> Forums { get; set; }
 
     #endregion
 }

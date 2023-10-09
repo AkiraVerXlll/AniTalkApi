@@ -7,5 +7,7 @@ public class Image
     [Key]
     public int Id { get; init; }
 
-    public string Url { get; init; }
+    [Required]
+    public Uri Url { get; init; }
+
 }

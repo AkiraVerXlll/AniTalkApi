@@ -3,17 +3,17 @@ using AniTalkApi.DataLayer.Models.ManyToMany;
 
 namespace AniTalkApi.DataLayer.Models;
 
-public class Genre
+public class TitleType
 {
     [Key]
-    public int Id { get; init; }
+    public int Id { get; set; }
 
     [Required]
-    public int Name { get; init; }
+    public string Name { get; set; }
 
     #region Dependencies
-    
-    public List<GenresInTitle> GenresInTitle { get; init; }
+
+    public List<TitleTypes> TitleTypes { get; set; }
 
     #endregion
 }

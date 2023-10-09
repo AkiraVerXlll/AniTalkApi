@@ -4,17 +4,19 @@ using AniTalkApi.DataLayer.Models.ManyToMany;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
+namespace AniTalkApi.DataLayer;
 
 public class AppDbContext : DbContext
 {
     private readonly string _connectionString;
+
     public AppDbContext(IConfiguration configuration, IWebHostEnvironment environment)
     {
         var connectionStringName = environment.IsDevelopment() ? "Development" : "Production";
         _connectionString = configuration
-            .GetConnectionString(connectionStringName) 
-                           ?? throw new ArgumentNullException
-                               ($"Connection string \"{connectionStringName}\" is empty");
+                                .GetConnectionString(connectionStringName) 
+                            ?? throw new ArgumentNullException
+                                ($"Connection string \"{connectionStringName}\" is empty");
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -24,7 +26,7 @@ public class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        #region ParsingEnums
+        #region ValueConvertors
 
         modelBuilder.Entity<User>()
             .Property(u => u.Role)
@@ -46,9 +48,14 @@ public class AppDbContext : DbContext
             .Property(r => r.RelationshipsStatus)
             .HasConversion<EnumToStringConverter<RelationshipsStatus>>();
 
+        modelBuilder.Entity<Image>()
+            .Property(i => i.Url)
+            .HasConversion<UriToStringConverter>();
+
+
         #endregion
 
-        #region PrimaryKeyConfig
+        #region PrimaryKeys
 
         modelBuilder.Entity<TagsInTitle>()
             .HasKey(tt => new { tt.TagId, tt.TitleId });
@@ -64,6 +71,72 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<Relationships>()
             .HasKey(r => new { r.MainUserId, r.RelationshipsWithUserId });
+
+        modelBuilder.Entity<Review>()
+            .HasKey(r => new { r.TitleId, r.UserID });
+
+        modelBuilder.Entity<ImagesInReview>()
+            .HasKey(it => new { it.ImageId, it.ReviewId });
+
+        modelBuilder.Entity<UsersInDialog>()
+            .HasKey(ud => new { ud.DialogId, ud.UserId });
+
+        modelBuilder.Entity<TitleTypes>()
+            .HasKey(t => new { t.TitleId, t.TitleTypeId });
+
+        #endregion
+
+        #region UniqueFields
+
+        modelBuilder.Entity<Author>()
+            .HasIndex(a => a.PersonalInformationId)
+            .IsUnique();
+
+        modelBuilder.Entity<Title>()
+            .HasIndex(t => t.Name)
+            .IsUnique();
+
+        modelBuilder.Entity<User>()
+            .HasIndex(u => u.Nickname)
+            .IsUnique();
+
+        modelBuilder.Entity<User>()
+            .HasIndex(u => u.Email)
+            .IsUnique();
+
+        modelBuilder.Entity<Tag>()
+            .HasIndex(t => t.Name)
+            .IsUnique();
+
+        modelBuilder.Entity<Genre>()
+            .HasIndex(g => g.Name)
+            .IsUnique();
+
+        modelBuilder.Entity<Forum>()
+            .HasIndex(f => f.DialogId)
+            .IsUnique();
+
+        #endregion
+
+        #region Indexes
+
+        modelBuilder.Entity<Relationships>()
+            .HasIndex(r => r.RelationshipsStatus);
+
+        modelBuilder.Entity<PersonalInformation>()
+            .HasIndex(pi => pi.Country);
+
+        modelBuilder.Entity<PersonalInformation>()
+            .HasIndex(pi => pi.City);
+
+        modelBuilder.Entity<PersonalInformation>()
+            .HasIndex(pi => pi.Age);
+
+        modelBuilder.Entity<Review>()
+            .HasIndex(r => r.StarsCount);
+
+        modelBuilder.Entity<Message>()
+            .HasIndex(m => m.SendingTime);
 
         #endregion
     }

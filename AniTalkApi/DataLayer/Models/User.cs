@@ -10,18 +10,24 @@ public class User
     [Key]
     public int Id { get; set; }
 
+    [Required]
     [MaxLength(20)]
     public string Nickname { get; set; }
 
+    [Required]
     public string Email { get; set; }
 
+    [Required]
     public string Password { get; set; }
 
+    [Required]
     [Column(TypeName = "date")]
     public DateTime DateOfRegistration { get; set; }
 
+    [Required]
     public UserStatus Status { get; set; }
 
+    [Required]
     public UserRoles Role { get; set; }
 
     public int PersonalInformationId { get; set; }
@@ -35,6 +41,8 @@ public class User
     public List<Relationships> Relationships { get; set; }
 
     public List<Review> Reviews { get; set; }
+
+    public List<UsersInDialog> Dialogs { get; set; }
 
     #endregion
 }

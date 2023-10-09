@@ -1,15 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿namespace AniTalkApi.DataLayer.Models.ManyToMany;
 
-namespace AniTalkApi.DataLayer.Models.ManyToMany;
-
-public class FavoriteTitles
+public class ImagesInReview
 {
-    public int UserId { get; init; }
+    public int ReviewId { get; init; }
 
-    public int TitleId { get; init; }
+    public int ImageId { get; init; }
 
     private int _order;
-
     public int Order
     {
         get => _order;
@@ -24,9 +21,9 @@ public class FavoriteTitles
 
     #region Dependencies
 
-    public Title Title { get; set; }
+    public Review Review { get; init; }
 
-    public User User { get; set; }
+    public Image Image { get; init; }
 
     #endregion
 }

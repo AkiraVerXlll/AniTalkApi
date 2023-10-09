@@ -7,9 +7,15 @@ namespace AniTalkApi.DataLayer.Models;
 public class PersonalInformation
 {
     [Key]
-    public int Id { get; set; }
+    public int Id { get; init; }
 
     public int AvatarId { get; set; }
+
+    [MaxLength(30)]
+    public string Name { get; set; }
+
+    [MaxLength(30)]
+    public string Surname { get; set; }
 
     [MaxLength(512)]
     public string? AboutYourself { get; set; }

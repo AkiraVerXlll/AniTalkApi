@@ -1,16 +1,18 @@
 using AniTalkApi.DataLayer;
+using AniTalkApi.ServiceLayer;
+#pragma warning disable ASP0014
 
 namespace AniTalkApi;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static void Main()
     {
-        var builder = WebApplication.CreateBuilder(args);
-
+        var builder = WebApplication.CreateBuilder();
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddDbContext<AppDbContext>();
+        builder.Services.AddCloudinary(builder.Configuration);
 
         var app = builder.Build();
 
@@ -21,8 +23,8 @@ public class Program
         app.UseHttpsRedirection();
         app.UseRouting();
         app.UseAuthentication();
-        app.UseEndpoints(endpoints => 
-            endpoints.MapControllers());
+        app.UseEndpoints(configure => 
+            configure.MapControllers());
         app.Run();
     }
 }

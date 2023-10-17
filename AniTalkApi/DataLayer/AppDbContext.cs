@@ -3,6 +3,7 @@ using AniTalkApi.DataLayer.Models.Enums;
 using AniTalkApi.DataLayer.Models.ManyToMany;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Image = AniTalkApi.DataLayer.Models.Image;
 
 namespace AniTalkApi.DataLayer;
 
@@ -47,11 +48,6 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Relationships>()
             .Property(r => r.RelationshipsStatus)
             .HasConversion<EnumToStringConverter<RelationshipsStatus>>();
-
-        modelBuilder.Entity<Image>()
-            .Property(i => i.Url)
-            .HasConversion<UriToStringConverter>();
-
 
         #endregion
 
@@ -120,6 +116,10 @@ public class AppDbContext : DbContext
             .HasIndex(f => f.DialogId)
             .IsUnique();
 
+        modelBuilder.Entity<Image>()
+            .HasIndex(i => i.Url)
+            .IsUnique();
+
         #endregion
 
         #region Indexes
@@ -167,7 +167,7 @@ public class AppDbContext : DbContext
 
     public DbSet<Genre> Genres { get; set; }
     
-    public DbSet<Image> Images { get; set; }
+    public DbSet<Models.Image> Images { get; set; }
 
     public DbSet<Message> Messages { get; set; }
 
@@ -179,7 +179,7 @@ public class AppDbContext : DbContext
 
     public DbSet<Title> Titles { get; set; }
 
-    public DbSet<TitleType> TitleTypes { get; set; }
+    public DbSet<TitleType> TitleType { get; set; }
 
     public DbSet<User> Users { get; set;  }
 }

@@ -12,7 +12,8 @@ public class Program
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddDbContext<AppDbContext>();
-        builder.Services.AddCloudinary(builder.Configuration);
+        builder.Services.AddPhotoValidatorService();
+        builder.Services.AddCloudinaryPhotoLoaderService();
 
         var app = builder.Build();
 

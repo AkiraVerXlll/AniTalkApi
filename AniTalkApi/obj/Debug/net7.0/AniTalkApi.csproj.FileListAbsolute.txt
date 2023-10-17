@@ -48,3 +48,6 @@ E:\AniTalk\AniTalkApi\AniTalkApi\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.
 E:\AniTalk\AniTalkApi\AniTalkApi\bin\Debug\net7.0\Microsoft.Extensions.DependencyModel.dll
 E:\AniTalk\AniTalkApi\AniTalkApi\bin\Debug\net7.0\Mono.TextTemplating.dll
 E:\AniTalk\AniTalkApi\AniTalkApi\bin\Debug\net7.0\System.CodeDom.dll
+E:\AniTalk\AniTalkApi\AniTalkApi\bin\Debug\net7.0\CloudinaryDotNet.dll
+E:\AniTalk\AniTalkApi\AniTalkApi\bin\Debug\net7.0\Newtonsoft.Json.dll
+E:\AniTalk\AniTalkApi\AniTalkApi\bin\Debug\net7.0\SixLabors.ImageSharp.dll

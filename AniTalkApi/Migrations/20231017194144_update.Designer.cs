@@ -3,6 +3,7 @@ using System;
 using AniTalkApi.DataLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AniTalkApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231017194144_update")]
+    partial class update
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -647,7 +650,7 @@ namespace AniTalkApi.Migrations
                         .IsRequired();
 
                     b.HasOne("AniTalkApi.DataLayer.Models.TitleType", "TitleType")
-                        .WithMany("TitleTypes")
+                        .WithMany()
                         .HasForeignKey("TitleTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -811,11 +814,6 @@ namespace AniTalkApi.Migrations
 
                     b.Navigation("TitleAuthors");
 
-                    b.Navigation("TitleTypes");
-                });
-
-            modelBuilder.Entity("AniTalkApi.DataLayer.Models.TitleType", b =>
-                {
                     b.Navigation("TitleTypes");
                 });
 

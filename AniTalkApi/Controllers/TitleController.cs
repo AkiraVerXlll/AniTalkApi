@@ -23,6 +23,7 @@ public class TitleController : Controller
     [HttpGet("")]
     public IActionResult GetTitles([FromForm] TitleFromForm formData)
     {
+        var а = formData as TitleFromForm;
         return null;
     }
 

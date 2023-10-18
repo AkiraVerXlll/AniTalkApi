@@ -7,3 +7,4 @@ TestController.cs
 .vs
 .gitattributes.txt
 bin
+obj

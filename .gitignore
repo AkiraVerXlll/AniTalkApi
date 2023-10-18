@@ -10,3 +10,4 @@ bin
 obj
 AniTalkApi.sln.DotSettings.user
 AniTalkApi.csproj.user
+Dockerfile

@@ -23,7 +23,7 @@ public class CloudinaryPhotoLoaderService : IPhotoLoaderService
         _cloudinary = new Cloudinary(new Account(cloudName, apiKey, apiSecret));
     }
 
-    public async Task<string> Upload(IFormFile file)
+    public async Task<string> UploadAsync(IFormFile file)
     {
         if (!_validator.IsImage(file)) 
             throw new ArgumentException();
@@ -47,7 +47,7 @@ public class CloudinaryPhotoLoaderService : IPhotoLoaderService
         throw new ArgumentException();
     }
 
-    public Task<string> Download(string publicId)
+    public Task<string> DownloadAsync(string publicId)
     {
         var url = _cloudinary
             .GetResource(publicId)

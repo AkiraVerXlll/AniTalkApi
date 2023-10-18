@@ -2,7 +2,7 @@
 
 public interface IPhotoLoaderService
 {
-    Task<string> Upload(IFormFile file);
+    Task<string> UploadAsync(IFormFile file);
 
-    Task<string> Download(string publicId);
+    Task<string> DownloadAsync(string publicId);
 }

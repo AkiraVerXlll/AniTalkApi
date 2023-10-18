@@ -2,7 +2,6 @@
 using AniTalkApi.DataLayer.DTO;
 using AniTalkApi.ServiceLayer.PhotoServices.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace AniTalkApi.Controllers;
 

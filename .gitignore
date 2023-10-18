@@ -6,4 +6,4 @@ launchSettings.json
 TestController.cs
 .vs
 .gitattributes.txt
-.bin
+bin

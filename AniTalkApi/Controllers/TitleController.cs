@@ -1,5 +1,6 @@
 ﻿using AniTalkApi.DataLayer;
 using AniTalkApi.DataLayer.DTO;
+using AniTalkApi.ServiceLayer.PhotoServices.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,9 +11,13 @@ public class TitleController : Controller
 {
     private readonly AppDbContext _dbContext;
 
-    public TitleController(AppDbContext dbContext)
+    private IPhotoLoaderService _photoLoaderService;
+
+    public TitleController(AppDbContext dbContext, 
+        IPhotoLoaderService photoLoaderService)
     {
         _dbContext = dbContext;
+        _photoLoaderService = photoLoaderService;
     }
 
     [HttpGet("")]

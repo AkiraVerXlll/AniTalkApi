@@ -12,15 +12,15 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AniTalkApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231009213602_CreateSchema")]
-    partial class CreateSchema
+    [Migration("20231214130954_CreateShema")]
+    partial class CreateShema
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.11")
+                .HasAnnotation("ProductVersion", "7.0.12")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -41,7 +41,7 @@ namespace AniTalkApi.Migrations
                     b.HasIndex("PersonalInformationId")
                         .IsUnique();
 
-                    b.ToTable("Author");
+                    b.ToTable("Authors");
                 });
 
             modelBuilder.Entity("AniTalkApi.DataLayer.Models.Dialog", b =>
@@ -63,7 +63,7 @@ namespace AniTalkApi.Migrations
 
                     b.HasIndex("AvatarId");
 
-                    b.ToTable("Dialog");
+                    b.ToTable("Dialogs");
                 });
 
             modelBuilder.Entity("AniTalkApi.DataLayer.Models.Forum", b =>
@@ -88,7 +88,7 @@ namespace AniTalkApi.Migrations
 
                     b.HasIndex("TitleId");
 
-                    b.ToTable("Forum");
+                    b.ToTable("Forums");
                 });
 
             modelBuilder.Entity("AniTalkApi.DataLayer.Models.Genre", b =>
@@ -107,7 +107,7 @@ namespace AniTalkApi.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Genre");
+                    b.ToTable("Genres");
                 });
 
             modelBuilder.Entity("AniTalkApi.DataLayer.Models.Image", b =>
@@ -124,7 +124,10 @@ namespace AniTalkApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Image");
+                    b.HasIndex("Url")
+                        .IsUnique();
+
+                    b.ToTable("Images");
                 });
 
             modelBuilder.Entity("AniTalkApi.DataLayer.Models.ManyToMany.FavoriteTitles", b =>
@@ -282,7 +285,7 @@ namespace AniTalkApi.Migrations
 
                     b.HasIndex("SendingTime");
 
-                    b.ToTable("Message");
+                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("AniTalkApi.DataLayer.Models.PersonalInformation", b =>
@@ -378,7 +381,7 @@ namespace AniTalkApi.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("Review");
+                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("AniTalkApi.DataLayer.Models.Tag", b =>
@@ -397,7 +400,7 @@ namespace AniTalkApi.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Tag");
+                    b.ToTable("Tags");
                 });
 
             modelBuilder.Entity("AniTalkApi.DataLayer.Models.Title", b =>
@@ -433,7 +436,7 @@ namespace AniTalkApi.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Title");
+                    b.ToTable("Titles");
                 });
 
             modelBuilder.Entity("AniTalkApi.DataLayer.Models.TitleType", b =>
@@ -499,7 +502,7 @@ namespace AniTalkApi.Migrations
                     b.HasIndex("PersonalInformationId")
                         .IsUnique();
 
-                    b.ToTable("User");
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("AniTalkApi.DataLayer.Models.Author", b =>

@@ -7,13 +7,13 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AniTalkApi.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateSchema : Migration
+    public partial class CreateShema : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Genre",
+                name: "Genres",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -22,11 +22,11 @@ namespace AniTalkApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Genre", x => x.Id);
+                    table.PrimaryKey("PK_Genres", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Image",
+                name: "Images",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -35,11 +35,11 @@ namespace AniTalkApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Image", x => x.Id);
+                    table.PrimaryKey("PK_Images", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Tag",
+                name: "Tags",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -48,7 +48,7 @@ namespace AniTalkApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Tag", x => x.Id);
+                    table.PrimaryKey("PK_Tags", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -65,7 +65,7 @@ namespace AniTalkApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Dialog",
+                name: "Dialogs",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -75,11 +75,11 @@ namespace AniTalkApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Dialog", x => x.Id);
+                    table.PrimaryKey("PK_Dialogs", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Dialog_Image_AvatarId",
+                        name: "FK_Dialogs_Images_AvatarId",
                         column: x => x.AvatarId,
-                        principalTable: "Image",
+                        principalTable: "Images",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -103,15 +103,15 @@ namespace AniTalkApi.Migrations
                 {
                     table.PrimaryKey("PK_PersonalInformation", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_PersonalInformation_Image_AvatarId",
+                        name: "FK_PersonalInformation_Images_AvatarId",
                         column: x => x.AvatarId,
-                        principalTable: "Image",
+                        principalTable: "Images",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Title",
+                name: "Titles",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -124,17 +124,17 @@ namespace AniTalkApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Title", x => x.Id);
+                    table.PrimaryKey("PK_Titles", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Title_Image_CoverId",
+                        name: "FK_Titles_Images_CoverId",
                         column: x => x.CoverId,
-                        principalTable: "Image",
+                        principalTable: "Images",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Author",
+                name: "Authors",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -143,9 +143,9 @@ namespace AniTalkApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Author", x => x.Id);
+                    table.PrimaryKey("PK_Authors", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Author_PersonalInformation_PersonalInformationId",
+                        name: "FK_Authors_PersonalInformation_PersonalInformationId",
                         column: x => x.PersonalInformationId,
                         principalTable: "PersonalInformation",
                         principalColumn: "Id",
@@ -153,7 +153,7 @@ namespace AniTalkApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "User",
+                name: "Users",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -168,9 +168,9 @@ namespace AniTalkApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_User", x => x.Id);
+                    table.PrimaryKey("PK_Users", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_User_PersonalInformation_PersonalInformationId",
+                        name: "FK_Users_PersonalInformation_PersonalInformationId",
                         column: x => x.PersonalInformationId,
                         principalTable: "PersonalInformation",
                         principalColumn: "Id",
@@ -178,7 +178,7 @@ namespace AniTalkApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Forum",
+                name: "Forums",
                 columns: table => new
                 {
                     DialogId = table.Column<int>(type: "integer", nullable: false),
@@ -188,17 +188,17 @@ namespace AniTalkApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Forum", x => x.DialogId);
+                    table.PrimaryKey("PK_Forums", x => x.DialogId);
                     table.ForeignKey(
-                        name: "FK_Forum_Dialog_DialogId",
+                        name: "FK_Forums_Dialogs_DialogId",
                         column: x => x.DialogId,
-                        principalTable: "Dialog",
+                        principalTable: "Dialogs",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Forum_Title_TitleId",
+                        name: "FK_Forums_Titles_TitleId",
                         column: x => x.TitleId,
-                        principalTable: "Title",
+                        principalTable: "Titles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -215,15 +215,15 @@ namespace AniTalkApi.Migrations
                 {
                     table.PrimaryKey("PK_GenresInTitle", x => new { x.GenreId, x.TitleId });
                     table.ForeignKey(
-                        name: "FK_GenresInTitle_Genre_GenreId",
+                        name: "FK_GenresInTitle_Genres_GenreId",
                         column: x => x.GenreId,
-                        principalTable: "Genre",
+                        principalTable: "Genres",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_GenresInTitle_Title_TitleId",
+                        name: "FK_GenresInTitle_Titles_TitleId",
                         column: x => x.TitleId,
-                        principalTable: "Title",
+                        principalTable: "Titles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -240,15 +240,15 @@ namespace AniTalkApi.Migrations
                 {
                     table.PrimaryKey("PK_TagsInTitle", x => new { x.TagId, x.TitleId });
                     table.ForeignKey(
-                        name: "FK_TagsInTitle_Tag_TagId",
+                        name: "FK_TagsInTitle_Tags_TagId",
                         column: x => x.TagId,
-                        principalTable: "Tag",
+                        principalTable: "Tags",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_TagsInTitle_Title_TitleId",
+                        name: "FK_TagsInTitle_Titles_TitleId",
                         column: x => x.TitleId,
-                        principalTable: "Title",
+                        principalTable: "Titles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -270,9 +270,9 @@ namespace AniTalkApi.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_TitleTypes_Title_TitleId",
+                        name: "FK_TitleTypes_Titles_TitleId",
                         column: x => x.TitleId,
-                        principalTable: "Title",
+                        principalTable: "Titles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -289,15 +289,15 @@ namespace AniTalkApi.Migrations
                 {
                     table.PrimaryKey("PK_TitleAuthors", x => new { x.AuthorId, x.TitleId });
                     table.ForeignKey(
-                        name: "FK_TitleAuthors_Author_AuthorId",
+                        name: "FK_TitleAuthors_Authors_AuthorId",
                         column: x => x.AuthorId,
-                        principalTable: "Author",
+                        principalTable: "Authors",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_TitleAuthors_Title_TitleId",
+                        name: "FK_TitleAuthors_Titles_TitleId",
                         column: x => x.TitleId,
-                        principalTable: "Title",
+                        principalTable: "Titles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -314,21 +314,21 @@ namespace AniTalkApi.Migrations
                 {
                     table.PrimaryKey("PK_FavoriteTitles", x => new { x.TitleId, x.UserId });
                     table.ForeignKey(
-                        name: "FK_FavoriteTitles_Title_TitleId",
+                        name: "FK_FavoriteTitles_Titles_TitleId",
                         column: x => x.TitleId,
-                        principalTable: "Title",
+                        principalTable: "Titles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_FavoriteTitles_User_UserId",
+                        name: "FK_FavoriteTitles_Users_UserId",
                         column: x => x.UserId,
-                        principalTable: "User",
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Message",
+                name: "Messages",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -340,17 +340,17 @@ namespace AniTalkApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Message", x => x.Id);
+                    table.PrimaryKey("PK_Messages", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Message_Dialog_DialogId",
+                        name: "FK_Messages_Dialogs_DialogId",
                         column: x => x.DialogId,
-                        principalTable: "Dialog",
+                        principalTable: "Dialogs",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Message_User_SenderId",
+                        name: "FK_Messages_Users_SenderId",
                         column: x => x.SenderId,
-                        principalTable: "User",
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -367,21 +367,21 @@ namespace AniTalkApi.Migrations
                 {
                     table.PrimaryKey("PK_Relationships", x => new { x.MainUserId, x.RelationshipsWithUserId });
                     table.ForeignKey(
-                        name: "FK_Relationships_User_MainUserId",
+                        name: "FK_Relationships_Users_MainUserId",
                         column: x => x.MainUserId,
-                        principalTable: "User",
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Relationships_User_RelationshipsWithUserId",
+                        name: "FK_Relationships_Users_RelationshipsWithUserId",
                         column: x => x.RelationshipsWithUserId,
-                        principalTable: "User",
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Review",
+                name: "Reviews",
                 columns: table => new
                 {
                     UserID = table.Column<int>(type: "integer", nullable: false),
@@ -391,17 +391,17 @@ namespace AniTalkApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Review", x => new { x.TitleId, x.UserID });
+                    table.PrimaryKey("PK_Reviews", x => new { x.TitleId, x.UserID });
                     table.ForeignKey(
-                        name: "FK_Review_Title_TitleId",
+                        name: "FK_Reviews_Titles_TitleId",
                         column: x => x.TitleId,
-                        principalTable: "Title",
+                        principalTable: "Titles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Review_User_UserID",
+                        name: "FK_Reviews_Users_UserID",
                         column: x => x.UserID,
-                        principalTable: "User",
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -417,15 +417,15 @@ namespace AniTalkApi.Migrations
                 {
                     table.PrimaryKey("PK_UsersInDialog", x => new { x.DialogId, x.UserId });
                     table.ForeignKey(
-                        name: "FK_UsersInDialog_Dialog_DialogId",
+                        name: "FK_UsersInDialog_Dialogs_DialogId",
                         column: x => x.DialogId,
-                        principalTable: "Dialog",
+                        principalTable: "Dialogs",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UsersInDialog_User_UserId",
+                        name: "FK_UsersInDialog_Users_UserId",
                         column: x => x.UserId,
-                        principalTable: "User",
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -444,28 +444,28 @@ namespace AniTalkApi.Migrations
                 {
                     table.PrimaryKey("PK_ImagesInReview", x => new { x.ImageId, x.ReviewId });
                     table.ForeignKey(
-                        name: "FK_ImagesInReview_Image_ImageId",
+                        name: "FK_ImagesInReview_Images_ImageId",
                         column: x => x.ImageId,
-                        principalTable: "Image",
+                        principalTable: "Images",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ImagesInReview_Review_ReviewTitleId_ReviewUserID",
+                        name: "FK_ImagesInReview_Reviews_ReviewTitleId_ReviewUserID",
                         columns: x => new { x.ReviewTitleId, x.ReviewUserID },
-                        principalTable: "Review",
+                        principalTable: "Reviews",
                         principalColumns: new[] { "TitleId", "UserID" },
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Author_PersonalInformationId",
-                table: "Author",
+                name: "IX_Authors_PersonalInformationId",
+                table: "Authors",
                 column: "PersonalInformationId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Dialog_AvatarId",
-                table: "Dialog",
+                name: "IX_Dialogs_AvatarId",
+                table: "Dialogs",
                 column: "AvatarId");
 
             migrationBuilder.CreateIndex(
@@ -474,19 +474,19 @@ namespace AniTalkApi.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Forum_DialogId",
-                table: "Forum",
+                name: "IX_Forums_DialogId",
+                table: "Forums",
                 column: "DialogId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Forum_TitleId",
-                table: "Forum",
+                name: "IX_Forums_TitleId",
+                table: "Forums",
                 column: "TitleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Genre_Name",
-                table: "Genre",
+                name: "IX_Genres_Name",
+                table: "Genres",
                 column: "Name",
                 unique: true);
 
@@ -496,23 +496,29 @@ namespace AniTalkApi.Migrations
                 column: "TitleId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Images_Url",
+                table: "Images",
+                column: "Url",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ImagesInReview_ReviewTitleId_ReviewUserID",
                 table: "ImagesInReview",
                 columns: new[] { "ReviewTitleId", "ReviewUserID" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Message_DialogId",
-                table: "Message",
+                name: "IX_Messages_DialogId",
+                table: "Messages",
                 column: "DialogId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Message_SenderId",
-                table: "Message",
+                name: "IX_Messages_SenderId",
+                table: "Messages",
                 column: "SenderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Message_SendingTime",
-                table: "Message",
+                name: "IX_Messages_SendingTime",
+                table: "Messages",
                 column: "SendingTime");
 
             migrationBuilder.CreateIndex(
@@ -546,18 +552,18 @@ namespace AniTalkApi.Migrations
                 column: "RelationshipsWithUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Review_StarsCount",
-                table: "Review",
+                name: "IX_Reviews_StarsCount",
+                table: "Reviews",
                 column: "StarsCount");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Review_UserID",
-                table: "Review",
+                name: "IX_Reviews_UserID",
+                table: "Reviews",
                 column: "UserID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tag_Name",
-                table: "Tag",
+                name: "IX_Tags_Name",
+                table: "Tags",
                 column: "Name",
                 unique: true);
 
@@ -567,20 +573,20 @@ namespace AniTalkApi.Migrations
                 column: "TitleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Title_CoverId",
-                table: "Title",
-                column: "CoverId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Title_Name",
-                table: "Title",
-                column: "Name",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_TitleAuthors_TitleId",
                 table: "TitleAuthors",
                 column: "TitleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Titles_CoverId",
+                table: "Titles",
+                column: "CoverId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Titles_Name",
+                table: "Titles",
+                column: "Name",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_TitleTypes_TitleTypeId",
@@ -588,20 +594,20 @@ namespace AniTalkApi.Migrations
                 column: "TitleTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_User_Email",
-                table: "User",
+                name: "IX_Users_Email",
+                table: "Users",
                 column: "Email",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_User_Nickname",
-                table: "User",
+                name: "IX_Users_Nickname",
+                table: "Users",
                 column: "Nickname",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_User_PersonalInformationId",
-                table: "User",
+                name: "IX_Users_PersonalInformationId",
+                table: "Users",
                 column: "PersonalInformationId",
                 unique: true);
 
@@ -618,7 +624,7 @@ namespace AniTalkApi.Migrations
                 name: "FavoriteTitles");
 
             migrationBuilder.DropTable(
-                name: "Forum");
+                name: "Forums");
 
             migrationBuilder.DropTable(
                 name: "GenresInTitle");
@@ -627,7 +633,7 @@ namespace AniTalkApi.Migrations
                 name: "ImagesInReview");
 
             migrationBuilder.DropTable(
-                name: "Message");
+                name: "Messages");
 
             migrationBuilder.DropTable(
                 name: "Relationships");
@@ -645,34 +651,34 @@ namespace AniTalkApi.Migrations
                 name: "UsersInDialog");
 
             migrationBuilder.DropTable(
-                name: "Genre");
+                name: "Genres");
 
             migrationBuilder.DropTable(
-                name: "Review");
+                name: "Reviews");
 
             migrationBuilder.DropTable(
-                name: "Tag");
+                name: "Tags");
 
             migrationBuilder.DropTable(
-                name: "Author");
+                name: "Authors");
 
             migrationBuilder.DropTable(
                 name: "TitleType");
 
             migrationBuilder.DropTable(
-                name: "Dialog");
+                name: "Dialogs");
 
             migrationBuilder.DropTable(
-                name: "Title");
+                name: "Titles");
 
             migrationBuilder.DropTable(
-                name: "User");
+                name: "Users");
 
             migrationBuilder.DropTable(
                 name: "PersonalInformation");
 
             migrationBuilder.DropTable(
-                name: "Image");
+                name: "Images");
         }
     }
 }

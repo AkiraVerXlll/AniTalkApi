@@ -5,13 +5,13 @@ using CloudinaryDotNet.Actions;
 
 namespace AniTalkApi.ServiceLayer.PhotoServices.Implementations;
 
-public class CloudinaryPhotoLoaderService : IPhotoLoaderService
+public class CloudinaryPhotoUploaderService : IPhotoUploaderService
 {
     private readonly IPhotoValidatorService _validator;
 
     private readonly Cloudinary _cloudinary;
 
-    public CloudinaryPhotoLoaderService(
+    public CloudinaryPhotoUploaderService(
         IPhotoValidatorService validator, 
         IConfiguration configuration)
     {
@@ -39,23 +39,9 @@ public class CloudinaryPhotoLoaderService : IPhotoLoaderService
         var imageUploadResult = 
             await _cloudinary.UploadAsync(imageUploadParams);
 
-        if (imageUploadResult != null)
-        {
-            return imageUploadResult.PublicId;
-        }
-
-        throw new ArgumentException();
-    }
-
-    public Task<string> DownloadAsync(string publicId)
-    {
-        var url = _cloudinary
-            .GetResource(publicId)
-            .SecureUrl;
-
-        if (url is null)
+        if (imageUploadResult is null)
             throw new ArgumentException();
-
-        return new Task<string>(() => url);
+          
+        return imageUploadResult.SecureUrl.ToString();
     }
 }

@@ -14,6 +14,6 @@ public static class ApplicationServiceExtensions
 
     public static void AddCloudinaryPhotoLoaderService(this IServiceCollection services)
     {
-        services.AddSingleton<IPhotoLoaderService, CloudinaryPhotoLoaderService>();
+        services.AddSingleton<IPhotoUploaderService, CloudinaryPhotoUploaderService>();
     }
 }

@@ -10,10 +10,10 @@ public class TitleController : Controller
 {
     private readonly AppDbContext _dbContext;
 
-    private IPhotoLoaderService _photoLoaderService;
+    private IPhotoUploaderService _photoLoaderService;
 
     public TitleController(AppDbContext dbContext, 
-        IPhotoLoaderService photoLoaderService)
+        IPhotoUploaderService photoLoaderService)
     {
         _dbContext = dbContext;
         _photoLoaderService = photoLoaderService;

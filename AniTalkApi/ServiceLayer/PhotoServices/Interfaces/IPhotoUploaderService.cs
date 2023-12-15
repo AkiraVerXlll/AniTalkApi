@@ -1,8 +1,7 @@
 ﻿namespace AniTalkApi.ServiceLayer.PhotoServices.Interfaces;
 
-public interface IPhotoLoaderService
+public interface IPhotoUploaderService
 {
     Task<string> UploadAsync(IFormFile file);
 
-    Task<string> DownloadAsync(string publicId);
 }

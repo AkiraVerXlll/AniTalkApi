@@ -23,7 +23,7 @@ public class CloudinaryPhotoUploaderService : IPhotoUploaderService
         _cloudinary = new Cloudinary(new Account(cloudName, apiKey, apiSecret));
     }
 
-    public async Task<string> UploadAsync(IFormFile file)
+    public async Task<string> UploadAsync(IFormFile file, string path)
     {
         if (!_validator.IsImage(file)) 
             throw new ArgumentException();
@@ -33,7 +33,7 @@ public class CloudinaryPhotoUploaderService : IPhotoUploaderService
         var imageUploadParams = new ImageUploadParams()
         {
             File = new FileDescription(file.FileName, stream),
-            PublicId = $"test/{file.FileName.Split('.').First()}{Guid.NewGuid()}"
+            PublicId = $"{path}/{file.FileName.Split('.').First()}{Guid.NewGuid()}"
         };
 
         var imageUploadResult = 

@@ -18,7 +18,10 @@ public class User
     public string Email { get; set; }
 
     [Required]
-    public string Password { get; set; }
+    public string PasswordHash { get; set; }
+
+    [Required]
+    public string Salt { get; set; }
 
     [Required]
     [Column(TypeName = "date")]
@@ -29,6 +32,9 @@ public class User
 
     [Required]
     public UserRoles Role { get; set; }
+
+    [Required]
+    public bool IsEmailVerified { get; set; }
 
     public int PersonalInformationId { get; init; }
 

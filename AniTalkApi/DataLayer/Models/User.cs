@@ -27,6 +27,10 @@ public class User
     [Column(TypeName = "date")]
     public DateTime DateOfRegistration { get; set; }
 
+    public string? AccessToken { get; set; }
+
+    public string? RefreshToken { get; set; }
+
     [Required]
     public UserStatus Status { get; set; }
 

@@ -19,10 +19,8 @@ public class PasswordHasherSHA256Service : IPasswordHasherService
     public string HashPassword(string password, string salt)
     {
         password += salt;
-        var passwordHash = _passwordHasher
-            .ComputeHash(Encoding.UTF8.GetBytes(password))
-            .ToString();
-        return passwordHash;
+        return Convert.ToBase64String(_passwordHasher
+                    .ComputeHash(Encoding.UTF8.GetBytes(password)));
     }
 
     public bool VerifyPassword(string inputPassword, string hash, string salt)
@@ -34,9 +32,6 @@ public class PasswordHasherSHA256Service : IPasswordHasherService
     {
         var salt = new byte[32];
         _saltGenerator.GetBytes(salt);
-        return Encoding.UTF8.GetString(salt);
+        return Convert.ToBase64String(salt);
     }
-
-    
-
 }

@@ -4,6 +4,7 @@
 using AniTalkApi.DataLayer;
 using AniTalkApi.ServiceLayer;
 using Auth0.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace AniTalkApi;
 
@@ -21,11 +22,16 @@ public class Program
         builder.Services.AddCloudinaryPhotoLoaderService();
         builder.Services.AddPasswordHasherSha256Service();
 
-        builder.Services.AddAuth0WebAppAuthentication(options =>
+        builder.Services.AddAuthentication(options =>
         {
-            options.Domain = builder.Configuration["Auth0:Domain"];
-            options.ClientId = builder.Configuration["Auth0:ClientId"];
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        }).AddJwtBearer(options =>
+        {
+            options.Authority = builder.Configuration["Auth0:Domain"];
+            options.Audience = builder.Configuration["Auth0:ClientId"];
         });
+        builder.Services.AddAuthorization();
 
 
         var app = builder.Build();

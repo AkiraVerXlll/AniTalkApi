@@ -9,13 +9,13 @@ public class PersonalInformation
     [Key]
     public int Id { get; init; }
 
-    public int AvatarId { get; init; }
+    public int? AvatarId { get; init; }
 
     [MaxLength(30)]
-    public string Name { get; set; }
+    public string? Name { get; set; }
 
     [MaxLength(30)]
-    public string Surname { get; set; }
+    public string? Surname { get; set; }
 
     [MaxLength(512)]
     public string? AboutYourself { get; set; }

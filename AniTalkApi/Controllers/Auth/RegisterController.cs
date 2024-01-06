@@ -1,6 +1,7 @@
 ﻿using AniTalkApi.DataLayer;
 using AniTalkApi.DataLayer.DTO.Auth;
 using AniTalkApi.DataLayer.Models;
+using AniTalkApi.DataLayer.Models.Enums;
 using AniTalkApi.ServiceLayer.PasswordHasherServices;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -25,10 +26,10 @@ public class RegisterController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> RegisterAsync([FromForm] RegisterForm formData)
     {
-        if (await EmailIsAvailable(formData.Email))
+        if (await EmailIsUnavailable(formData.Email))
             return BadRequest("User with this email already exists");
 
-        if (await NicknameIsAvailable(formData.Nickname))
+        if (await NicknameIsUnavailable(formData.Nickname))
             return BadRequest("User with this nickname already exists");
         
         var salt = _passwordHasher.GenerateSalt();
@@ -40,7 +41,12 @@ public class RegisterController : ControllerBase
             Email = formData.Email,
             PasswordHash = hash, 
             Salt = salt,
-            Nickname = formData.Nickname
+            Nickname = formData.Nickname,
+            DateOfRegistration = DateTime.Now,
+            Status = UserStatus.Offline,
+            Role = UserRoles.User,
+            IsEmailVerified = false,
+            PersonalInformation = new PersonalInformation()
         };
 
         await _context.Users.AddAsync(newUser);
@@ -49,16 +55,16 @@ public class RegisterController : ControllerBase
         return Ok();
     }
 
-    private async Task<bool> EmailIsAvailable(string email)
+    private async Task<bool> EmailIsUnavailable(string email)
     {
-        return !await _context
+        return await _context
             .Users
             .AnyAsync(u => u.Email == email);
     }
 
-    private async Task<bool> NicknameIsAvailable(string nickname)
+    private async Task<bool> NicknameIsUnavailable(string nickname)
     {
-        return !await _context
+        return await _context
             .Users
             .AnyAsync(u => u.Nickname == nickname);
     }

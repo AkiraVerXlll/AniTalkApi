@@ -3,11 +3,12 @@ using AniTalkApi.DataLayer.Models.Enums;
 using AniTalkApi.DataLayer.Models.ManyToMany;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Image = AniTalkApi.DataLayer.Models.Image;
 
 namespace AniTalkApi.DataLayer;
 
-public class AppDbContext : DbContext
+public class AppDbContext : IdentityDbContext<User>
 {
     private readonly string _connectionString;
 
@@ -28,10 +29,6 @@ public class AppDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         #region ValueConvertors
-
-        modelBuilder.Entity<User>()
-            .Property(u => u.Role)
-            .HasConversion<EnumToStringConverter<UserRoles>>();
 
         modelBuilder.Entity<User>()
             .Property(u => u.Status)
@@ -90,14 +87,6 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<Title>()
             .HasIndex(t => t.Name)
-            .IsUnique();
-
-        modelBuilder.Entity<User>()
-            .HasIndex(u => u.Username)
-            .IsUnique();
-
-        modelBuilder.Entity<User>()
-            .HasIndex(u => u.Email)
             .IsUnique();
 
         modelBuilder.Entity<User>()
@@ -180,6 +169,4 @@ public class AppDbContext : DbContext
     public DbSet<Title> Titles { get; set; }
 
     public DbSet<TitleType> TitleType { get; set; }
-
-    public DbSet<User> Users { get; set;  }
 }

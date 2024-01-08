@@ -2,34 +2,15 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using AniTalkApi.DataLayer.Models.Enums;
 using AniTalkApi.DataLayer.Models.ManyToMany;
+using Microsoft.AspNetCore.Identity;
 
 namespace AniTalkApi.DataLayer.Models;
 
-public class User
+public class User : IdentityUser
 {
-    [Key]
-    public int Id { get; init; }
-
-    [Required]
-    [MaxLength(20)]
-    public string Username { get; set; }
-
-    [Required]
-    public string Email { get; set; }
-
-    [Required]
-    public string PasswordHash { get; set; }
-
-    [Required]
-    public string Salt { get; set; }
-
     [Required]
     [Column(TypeName = "date")]
     public DateTime DateOfRegistration { get; set; }
-
-    public string? AccessToken { get; set; }
-
-    public string? RefreshToken { get; set; }
 
     [Required]
     public UserStatus Status { get; set; }
@@ -37,8 +18,9 @@ public class User
     [Required]
     public UserRoles Role { get; set; }
 
-    [Required]
-    public bool IsEmailVerified { get; set; }
+    public string? RefreshToken { get; set; }
+
+    public DateTime RefreshTokenExpiryTime { get; set; }
 
     public int PersonalInformationId { get; init; }
 
@@ -57,4 +39,11 @@ public class User
     public List<UsersInDialog> Dialogs { get; init; }
 
     #endregion
+}
+
+public class UserRoles
+{
+    public const string User = "User";
+    public const string Moderator = "Moderator";
+    public const string Admin = "Admin";
 }

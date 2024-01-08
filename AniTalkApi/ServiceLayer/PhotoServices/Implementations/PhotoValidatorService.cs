@@ -1,4 +1,5 @@
 ﻿using AniTalkApi.ServiceLayer.PhotoServices.Interfaces;
+using SixLabors.ImageSharp;
 
 namespace AniTalkApi.ServiceLayer.PhotoServices.Implementations;
 

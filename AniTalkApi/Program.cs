@@ -1,10 +1,13 @@
 #pragma warning disable ASP0014
 #pragma warning disable CS8601
 
+using System.Text;
 using AniTalkApi.DataLayer;
+using AniTalkApi.DataLayer.Models;
 using AniTalkApi.ServiceLayer;
-using Auth0.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
 
 namespace AniTalkApi;
 
@@ -18,6 +21,9 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
         builder.Services.AddDbContext<AppDbContext>();
+        builder.Services.AddIdentity<User, UserRoles>()
+            .AddEntityFrameworkStores<AppDbContext>()
+            .AddDefaultTokenProviders();
         builder.Services.AddPhotoValidatorService();
         builder.Services.AddCloudinaryPhotoLoaderService();
         builder.Services.AddPasswordHasherSha256Service();
@@ -26,11 +32,26 @@ public class Program
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
         }).AddJwtBearer(options =>
-        {
-            options.Authority = builder.Configuration["Auth0:Domain"];
-            options.Audience = builder.Configuration["Auth0:ClientId"];
-        });
+            {
+                options.SaveToken = true;
+                options.RequireHttpsMetadata = false;
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ClockSkew = TimeSpan.Zero,
+
+                    ValidAudience = builder.Configuration["JWT:ValidAudience"],
+                    ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
+                    IssuerSigningKey =
+                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
+                };
+            }
+        );
         builder.Services.AddAuthorization();
 
 

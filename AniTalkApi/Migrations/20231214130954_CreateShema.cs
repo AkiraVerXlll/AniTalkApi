@@ -602,7 +602,7 @@ namespace AniTalkApi.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Users_Nickname",
                 table: "Users",
-                column: "Nickname",
+                column: "Username",
                 unique: true);
 
             migrationBuilder.CreateIndex(

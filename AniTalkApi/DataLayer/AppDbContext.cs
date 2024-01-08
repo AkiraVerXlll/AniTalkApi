@@ -93,7 +93,7 @@ public class AppDbContext : DbContext
             .IsUnique();
 
         modelBuilder.Entity<User>()
-            .HasIndex(u => u.Nickname)
+            .HasIndex(u => u.Username)
             .IsUnique();
 
         modelBuilder.Entity<User>()

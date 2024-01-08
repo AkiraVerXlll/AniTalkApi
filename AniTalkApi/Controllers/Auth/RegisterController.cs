@@ -1,10 +1,12 @@
-﻿using AniTalkApi.DataLayer;
+﻿using System.Text;
+using AniTalkApi.DataLayer;
 using AniTalkApi.DataLayer.DTO.Auth;
 using AniTalkApi.DataLayer.Models;
 using AniTalkApi.DataLayer.Models.Enums;
 using AniTalkApi.ServiceLayer.PasswordHasherServices;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace AniTalkApi.Controllers.Auth;
 [Route("/[controller]")]
@@ -29,7 +31,7 @@ public class RegisterController : ControllerBase
         if (await EmailIsUnavailable(formData.Email))
             return BadRequest("User with this email already exists");
 
-        if (await NicknameIsUnavailable(formData.Nickname))
+        if (await NicknameIsUnavailable(formData.Username))
             return BadRequest("User with this nickname already exists");
         
         var salt = _passwordHasher.GenerateSalt();
@@ -41,13 +43,15 @@ public class RegisterController : ControllerBase
             Email = formData.Email,
             PasswordHash = hash, 
             Salt = salt,
-            Nickname = formData.Nickname,
+            Username = formData.Username,
             DateOfRegistration = DateTime.Now,
             Status = UserStatus.Offline,
             Role = UserRoles.User,
             IsEmailVerified = false,
             PersonalInformation = new PersonalInformation()
         };
+
+
 
         await _context.Users.AddAsync(newUser);
         await _context.SaveChangesAsync();
@@ -66,6 +70,6 @@ public class RegisterController : ControllerBase
     {
         return await _context
             .Users
-            .AnyAsync(u => u.Nickname == nickname);
+            .AnyAsync(u => u.Username == nickname);
     }
 }

@@ -8,15 +8,13 @@ namespace AniTalkApi.DataLayer.Models;
 
 public class User : IdentityUser
 {
+
     [Required]
     [Column(TypeName = "date")]
     public DateTime DateOfRegistration { get; set; }
 
     [Required]
     public UserStatus Status { get; set; }
-
-    [Required]
-    public UserRoles Role { get; set; }
 
     public string? RefreshToken { get; set; }
 

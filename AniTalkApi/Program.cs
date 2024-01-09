@@ -7,6 +7,7 @@ using AniTalkApi.DataLayer.Models;
 using AniTalkApi.ServiceLayer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace AniTalkApi;
@@ -21,9 +22,11 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
         builder.Services.AddDbContext<AppDbContext>();
-        builder.Services.AddIdentity<User, UserRoles>()
+
+        builder.Services.AddIdentity<User, IdentityRole>()
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
+
         builder.Services.AddPhotoValidatorService();
         builder.Services.AddCloudinaryPhotoLoaderService();
         builder.Services.AddPasswordHasherSha256Service();

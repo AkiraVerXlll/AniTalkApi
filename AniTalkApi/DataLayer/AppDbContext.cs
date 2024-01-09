@@ -1,6 +1,7 @@
 ﻿using AniTalkApi.DataLayer.Models;
 using AniTalkApi.DataLayer.Models.Enums;
 using AniTalkApi.DataLayer.Models.ManyToMany;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -66,7 +67,7 @@ public class AppDbContext : IdentityDbContext<User>
             .HasKey(r => new { r.MainUserId, r.RelationshipsWithUserId });
 
         modelBuilder.Entity<Review>()
-            .HasKey(r => new { r.TitleId, r.UserID });
+            .HasKey(r => new { r.TitleId, r.UserId });
 
         modelBuilder.Entity<ImagesInReview>()
             .HasKey(it => new { it.ImageId, it.ReviewId });
@@ -146,6 +147,17 @@ public class AppDbContext : IdentityDbContext<User>
             .HasForeignKey(r => r.RelationshipsWithUserId);
 
         #endregion
+
+        modelBuilder.Entity<IdentityUserLogin<string>>()
+            .HasNoKey();
+
+        modelBuilder.Entity<IdentityUserRole<string>>()
+            .HasNoKey();
+
+        modelBuilder.Entity<IdentityUserToken<string>>()
+            .HasNoKey();
+
+
     }
 
     public DbSet<Author> Authors { get; set; }

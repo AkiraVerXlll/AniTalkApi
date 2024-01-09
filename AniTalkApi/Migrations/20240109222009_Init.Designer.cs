@@ -12,15 +12,15 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AniTalkApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231214130954_CreateShema")]
-    partial class CreateShema
+    [Migration("20240109222009_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.12")
+                .HasAnnotation("ProductVersion", "8.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -135,8 +135,8 @@ namespace AniTalkApi.Migrations
                     b.Property<int>("TitleId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
 
                     b.Property<int>("Order")
                         .HasColumnType("integer");
@@ -180,12 +180,13 @@ namespace AniTalkApi.Migrations
                     b.Property<int>("ReviewTitleId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("ReviewUserID")
-                        .HasColumnType("integer");
+                    b.Property<string>("ReviewUserId")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("ImageId", "ReviewId");
 
-                    b.HasIndex("ReviewTitleId", "ReviewUserID");
+                    b.HasIndex("ReviewTitleId", "ReviewUserId");
 
                     b.ToTable("ImagesInReview");
                 });
@@ -247,8 +248,8 @@ namespace AniTalkApi.Migrations
                     b.Property<int>("DialogId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
 
                     b.HasKey("DialogId", "UserId");
 
@@ -268,8 +269,9 @@ namespace AniTalkApi.Migrations
                     b.Property<int>("DialogId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("SenderId")
-                        .HasColumnType("integer");
+                    b.Property<string>("SenderId")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("SendingTime")
                         .HasColumnType("timestamp with time zone");
@@ -303,7 +305,7 @@ namespace AniTalkApi.Migrations
                     b.Property<int?>("Age")
                         .HasColumnType("integer");
 
-                    b.Property<int>("AvatarId")
+                    b.Property<int?>("AvatarId")
                         .HasColumnType("integer");
 
                     b.Property<DateTime?>("BirthDate")
@@ -318,12 +320,10 @@ namespace AniTalkApi.Migrations
                         .HasColumnType("character varying(25)");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("character varying(30)");
 
                     b.Property<string>("Surname")
-                        .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("character varying(30)");
 
@@ -342,11 +342,11 @@ namespace AniTalkApi.Migrations
 
             modelBuilder.Entity("AniTalkApi.DataLayer.Models.Relationships", b =>
                 {
-                    b.Property<int>("MainUserId")
-                        .HasColumnType("integer");
+                    b.Property<string>("MainUserId")
+                        .HasColumnType("text");
 
-                    b.Property<int>("RelationshipsWithUserId")
-                        .HasColumnType("integer");
+                    b.Property<string>("RelationshipsWithUserId")
+                        .HasColumnType("text");
 
                     b.Property<string>("RelationshipsStatus")
                         .IsRequired()
@@ -366,8 +366,8 @@ namespace AniTalkApi.Migrations
                     b.Property<int>("TitleId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("UserID")
-                        .HasColumnType("integer");
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
 
                     b.Property<int>("StarsCount")
                         .HasColumnType("integer");
@@ -375,11 +375,11 @@ namespace AniTalkApi.Migrations
                     b.Property<string>("Text")
                         .HasColumnType("text");
 
-                    b.HasKey("TitleId", "UserID");
+                    b.HasKey("TitleId", "UserId");
 
                     b.HasIndex("StarsCount");
 
-                    b.HasIndex("UserID");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Reviews");
                 });
@@ -458,51 +458,185 @@ namespace AniTalkApi.Migrations
 
             modelBuilder.Entity("AniTalkApi.DataLayer.Models.User", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<string>("ConcurrencyStamp")
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("DateOfRegistration")
                         .HasColumnType("date");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Nickname")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("boolean");
 
-                    b.Property<string>("Password")
-                        .IsRequired()
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasColumnType("text");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PasswordHash")
                         .HasColumnType("text");
 
                     b.Property<int>("PersonalInformationId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Role")
-                        .IsRequired()
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("RefreshToken")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("RefreshTokenExpiryTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
 
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
-
-                    b.HasIndex("Email")
-                        .IsUnique();
-
-                    b.HasIndex("Nickname")
-                        .IsUnique();
 
                     b.HasIndex("PersonalInformationId")
                         .IsUnique();
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("NormalizedName")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Roles");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RoleId")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RoleClaims");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserClaims");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+                {
+                    b.Property<string>("LoginProvider")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProviderDisplayName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProviderKey")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.ToTable("UserLogins");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+                {
+                    b.Property<string>("RoleId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.ToTable("UserRoles");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+                {
+                    b.Property<string>("LoginProvider")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("text");
+
+                    b.ToTable("UserTokens");
                 });
 
             modelBuilder.Entity("AniTalkApi.DataLayer.Models.Author", b =>
@@ -594,7 +728,7 @@ namespace AniTalkApi.Migrations
 
                     b.HasOne("AniTalkApi.DataLayer.Models.Review", "Review")
                         .WithMany()
-                        .HasForeignKey("ReviewTitleId", "ReviewUserID")
+                        .HasForeignKey("ReviewTitleId", "ReviewUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -702,9 +836,7 @@ namespace AniTalkApi.Migrations
                 {
                     b.HasOne("AniTalkApi.DataLayer.Models.Image", "Avatar")
                         .WithMany()
-                        .HasForeignKey("AvatarId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AvatarId");
 
                     b.Navigation("Avatar");
                 });
@@ -738,7 +870,7 @@ namespace AniTalkApi.Migrations
 
                     b.HasOne("AniTalkApi.DataLayer.Models.User", "User")
                         .WithMany("Reviews")
-                        .HasForeignKey("UserID")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

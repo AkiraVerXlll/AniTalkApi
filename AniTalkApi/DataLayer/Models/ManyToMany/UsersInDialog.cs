@@ -2,7 +2,7 @@
 
 public class UsersInDialog
 {
-    public int UserId { get; init; }
+    public string UserId { get; init; }
 
     public int DialogId { get; init; }
 

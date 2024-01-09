@@ -6,9 +6,9 @@ namespace AniTalkApi.DataLayer.Models;
 
 public class Relationships
 {
-    public int MainUserId { get; init; }
+    public string MainUserId { get; init; }
 
-    public int RelationshipsWithUserId { get; init; }
+    public string RelationshipsWithUserId { get; init; }
 
     [Required]
     public RelationshipsStatus RelationshipsStatus { get; set; }

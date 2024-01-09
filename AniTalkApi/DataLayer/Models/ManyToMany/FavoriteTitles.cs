@@ -4,7 +4,7 @@ namespace AniTalkApi.DataLayer.Models.ManyToMany;
 
 public class FavoriteTitles
 {
-    public int UserId { get; init; }
+    public string UserId { get; init; }
 
     public int TitleId { get; init; }
 

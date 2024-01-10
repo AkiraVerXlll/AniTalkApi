@@ -1,5 +1,4 @@
 #pragma warning disable ASP0014
-#pragma warning disable CS8601
 
 using System.Text;
 using AniTalkApi.DataLayer;
@@ -7,7 +6,6 @@ using AniTalkApi.DataLayer.Models;
 using AniTalkApi.ServiceLayer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace AniTalkApi;
@@ -29,7 +27,7 @@ public class Program
 
         builder.Services.AddPhotoValidatorService();
         builder.Services.AddCloudinaryPhotoLoaderService();
-        builder.Services.AddPasswordHasherSha256Service();
+        builder.Services.AddTokenManagerService();
 
         builder.Services.AddAuthentication(options =>
         {

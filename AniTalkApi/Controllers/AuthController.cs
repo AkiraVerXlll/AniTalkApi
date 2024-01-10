@@ -1,15 +1,11 @@
 ﻿using AniTalkApi.DataLayer.DTO.Auth;
 using AniTalkApi.DataLayer.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
 using AniTalkApi.DataLayer.Models.Enums;
+using AniTalkApi.ServiceLayer.TokenManagerService;
 
 namespace AniTalkApi.Controllers;
 [Route("/[controller]")]
@@ -18,15 +14,46 @@ namespace AniTalkApi.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly UserManager<User> _userManager;
+
     private readonly IConfiguration _configuration;
+
+    private readonly ITokenManagerService _tokenManager;
 
     public AuthController(
         UserManager<User> userManager,
-        RoleManager<IdentityRole> roleManager,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        ITokenManagerService tokenManager)
     {
         _userManager = userManager;
         _configuration = configuration;
+        _tokenManager = tokenManager;
+    }
+
+    [HttpPost]
+    [Route("register")]
+    public async Task<IActionResult> ModalRegister([FromBody] RegisterForm formData)
+    {
+        if (await _userManager.FindByEmailAsync(formData.Email) is not null)
+            return StatusCode(StatusCodes.Status409Conflict, "The user with this email is already exist");
+
+        if (await _userManager.FindByNameAsync(formData.Username) is not null)
+            return StatusCode(StatusCodes.Status409Conflict, "The user with this name is already exist");
+
+        User user = new()
+        {
+            Email = formData.Email,
+            UserName = formData.Username,
+            DateOfRegistration = DateTime.Now,
+            SecurityStamp = Guid.NewGuid().ToString(),
+            Status = UserStatus.Online,
+            PersonalInformation = new PersonalInformation()
+        };
+        var result = await _userManager.CreateAsync(user, formData.Password);
+        if (!result.Succeeded)
+            return StatusCode(StatusCodes.Status500InternalServerError, 
+                "User creation failed! Please check user details and try again." );
+
+        return Ok("User created successfully!");
     }
 
     [HttpPost]
@@ -53,10 +80,10 @@ public class AuthController : ControllerBase
             .AddRange(userRoles
                 .Select(userRole => new Claim(ClaimTypes.Role, userRole)));
 
-        var token = CreateToken(authClaims);
-        var refreshToken = GenerateRefreshToken();
+        var token = _tokenManager.CreateToken(authClaims);
+        var refreshToken = _tokenManager.GenerateRefreshToken();
 
-        _ = int.TryParse(_configuration["JWT:RefreshTokenValidityInDays"], out int refreshTokenValidityInDays);
+        _ = int.TryParse(_configuration["JWT:RefreshTokenValidityInDays"], out var refreshTokenValidityInDays);
 
         user.RefreshToken = refreshToken;
         user.RefreshTokenExpiryTime = DateTime.Now.AddDays(refreshTokenValidityInDays).ToUniversalTime();
@@ -72,34 +99,6 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost]
-    [Route("register")]
-    public async Task<IActionResult> Register([FromBody] RegisterForm formData)
-    {
-        if (await _userManager.FindByEmailAsync(formData.Email) is not null)
-            return StatusCode(StatusCodes.Status409Conflict, "The user with this email is already exist");
-
-        if (await _userManager.FindByNameAsync(formData.Username) is not null)
-            return StatusCode(StatusCodes.Status409Conflict, "The user with this name is already exist");
-
-        User user = new()
-        {
-            Email = formData.Email,
-            UserName = formData.Username,
-            DateOfRegistration = DateTime.Now,
-            SecurityStamp = Guid.NewGuid().ToString(),
-            Status = UserStatus.Online,
-            PersonalInformation = new PersonalInformation()
-        };
-        var result = await _userManager.CreateAsync(user, formData.Password);
-        if (!result.Succeeded)
-            return StatusCode(StatusCodes.Status500InternalServerError, 
-                "User creation failed! Please check user details and try again." );
-
-        return Ok("User created successfully!");
-    }
-
-
-    [HttpPost]
     [Route("refresh-token")]
     public async Task<IActionResult> RefreshToken(TokenModel? tokenModel)
     { 
@@ -109,7 +108,7 @@ public class AuthController : ControllerBase
         var accessToken = tokenModel.AccessToken;
         var refreshToken = tokenModel.RefreshToken;
 
-        var principal = GetPrincipalFromExpiredToken(accessToken);
+        var principal = _tokenManager.GetPrincipalFromExpiredToken(accessToken);
         if (principal == null)
             return BadRequest("Invalid access token or refresh token");
 
@@ -120,8 +119,8 @@ public class AuthController : ControllerBase
         if (user is null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
             return BadRequest("Invalid access token or refresh token");
 
-        var newAccessToken = CreateToken(principal.Claims.ToList());
-        var newRefreshToken = GenerateRefreshToken();
+        var newAccessToken = _tokenManager.CreateToken(principal.Claims.ToList());
+        var newRefreshToken = _tokenManager.GenerateRefreshToken();
 
         user.RefreshToken = newRefreshToken;
         await _userManager.UpdateAsync(user);
@@ -131,52 +130,5 @@ public class AuthController : ControllerBase
             accessToken = new JwtSecurityTokenHandler().WriteToken(newAccessToken),
             refreshToken = newRefreshToken
         });
-    }
-
-
-    private JwtSecurityToken CreateToken(IEnumerable<Claim> authClaims)
-    {
-        var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
-        _ = int.TryParse(_configuration["JWT:TokenValidityInMinutes"], out var tokenValidityInMinutes);
-
-        var token = new JwtSecurityToken(
-            issuer: _configuration["JWT:ValidIssuer"],
-            audience: _configuration["JWT:ValidAudience"],
-            expires: DateTime.Now.AddMinutes(tokenValidityInMinutes),
-            claims: authClaims,
-            signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
-            );
-
-        return token;
-    }
-
-    private static string GenerateRefreshToken()
-    {
-        var randomNumber = new byte[64];
-        using var rng = RandomNumberGenerator.Create();
-        rng.GetBytes(randomNumber);
-        return Convert.ToBase64String(randomNumber);
-    }
-
-    private ClaimsPrincipal? GetPrincipalFromExpiredToken(string? token)
-    {
-        var tokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateAudience = false,
-            ValidateIssuer = false,
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"])),
-            ValidateLifetime = false
-        };
-
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
-        if (securityToken is not JwtSecurityToken jwtSecurityToken || 
-            !jwtSecurityToken.Header.Alg
-                .Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
-            throw new SecurityTokenException("Invalid token");
-
-        return principal;
-
     }
 }

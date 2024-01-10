@@ -1,6 +1,6 @@
-﻿using AniTalkApi.ServiceLayer.PasswordHasherServices;
-using AniTalkApi.ServiceLayer.PhotoServices.Implementations;
+﻿using AniTalkApi.ServiceLayer.PhotoServices.Implementations;
 using AniTalkApi.ServiceLayer.PhotoServices.Interfaces;
+using AniTalkApi.ServiceLayer.TokenManagerService;
 
 namespace AniTalkApi.ServiceLayer;
 
@@ -16,8 +16,8 @@ public static class ApplicationServiceExtensions
         services.AddSingleton<IPhotoUploaderService, CloudinaryPhotoUploaderService>();
     }
 
-    public static void AddPasswordHasherSha256Service(this IServiceCollection services)
+    public static void AddTokenManagerService(this IServiceCollection services)
     {
-        services.AddSingleton<IPasswordHasherService, PasswordHasherSHA256Service>();
+        services.AddSingleton<ITokenManagerService, TokenManagerService.TokenManagerService>();
     }
 }

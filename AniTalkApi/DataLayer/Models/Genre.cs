@@ -13,7 +13,7 @@ public class Genre
 
     #region Dependencies
     
-    public List<GenresInTitle> GenresInTitle { get; init; }
+    public List<GenresInTitle>? GenresInTitle { get; init; }
 
     #endregion
 }

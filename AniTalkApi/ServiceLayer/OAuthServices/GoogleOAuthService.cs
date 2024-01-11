@@ -1,17 +1,14 @@
-﻿using System.Text;
-using Newtonsoft.Json;
-
-namespace AniTalkApi.ServiceLayer.OAuthServices;
+﻿namespace AniTalkApi.ServiceLayer.OAuthServices;
 
 public class GoogleOAuthService : IOAuthService
 {
     private readonly IConfiguration _configuration;
 
-    private readonly HttpClient _httpClient;
+    private readonly HttpClientService _httpClient;
 
     public GoogleOAuthService(
         IConfiguration configuration,
-        HttpClient httpClient)
+        HttpClientService httpClient)
     {
         _configuration = configuration;
         _httpClient = httpClient;
@@ -28,7 +25,8 @@ public class GoogleOAuthService : IOAuthService
             {"response_type", "code"},
             {"scope", scope},
             {"code_challenge", codeChallenge},
-            {"code_challenge_method", "S256"}
+            {"code_challenge_method", "S256"},
+            {"access_type", "offline"}
         };
         var encodedParameters = string.Join("&", parameters
             .Select(x => $"{x.Key}={x.Value}"));
@@ -37,7 +35,7 @@ public class GoogleOAuthService : IOAuthService
 
     public async Task<TokenResultModel> ExchangeCodeToTokenAsync(string code, string codeVerifier)
     {
-        var url = _configuration["GoogleOAuth2.0:TokenEndpoint"];
+        var url = _configuration["GoogleOAuth2.0:TokenEndpoint"]!;
 
         var parameters = new Dictionary<string, string>
         {
@@ -49,20 +47,23 @@ public class GoogleOAuthService : IOAuthService
             {"redirect_uri", _configuration["GoogleOAuth2.0:RedirectUrl"]!}
         };
 
-        var encodedParameters = string
-            .Join("&", parameters.Select(x => $"{x.Key}={x.Value}"));
-        var response = await _httpClient
-            .PostAsync(url, new StringContent
-                (encodedParameters, Encoding.UTF8, "application/x-www-form-urlencoded"));
-
-        var content = response.Content.ReadAsStringAsync().Result;
-        var token = JsonConvert.DeserializeObject<TokenResultModel>(content);
-
-        return token ?? throw new Exception("TokenIsNull");
+        var token = await _httpClient.SendPostRequest<TokenResultModel>(url, parameters);
+        return token ?? throw new Exception("Token is null");
     }
 
     public async Task<TokenResultModel> RefreshTokenAsync(string refreshToken)
     {
-        throw new NotImplementedException();
+        var url = _configuration["GoogleOAuth2.0:TokenEndpoint"]!;
+
+        var parameters = new Dictionary<string, string>
+        {
+            {"client_id", _configuration["GoogleOAuth2.0:ClientId"]!},
+            {"client_secret", _configuration["GoogleOAuth2.0:ClientSecret"]!},
+            {"grant_type", "refresh_token"},
+            {"refresh_token", refreshToken}
+        };
+
+        var token = await _httpClient.SendPostRequest<TokenResultModel>(url, parameters);
+        return token ?? throw new Exception("Token is null");
     }
 }

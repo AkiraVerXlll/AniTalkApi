@@ -9,11 +9,11 @@ public class TitleType
     public int Id { get; init; }
 
     [Required]
-    public string Name { get; set; }
+    public string? Name { get; set; }
 
     #region Dependencies
 
-    public List<TitleTypes> TitleTypes { get; init; }
+    public List<TitleTypes>? TitleTypes { get; init; }
 
     #endregion
 }

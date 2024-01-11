@@ -9,6 +9,7 @@ public class PersonalInformation
     [Key]
     public int Id { get; init; }
 
+    [Required]
     public int? AvatarId { get; init; }
 
     [MaxLength(30)]
@@ -37,7 +38,7 @@ public class PersonalInformation
 
     public Author? Author { get; init; } 
 
-    public Image Avatar { get; init; }
+    public Image? Avatar { get; init; }
 
     #endregion
 }

@@ -160,25 +160,25 @@ public class AppDbContext : IdentityDbContext<User>
 
     }
 
-    public DbSet<Author> Authors { get; set; }
+    public DbSet<Author>? Authors { get; set; }
 
-    public DbSet<Dialog> Dialogs { get; set; }
+    public DbSet<Dialog>? Dialogs { get; set; }
 
-    public DbSet<Forum> Forums { get; set; }
+    public DbSet<Forum>? Forums { get; set; }
 
-    public DbSet<Genre> Genres { get; set; }
+    public DbSet<Genre>? Genres { get; set; }
     
-    public DbSet<Models.Image> Images { get; set; }
+    public DbSet<Models.Image>? Images { get; set; }
 
-    public DbSet<Message> Messages { get; set; }
+    public DbSet<Message>? Messages { get; set; }
 
-    public DbSet<PersonalInformation> PersonalInformation { get; set; }
+    public DbSet<PersonalInformation>? PersonalInformation { get; set; }
 
-    public DbSet<Review> Reviews { get; set; }
+    public DbSet<Review>? Reviews { get; set; }
 
-    public DbSet<Tag> Tags { get; set; }
+    public DbSet<Tag>? Tags { get; set; }
 
-    public DbSet<Title> Titles { get; set; }
+    public DbSet<Title>? Titles { get; set; }
 
-    public DbSet<TitleType> TitleType { get; set; }
+    public DbSet<TitleType>? TitleType { get; set; }
 }

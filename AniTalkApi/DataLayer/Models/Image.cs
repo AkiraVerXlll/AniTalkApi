@@ -8,6 +8,6 @@ public class Image
     public int Id { get; init; }
 
     [Required]
-    public string Url { get; init; }
+    public string? Url { get; init; }
 
 }

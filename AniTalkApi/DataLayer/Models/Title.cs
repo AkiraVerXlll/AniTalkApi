@@ -11,11 +11,12 @@ public class Title
     public int Id { get; init; }
 
     [Required]
-    public string Name { get; set; }
+    public string? Name { get; set; }
 
     [Required]
-    public string Description { get; set; }
+    public string? Description { get; set; }
 
+    [Required]
     public int CoverId { get; set; }
 
     [Column(TypeName = "date")]
@@ -26,21 +27,21 @@ public class Title
 
     #region Dependencies
 
-    public Image Cover { get; init; }
+    public Image? Cover { get; init; }
 
-    public List<TitleTypes> TitleTypes { get; init; }
+    public List<TitleTypes>? TitleTypes { get; init; }
 
-    public List<GenresInTitle> Genres { get; init; }
+    public List<GenresInTitle>? Genres { get; init; }
 
-    public List<TagsInTitle> Tags { get; init; }
+    public List<TagsInTitle>? Tags { get; init; }
 
-    public List<TitleAuthors> TitleAuthors { get; init; }
+    public List<TitleAuthors>? TitleAuthors { get; init; }
 
-    public List<FavoriteTitles> FavoriteTitlesOf { get; init; }
+    public List<FavoriteTitles>? FavoriteTitlesOf { get; init; }
 
-    public List<Review> Reviews { get; init; }
+    public List<Review>? Reviews { get; init; }
 
-    public List<Forum> Forums { get; init; }
+    public List<Forum>? Forums { get; init; }
 
     #endregion
 }

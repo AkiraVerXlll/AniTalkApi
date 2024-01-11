@@ -1,12 +1,18 @@
-﻿namespace AniTalkApi.DataLayer.Models.ManyToMany;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace AniTalkApi.DataLayer.Models.ManyToMany;
 
 public class TagsInTitle
 {
+    [Required]
     public int TitleId { get; init; }
 
+    [Required]
     public int TagId { get; init; }
 
+    [Required]
     private int _order;
+
     public int Order
     {
         get => _order;
@@ -21,9 +27,9 @@ public class TagsInTitle
 
     #region Dependencies
 
-    public Tag Tag { get; init; }
+    public Tag? Tag { get; init; } 
     
-    public Title Title { get; init; }
+    public Title? Title { get; init; }  
     
     #endregion
 }

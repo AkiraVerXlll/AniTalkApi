@@ -5,8 +5,10 @@ namespace AniTalkApi.DataLayer.Models.ManyToMany;
 
 public class TitleAuthors
 {
+    [Required]
     public int AuthorId { get; init; }
 
+    [Required]
     public int TitleId { get; init; }
 
     [Required]
@@ -14,9 +16,9 @@ public class TitleAuthors
 
     #region Dependencies
 
-    public Title Title { get; init; }
+    public Title? Title { get; init; } 
 
-    public Author Author { get; init; }
+    public Author? Author { get; init; }
 
     #endregion
 }

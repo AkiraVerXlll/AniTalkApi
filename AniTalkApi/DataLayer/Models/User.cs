@@ -24,17 +24,17 @@ public class User : IdentityUser
 
     #region Dependencies
 
-    public PersonalInformation PersonalInformation { get; init; }
+    public PersonalInformation? PersonalInformation { get; init; }
 
-    public List<FavoriteTitles> FavoriteTitles { get; init; }
+    public List<FavoriteTitles>? FavoriteTitles { get; init; }
 
-    public List<Relationships> RelationshipsAsMainUser { get; init; }
+    public List<Relationships>? RelationshipsAsMainUser { get; init; }
 
-    public List<Relationships> RelationshipsAsSubjectUser { get; init; }
+    public List<Relationships>? RelationshipsAsSubjectUser { get; init; }
 
-    public List<Review> Reviews { get; init; }
+    public List<Review>? Reviews { get; init; }
 
-    public List<UsersInDialog> Dialogs { get; init; }
+    public List<UsersInDialog>? Dialogs { get; init; }
 
     #endregion
 }

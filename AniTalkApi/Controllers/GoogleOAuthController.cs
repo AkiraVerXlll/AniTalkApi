@@ -2,7 +2,6 @@
 
 using System.Security.Cryptography;
 using System.Text;
-using AniTalkApi.ServiceLayer;
 using AniTalkApi.ServiceLayer.CryptoGeneratorServices;
 using AniTalkApi.ServiceLayer.OAuthServices;
 using Microsoft.AspNetCore.Mvc;

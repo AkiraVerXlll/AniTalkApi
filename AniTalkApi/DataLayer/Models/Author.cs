@@ -8,13 +8,14 @@ public class Author
     [Key]
     public int Id { get; init; }
 
+    [Required]
     public int PersonalInformationId { get; init; }
 
     #region Dependencies
 
-    public PersonalInformation PersonalInformation { get; init; }
+    public PersonalInformation? PersonalInformation { get; init; }
 
-    public List<TitleAuthors> Works { get; init; }
+    public List<TitleAuthors>? Works { get; init; }
 
     #endregion
 }

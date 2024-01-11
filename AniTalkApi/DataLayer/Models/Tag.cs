@@ -13,7 +13,7 @@ public class Tag
 
     #region Dependencies
 
-    public List<TagsInTitle> TagsInTitle { get; init; }
+    public List<TagsInTitle>? TagsInTitle { get; init; }
 
     #endregion
 }

@@ -1,11 +1,16 @@
-﻿namespace AniTalkApi.DataLayer.Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace AniTalkApi.DataLayer.Models;
 
 public class Review
 {
-    public string UserId { get; init; }
+    [Required]
+    public string? UserId { get; init; }
 
+    [Required]
     public int TitleId { get; init; }
 
+    [Required]
     private int _starsCount;
     public int StarsCount
     {
@@ -23,9 +28,9 @@ public class Review
 
     #region Dependencies
 
-    public User User { get; init; }
+    public User? User { get; init; }
 
-    public Title Title { get; init; }
+    public Title? Title { get; init; }
 
     #endregion
 }

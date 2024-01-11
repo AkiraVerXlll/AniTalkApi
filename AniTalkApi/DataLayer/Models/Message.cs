@@ -4,12 +4,16 @@ namespace AniTalkApi.DataLayer.Models;
 
 public class Message
 {
+    [Key]
     public int Id { get; set; }
 
+    [Required]
     public int DialogId { get; set; }
 
-    public string SenderId { get; set; }
+    [Required]
+    public string? SenderId { get; set; }
 
+    [Required]
     public string? Text { get; set; }
 
     [Required]
@@ -18,9 +22,9 @@ public class Message
 
     #region Dependencies
     
-    public User Sender { get; set; }
+    public User? Sender { get; set; }
 
-    public Dialog Dialog { get; set; }
+    public Dialog? Dialog { get; set; }
 
     #endregion
 }

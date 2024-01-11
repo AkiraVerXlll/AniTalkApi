@@ -5,8 +5,8 @@ namespace AniTalkApi.DataLayer.DTO.Auth;
 public class LoginForm
 {
     [Required]
-    public string Login { get; init; }
+    public string? Login { get; init; }
 
     [Required]
-    public string Password { get; init; }
+    public string? Password { get; init; }
 }

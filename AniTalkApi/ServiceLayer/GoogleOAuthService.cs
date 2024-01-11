@@ -37,14 +37,6 @@ public class GoogleOAuthService
         return $"{url}?{encodedParameters}";
     }
 
-    public string GenerateCodeVerifier()
-    {
-        var random = new Random();
-        var bytes = new byte[32];
-        random.NextBytes(bytes);
-        return (bytes);
-    }
-
     public string ExchangeCodeToToken(string code, string codeVerifier)
     {
         var url = _configuration["GoogleOAuth2.0:TokenEndpoint"];

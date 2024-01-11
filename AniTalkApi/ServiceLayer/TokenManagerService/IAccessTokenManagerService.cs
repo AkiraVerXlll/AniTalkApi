@@ -3,7 +3,7 @@ using System.Security.Claims;
 
 namespace AniTalkApi.ServiceLayer.TokenManagerService;
 
-public interface ITokenManagerService
+public interface IAccessTokenManagerService
 {
     public JwtSecurityToken CreateToken(IEnumerable<Claim> authClaims);
 

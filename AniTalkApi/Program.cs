@@ -29,6 +29,7 @@ public class Program
         builder.Services.AddPhotoValidatorService();
         builder.Services.AddCloudinaryPhotoLoaderService();
         builder.Services.AddTokenManagerService();
+        builder.Services.AddCryptoGeneratorService();
 
         builder.Services.AddAuthentication(options =>
         {

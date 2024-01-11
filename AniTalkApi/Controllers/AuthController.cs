@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using AniTalkApi.DataLayer.Models.Enums;
+using AniTalkApi.ServiceLayer.CryptoGeneratorService;
 using AniTalkApi.ServiceLayer.TokenManagerService;
 
 namespace AniTalkApi.Controllers;
@@ -17,16 +18,20 @@ public class AuthController : ControllerBase
 
     private readonly IConfiguration _configuration;
 
-    private readonly ITokenManagerService _tokenManager;
+    private readonly IAccessTokenManagerService _tokenManager;
+
+    private readonly ICryptoGeneratorService _cryptoGenerator;
 
     public AuthController(
         UserManager<User> userManager,
         IConfiguration configuration,
-        ITokenManagerService tokenManager)
+        IAccessTokenManagerService tokenManager,
+        ICryptoGeneratorService cryptoGenerator)
     {
         _userManager = userManager;
         _configuration = configuration;
         _tokenManager = tokenManager;
+        _cryptoGenerator = cryptoGenerator;
     }
 
     [HttpPost]
@@ -72,7 +77,7 @@ public class AuthController : ControllerBase
 
         var authClaims = new List<Claim>
         {
-            new(ClaimTypes.Name, user.UserName),
+            new(ClaimTypes.Name, user.UserName!),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
         };
 
@@ -81,11 +86,11 @@ public class AuthController : ControllerBase
                 .Select(userRole => new Claim(ClaimTypes.Role, userRole)));
 
         var token = _tokenManager.CreateToken(authClaims);
-        var refreshToken = _tokenManager.GenerateRefreshToken();
+        var refreshToken = GenerateRefreshToken();
+        
+        var refreshTokenValidityInDays = int.Parse(_configuration["JWT:RefreshTokenValidityInDays"]!);
 
-        _ = int.TryParse(_configuration["JWT:RefreshTokenValidityInDays"], out var refreshTokenValidityInDays);
-
-        user.RefreshToken = refreshToken;
+        user.RefreshToken = GenerateRefreshToken();
         user.RefreshTokenExpiryTime = DateTime.Now.AddDays(refreshTokenValidityInDays).ToUniversalTime();
 
         await _userManager.UpdateAsync(user);
@@ -112,15 +117,15 @@ public class AuthController : ControllerBase
         if (principal == null)
             return BadRequest("Invalid access token or refresh token");
 
-        var username = principal.Identity.Name;
+        var username = principal.Identity!.Name;
 
-        var user = await _userManager.FindByNameAsync(username);
+        var user = await _userManager.FindByNameAsync(username!);
 
         if (user is null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
             return BadRequest("Invalid access token or refresh token");
 
         var newAccessToken = _tokenManager.CreateToken(principal.Claims.ToList());
-        var newRefreshToken = _tokenManager.GenerateRefreshToken();
+        var newRefreshToken = GenerateRefreshToken();
 
         user.RefreshToken = newRefreshToken;
         await _userManager.UpdateAsync(user);
@@ -132,4 +137,7 @@ public class AuthController : ControllerBase
         });
     }
 
+    private string GenerateRefreshToken() => _cryptoGenerator.GenerateRandomString(
+        int.Parse(_configuration["JWT:RefreshTokenLength"]!));
+    
 }

@@ -19,7 +19,7 @@ public static class ApplicationServiceExtensions
 
     public static void AddTokenManagerService(this IServiceCollection services)
     {
-        services.AddSingleton<ITokenManagerService, TokenManagerService.TokenManagerService>();
+        services.AddSingleton<IAccessTokenManagerService, TokenManagerService.AccessTokenManagerService>();
     }
 
     public static void AddCryptoGeneratorService(this IServiceCollection services)

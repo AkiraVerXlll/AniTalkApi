@@ -1,40 +1,29 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
-using AniTalkApi.ServiceLayer.CryptoGeneratorService;
 using Microsoft.IdentityModel.Tokens;
 
 namespace AniTalkApi.ServiceLayer.TokenManagerService;
 
-public class TokenManagerService : ITokenManagerService
+public class AccessTokenManagerService : IAccessTokenManagerService
 {
     private readonly IConfiguration _configuration;
 
-    private readonly ICryptoGeneratorService _cryptoGenerator;
-
-    public TokenManagerService (
-        IConfiguration configuration,
-        ICryptoGeneratorService cryptoGenerator) 
-    {
+    public AccessTokenManagerService (IConfiguration configuration) => 
         _configuration = configuration;
-        _cryptoGenerator = cryptoGenerator;
-    }
 
     public JwtSecurityToken CreateToken(IEnumerable<Claim> authClaims)
     {
         var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]!));
-        _ = int.TryParse(_configuration["JWT:TokenValidityInMinutes"], out var tokenValidityInMinutes);
+        var tokenValidityInMinutes = int.Parse(_configuration["JWT:TokenValidityInMinutes"]!);
 
-        var token = new JwtSecurityToken(
+        return new JwtSecurityToken(
             issuer: _configuration["JWT:ValidIssuer"],
             audience: _configuration["JWT:ValidAudience"],
             expires: DateTime.Now.AddMinutes(tokenValidityInMinutes),
             claims: authClaims,
             signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
         );
-
-        return token;
     }
 
     public ClaimsPrincipal? GetPrincipalFromExpiredToken(string? token)
@@ -44,7 +33,7 @@ public class TokenManagerService : ITokenManagerService
             ValidateAudience = true,
             ValidateIssuer = true,
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"])),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]!)),
             ValidIssuer = _configuration["JWT:Issuer"],
             ValidAudience = _configuration["JWT:Audience"],
             ValidateLifetime = false

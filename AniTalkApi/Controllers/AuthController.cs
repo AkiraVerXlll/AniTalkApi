@@ -38,10 +38,10 @@ public class AuthController : ControllerBase
     [Route("register")]
     public async Task<IActionResult> Register([FromBody] RegisterForm formData)
     {
-        if (await _userManager.FindByEmailAsync(formData.Email) is not null)
+        if (await _userManager.FindByEmailAsync(formData.Email!) is not null)
             return StatusCode(StatusCodes.Status409Conflict, "The user with this email is already exist");
 
-        if (await _userManager.FindByNameAsync(formData.Username) is not null)
+        if (await _userManager.FindByNameAsync(formData.Username!) is not null)
             return StatusCode(StatusCodes.Status409Conflict, "The user with this name is already exist");
 
         User user = new()
@@ -53,7 +53,7 @@ public class AuthController : ControllerBase
             Status = UserStatus.Online,
             PersonalInformation = new PersonalInformation()
         };
-        var result = await _userManager.CreateAsync(user, formData.Password);
+        var result = await _userManager.CreateAsync(user, formData.Password!);
         if (!result.Succeeded)
             return StatusCode(StatusCodes.Status500InternalServerError, 
                 "User creation failed! Please check user details and try again." );
@@ -66,11 +66,11 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Login([FromBody] LoginForm formData)
     {
 
-        var user = formData.Login.Contains('@')
+        var user = formData.Login!.Contains('@')
             ? await _userManager.FindByEmailAsync(formData.Login)
             : await _userManager.FindByNameAsync(formData.Login);
 
-        if (user == null || !await _userManager.CheckPasswordAsync(user, formData.Password)) 
+        if (user == null || !await _userManager.CheckPasswordAsync(user, formData.Password!)) 
             return Unauthorized();
 
         var userRoles = await _userManager.GetRolesAsync(user);

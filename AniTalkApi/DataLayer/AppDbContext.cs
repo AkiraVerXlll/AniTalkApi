@@ -168,7 +168,7 @@ public class AppDbContext : IdentityDbContext<User>
 
     public DbSet<Genre>? Genres { get; set; }
     
-    public DbSet<Models.Image>? Images { get; set; }
+    public DbSet<Image>? Images { get; set; }
 
     public DbSet<Message>? Messages { get; set; }
 

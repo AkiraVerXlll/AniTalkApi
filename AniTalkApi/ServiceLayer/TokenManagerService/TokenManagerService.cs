@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using AniTalkApi.ServiceLayer.CryptoGeneratorService;
 using Microsoft.IdentityModel.Tokens;
 
 namespace AniTalkApi.ServiceLayer.TokenManagerService;
@@ -10,14 +11,19 @@ public class TokenManagerService : ITokenManagerService
 {
     private readonly IConfiguration _configuration;
 
-    public TokenManagerService (IConfiguration configuration)
+    private readonly ICryptoGeneratorService _cryptoGenerator;
+
+    public TokenManagerService (
+        IConfiguration configuration,
+        ICryptoGeneratorService cryptoGenerator) 
     {
         _configuration = configuration;
+        _cryptoGenerator = cryptoGenerator;
     }
 
     public JwtSecurityToken CreateToken(IEnumerable<Claim> authClaims)
     {
-        var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
+        var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]!));
         _ = int.TryParse(_configuration["JWT:TokenValidityInMinutes"], out var tokenValidityInMinutes);
 
         var token = new JwtSecurityToken(
@@ -29,14 +35,6 @@ public class TokenManagerService : ITokenManagerService
         );
 
         return token;
-    }
-
-    public  string GenerateRefreshToken()
-    {
-        var randomNumber = new byte[64];
-        using var rng = RandomNumberGenerator.Create();
-        rng.GetBytes(randomNumber);
-        return Convert.ToBase64String(randomNumber);
     }
 
     public ClaimsPrincipal? GetPrincipalFromExpiredToken(string? token)

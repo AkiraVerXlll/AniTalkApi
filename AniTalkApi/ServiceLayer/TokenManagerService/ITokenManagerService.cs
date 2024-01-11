@@ -7,7 +7,5 @@ public interface ITokenManagerService
 {
     public JwtSecurityToken CreateToken(IEnumerable<Claim> authClaims);
 
-    public string GenerateRefreshToken();
-
     public ClaimsPrincipal? GetPrincipalFromExpiredToken(string? token);
 }

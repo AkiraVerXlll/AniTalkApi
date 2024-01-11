@@ -19,6 +19,7 @@ public class Program
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+        builder.Services.AddSession();
         builder.Services.AddDbContext<AppDbContext>();
 
         builder.Services.AddIdentity<User, IdentityRole>()
@@ -49,7 +50,7 @@ public class Program
                     ValidAudience = builder.Configuration["JWT:ValidAudience"],
                     ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
                     IssuerSigningKey =
-                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
+                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]!))
                 };
             }
         );
@@ -65,6 +66,7 @@ public class Program
             app.UseSwaggerUI();
         }
 
+        app.UseSession();
         app.UseHttpsRedirection();
         app.UseRouting();
         app.UseAuthentication();

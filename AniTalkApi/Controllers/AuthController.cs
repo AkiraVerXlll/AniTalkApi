@@ -8,9 +8,9 @@ using AniTalkApi.DataLayer.Models.Enums;
 using AniTalkApi.ServiceLayer.TokenManagerService;
 
 namespace AniTalkApi.Controllers;
-[Route("/[controller]")]
 
 [ApiController]
+[Route("/[controller]")]
 public class AuthController : ControllerBase
 {
     private readonly UserManager<User> _userManager;
@@ -31,7 +31,7 @@ public class AuthController : ControllerBase
 
     [HttpPost]
     [Route("register")]
-    public async Task<IActionResult> ModalRegister([FromBody] RegisterForm formData)
+    public async Task<IActionResult> Register([FromBody] RegisterForm formData)
     {
         if (await _userManager.FindByEmailAsync(formData.Email) is not null)
             return StatusCode(StatusCodes.Status409Conflict, "The user with this email is already exist");
@@ -131,4 +131,5 @@ public class AuthController : ControllerBase
             refreshToken = newRefreshToken
         });
     }
+
 }

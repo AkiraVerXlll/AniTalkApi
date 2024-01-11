@@ -1,6 +1,6 @@
 ﻿using System.Security.Cryptography;
 
-namespace AniTalkApi.ServiceLayer.CryptoGeneratorService;
+namespace AniTalkApi.ServiceLayer.CryptoGeneratorServices;
 
 public class BaseCryptoGeneratorService : ICryptoGeneratorService
 {

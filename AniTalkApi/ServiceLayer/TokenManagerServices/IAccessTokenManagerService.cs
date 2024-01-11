@@ -1,7 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
-namespace AniTalkApi.ServiceLayer.TokenManagerService;
+namespace AniTalkApi.ServiceLayer.TokenManagerServices;
 
 public interface IAccessTokenManagerService
 {

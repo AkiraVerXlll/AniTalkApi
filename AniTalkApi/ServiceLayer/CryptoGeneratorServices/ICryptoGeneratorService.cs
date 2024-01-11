@@ -1,4 +1,4 @@
-﻿namespace AniTalkApi.ServiceLayer.CryptoGeneratorService;
+﻿namespace AniTalkApi.ServiceLayer.CryptoGeneratorServices;
 
 /// <summary>
 /// Service for generating random sequence of characters

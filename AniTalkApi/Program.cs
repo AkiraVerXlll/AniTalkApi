@@ -19,8 +19,11 @@ public class Program
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+        builder.Services.AddDistributedMemoryCache();
         builder.Services.AddSession();
         builder.Services.AddDbContext<AppDbContext>();
+        builder.Services.AddHttpClient();
+        builder.Services.AddHttpClientService();
 
         builder.Services.AddIdentity<User, IdentityRole>()
             .AddEntityFrameworkStores<AppDbContext>()
@@ -30,6 +33,7 @@ public class Program
         builder.Services.AddCloudinaryPhotoLoaderService();
         builder.Services.AddTokenManagerService();
         builder.Services.AddCryptoGeneratorService();
+        builder.Services.AddGoogleOAuthService();
 
         builder.Services.AddAuthentication(options =>
         {

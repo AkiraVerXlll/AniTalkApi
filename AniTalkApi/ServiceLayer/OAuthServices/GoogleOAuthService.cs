@@ -1,11 +1,9 @@
 ﻿using System.Text;
-using System.Text.Unicode;
-using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 
-namespace AniTalkApi.ServiceLayer;
+namespace AniTalkApi.ServiceLayer.OAuthServices;
 
-public class GoogleOAuthService
+public class GoogleOAuthService : IOAuthService
 {
     private readonly IConfiguration _configuration;
 
@@ -19,7 +17,7 @@ public class GoogleOAuthService
         _httpClient = httpClient;
     }
 
-    public string GetGoogleOAuthUrl(string scope, string codeChallenge)
+    public string GetOAuthUrl(string scope, string codeChallenge)
     {
         var url = _configuration["GoogleOAuth2.0:AuthorizationEndpoint"];
 
@@ -37,7 +35,7 @@ public class GoogleOAuthService
         return $"{url}?{encodedParameters}";
     }
 
-    public string ExchangeCodeToToken(string code, string codeVerifier)
+    public async Task<TokenResultModel> ExchangeCodeToTokenAsync(string code, string codeVerifier)
     {
         var url = _configuration["GoogleOAuth2.0:TokenEndpoint"];
 
@@ -53,33 +51,18 @@ public class GoogleOAuthService
 
         var encodedParameters = string
             .Join("&", parameters.Select(x => $"{x.Key}={x.Value}"));
-        var response = _httpClient
+        var response = await _httpClient
             .PostAsync(url, new StringContent
-                (encodedParameters, Encoding.UTF8, "application/x-www-form-urlencoded"))
-            .Result;
-        var content = response.Content.ReadAsStringAsync().Result;
-        var token = JsonConvert.DeserializeObject<TokenResult>(content);
+                (encodedParameters, Encoding.UTF8, "application/x-www-form-urlencoded"));
 
-        return token is null ? 
-            throw new Exception("TokenIsNull") : 
-            token.AccessToken;
+        var content = response.Content.ReadAsStringAsync().Result;
+        var token = JsonConvert.DeserializeObject<TokenResultModel>(content);
+
+        return token ?? throw new Exception("TokenIsNull");
     }
 
-    private class TokenResult
+    public async Task<TokenResultModel> RefreshTokenAsync(string refreshToken)
     {
-        [JsonProperty("access_token")]
-        public string AccessToken { get; set; } = null!;
-
-        [JsonProperty("expires_in")]
-        public int ExpiresIn { get; set; }
-
-        [JsonProperty("refresh_token")]
-        public string RefreshToken { get; set; } = null!;
-
-        [JsonProperty("scope")]
-        public string Scope { get; set; } = null!;
-
-        [JsonProperty("token_type")]
-        public string TokenType { get; set; } = null!;
+        throw new NotImplementedException();
     }
 }

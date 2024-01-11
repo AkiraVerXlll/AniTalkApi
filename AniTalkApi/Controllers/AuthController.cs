@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using AniTalkApi.DataLayer.Models.Enums;
-using AniTalkApi.ServiceLayer.CryptoGeneratorService;
-using AniTalkApi.ServiceLayer.TokenManagerService;
+using AniTalkApi.ServiceLayer.CryptoGeneratorServices;
+using AniTalkApi.ServiceLayer.TokenManagerServices;
 
 namespace AniTalkApi.Controllers;
 

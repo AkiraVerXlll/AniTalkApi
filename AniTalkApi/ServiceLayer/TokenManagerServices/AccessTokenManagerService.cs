@@ -3,7 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 
-namespace AniTalkApi.ServiceLayer.TokenManagerService;
+namespace AniTalkApi.ServiceLayer.TokenManagerServices;
 
 public class AccessTokenManagerService : IAccessTokenManagerService
 {

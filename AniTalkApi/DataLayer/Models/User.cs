@@ -20,9 +20,6 @@ public class User : IdentityUser
 
     public DateTime RefreshTokenExpiryTime { get; set; }
 
-    [Required]
-    public bool IsOAuthRegistered { get; init; }
-
     public int PersonalInformationId { get; init; }
 
     #region Dependencies

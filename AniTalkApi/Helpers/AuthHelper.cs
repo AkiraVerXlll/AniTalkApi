@@ -14,19 +14,19 @@ public class AuthHelper
     
     private readonly ITokenManagerService _tokenManager;
 
-    private readonly CrudManager _crudManager;
+    private readonly ImageCrud _imageCrud;
 
     private readonly IConfiguration _configuration;
 
     public AuthHelper(
         ITokenManagerService tokenManager,
         UserManager<User> userManager,
-        CrudManager crudManager,
+        ImageCrud imageCrud,
         IConfiguration configuration)
     {
         _tokenManager = tokenManager;
         _userManager = userManager;
-        _crudManager = crudManager;
+        _imageCrud = imageCrud;
         _configuration = configuration;
     }
     public async Task<TokenModel> RefreshTokenAsync(TokenModel? tokenModel)
@@ -75,7 +75,9 @@ public class AuthHelper
             throw new ArgumentException("User with this email already exists!");
 
         var username = modelData.Username!;
-        if (!await IsUsernameExistAsync(username) && !username.StartsWith("user-"))
+        var normalizedName = _userManager.KeyNormalizer.NormalizeName(username);
+
+        if (!await IsUsernameExistAsync(username) || normalizedName.StartsWith("USER-"))
             throw new ArgumentException("User with this username already exists!");
 
         User user = new()
@@ -83,7 +85,6 @@ public class AuthHelper
             Email = modelData.Email,
             UserName = username,
             DateOfRegistration = DateTime.Now,
-            IsOAuthRegistered = false,
             SecurityStamp = Guid.NewGuid().ToString(),
             Status = UserStatus.Online,
             PersonalInformation = new PersonalInformation()
@@ -94,7 +95,7 @@ public class AuthHelper
 
         var result = await _userManager.CreateAsync(user, modelData.Password!);
         if (!result.Succeeded)
-            throw new Exception("User creation failed! Please check user data and try again!");
+            throw new ArgumentException($"User creation failed! {result.Errors.First().Description}");
 
         await _userManager.AddToRoleAsync(user, UserRoles.User);
     }
@@ -133,8 +134,7 @@ public class AuthHelper
         int refreshTokenValidityInDays)
     {
         var avatarExternalUrl = claims["picture"];
-        var avatar = await _crudManager
-            .ImageCrud
+        var avatar = await _imageCrud
             .CreateAsync(avatarExternalUrl, _configuration["CloudinarySettings:Paths:Avatar"]!);
 
         var username = claims["name"];
@@ -150,7 +150,6 @@ public class AuthHelper
                 Avatar = avatar,
             },
             DateOfRegistration = DateTime.Now,
-            IsOAuthRegistered = true,
             Status = UserStatus.Online,
             EmailConfirmed = true,
         };

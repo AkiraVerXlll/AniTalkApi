@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using AniTalkApi.DataLayer.Models.Enums;
 
 namespace AniTalkApi.DataLayer.Models;

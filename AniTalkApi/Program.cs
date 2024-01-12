@@ -3,6 +3,7 @@
 using System.Text;
 using AniTalkApi.DataLayer;
 using AniTalkApi.DataLayer.Models;
+using AniTalkApi.Helpers;
 using AniTalkApi.ServiceLayer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -23,7 +24,8 @@ public class Program
         builder.Services.AddSession();
         builder.Services.AddDbContext<AppDbContext>();
         builder.Services.AddHttpClient();
-        builder.Services.AddHttpClientService();
+        builder.Services.AddHttpClientHelper();
+        builder.Services.AddAuthHelper();
 
         builder.Services.AddIdentity<User, IdentityRole>()
             .AddEntityFrameworkStores<AppDbContext>()

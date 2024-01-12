@@ -8,5 +8,8 @@ public class TokenModel
     public string? AccessToken { get; set; }
 
     [JsonPropertyName("refresh_token")] 
-    public string? RefreshToken { get; set; } 
+    public string? RefreshToken { get; set; }
+
+    [JsonPropertyName("expires_in")]
+    public DateTime ExpiresIn { get; set; }
 }

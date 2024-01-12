@@ -1,4 +1,5 @@
-﻿using AniTalkApi.Helpers;
+﻿using AniTalkApi.DataLayer.DTO.Auth;
+using AniTalkApi.Helpers;
 
 namespace AniTalkApi.ServiceLayer.OAuthServices;
 
@@ -48,7 +49,7 @@ public class GoogleOAuthService : IOAuthService
             {"redirect_uri", _configuration["GoogleOAuth2.0:RedirectUrl"]!}
         };
 
-        var token = await _httpClient.SendPostRequest<TokenResultModel>(url, parameters);
+        var token = await _httpClient.SendPostRequest<IdTokenModel>(url, parameters);
         return token is null ? 
             throw new Exception("Token is null") : 
             token.IdToken!;

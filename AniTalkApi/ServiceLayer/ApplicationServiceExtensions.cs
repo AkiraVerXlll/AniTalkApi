@@ -33,9 +33,4 @@ public static class ApplicationServiceExtensions
     {
         services.AddSingleton<GoogleOAuthService, GoogleOAuthService>();
     }
-
-    public static void AddHttpClientService(this IServiceCollection services)
-    {
-        services.AddSingleton<HttpClientHelper>();
-    }
 }

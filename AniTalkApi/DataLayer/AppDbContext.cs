@@ -148,6 +148,17 @@ public class AppDbContext : IdentityDbContext<User>
 
         #endregion
 
+        #region CascadeDelete
+
+        modelBuilder.Entity<User>()
+            .HasOne(u => u.PersonalInformation)
+            .WithOne(pi => pi.User)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        #endregion
+
+        #region HasNoKey
+        
         modelBuilder.Entity<IdentityUserLogin<string>>()
             .HasNoKey();
 
@@ -156,6 +167,8 @@ public class AppDbContext : IdentityDbContext<User>
 
         modelBuilder.Entity<IdentityUserToken<string>>()
             .HasNoKey();
+
+        #endregion
 
 
     }

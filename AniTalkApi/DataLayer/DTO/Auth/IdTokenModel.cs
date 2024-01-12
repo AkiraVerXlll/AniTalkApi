@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
 
-namespace AniTalkApi.ServiceLayer.OAuthServices;
+namespace AniTalkApi.DataLayer.DTO.Auth;
 
-public class TokenResultModel
+public class IdTokenModel
 {
     [JsonProperty("id_token")]
     public string? IdToken { get; set; }

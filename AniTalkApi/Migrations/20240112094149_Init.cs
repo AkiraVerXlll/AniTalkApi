@@ -171,7 +171,7 @@ namespace AniTalkApi.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    AvatarId = table.Column<int>(type: "integer", nullable: true),
+                    AvatarId = table.Column<int>(type: "integer", nullable: false),
                     Name = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: true),
                     Surname = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: true),
                     AboutYourself = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: true),
@@ -187,7 +187,8 @@ namespace AniTalkApi.Migrations
                         name: "FK_PersonalInformation_Images_AvatarId",
                         column: x => x.AvatarId,
                         principalTable: "Images",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -242,9 +243,9 @@ namespace AniTalkApi.Migrations
                     RefreshToken = table.Column<string>(type: "text", nullable: true),
                     RefreshTokenExpiryTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     PersonalInformationId = table.Column<int>(type: "integer", nullable: false),
-                    UserName = table.Column<string>(type: "text", nullable: true),
+                    UserName = table.Column<string>(type: "text", nullable: false),
                     NormalizedUserName = table.Column<string>(type: "text", nullable: true),
-                    Email = table.Column<string>(type: "text", nullable: true),
+                    Email = table.Column<string>(type: "text", nullable: false),
                     NormalizedEmail = table.Column<string>(type: "text", nullable: true),
                     EmailConfirmed = table.Column<bool>(type: "boolean", nullable: false),
                     PasswordHash = table.Column<string>(type: "text", nullable: true),
@@ -399,7 +400,7 @@ namespace AniTalkApi.Migrations
                 {
                     UserId = table.Column<string>(type: "text", nullable: false),
                     TitleId = table.Column<int>(type: "integer", nullable: false),
-                    Order = table.Column<int>(type: "integer", nullable: false)
+                    Order = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -426,7 +427,7 @@ namespace AniTalkApi.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     DialogId = table.Column<int>(type: "integer", nullable: false),
                     SenderId = table.Column<string>(type: "text", nullable: false),
-                    Text = table.Column<string>(type: "text", nullable: true),
+                    Text = table.Column<string>(type: "text", nullable: false),
                     SendingTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
@@ -528,8 +529,8 @@ namespace AniTalkApi.Migrations
                     ReviewId = table.Column<int>(type: "integer", nullable: false),
                     ImageId = table.Column<int>(type: "integer", nullable: false),
                     Order = table.Column<int>(type: "integer", nullable: false),
-                    ReviewTitleId = table.Column<int>(type: "integer", nullable: false),
-                    ReviewUserId = table.Column<string>(type: "text", nullable: false)
+                    ReviewTitleId = table.Column<int>(type: "integer", nullable: true),
+                    ReviewUserId = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -544,8 +545,7 @@ namespace AniTalkApi.Migrations
                         name: "FK_ImagesInReview_Reviews_ReviewTitleId_ReviewUserId",
                         columns: x => new { x.ReviewTitleId, x.ReviewUserId },
                         principalTable: "Reviews",
-                        principalColumns: new[] { "TitleId", "UserId" },
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumns: new[] { "TitleId", "UserId" });
                 });
 
             migrationBuilder.CreateIndex(

@@ -78,6 +78,15 @@ public class AppDbContext : IdentityDbContext<User>
         modelBuilder.Entity<TitleTypes>()
             .HasKey(t => new { t.TitleId, t.TitleTypeId });
 
+        modelBuilder.Entity<IdentityUserRole<string>>()
+            .HasKey(iur => new {iur.RoleId, iur.UserId});
+
+        modelBuilder.Entity<IdentityUserLogin<string>>()
+            .HasKey(iul => new {iul.ProviderKey, iul.LoginProvider, iul.UserId});
+
+        modelBuilder.Entity<IdentityUserToken<string>>()
+            .HasKey(iut => new {iut.UserId, iut.LoginProvider, iut.Name});
+
         #endregion
 
         #region UniqueFields
@@ -147,30 +156,6 @@ public class AppDbContext : IdentityDbContext<User>
             .HasForeignKey(r => r.RelationshipsWithUserId);
 
         #endregion
-
-        #region CascadeDelete
-
-        modelBuilder.Entity<User>()
-            .HasOne(u => u.PersonalInformation)
-            .WithOne(pi => pi.User)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        #endregion
-
-        #region HasNoKey
-        
-        modelBuilder.Entity<IdentityUserLogin<string>>()
-            .HasNoKey();
-
-        modelBuilder.Entity<IdentityUserRole<string>>()
-            .HasNoKey();
-
-        modelBuilder.Entity<IdentityUserToken<string>>()
-            .HasNoKey();
-
-        #endregion
-
-
     }
 
     public DbSet<Author>? Authors { get; set; }

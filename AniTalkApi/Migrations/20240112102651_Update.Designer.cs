@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AniTalkApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240109222009_Init")]
-    partial class Init
+    [Migration("20240112102651_Update")]
+    partial class Update
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -138,7 +138,7 @@ namespace AniTalkApi.Migrations
                     b.Property<string>("UserId")
                         .HasColumnType("text");
 
-                    b.Property<int>("Order")
+                    b.Property<int?>("Order")
                         .HasColumnType("integer");
 
                     b.HasKey("TitleId", "UserId");
@@ -177,11 +177,10 @@ namespace AniTalkApi.Migrations
                     b.Property<int>("Order")
                         .HasColumnType("integer");
 
-                    b.Property<int>("ReviewTitleId")
+                    b.Property<int?>("ReviewTitleId")
                         .HasColumnType("integer");
 
                     b.Property<string>("ReviewUserId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("ImageId", "ReviewId");
@@ -277,6 +276,7 @@ namespace AniTalkApi.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Text")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -306,6 +306,7 @@ namespace AniTalkApi.Migrations
                         .HasColumnType("integer");
 
                     b.Property<int?>("AvatarId")
+                        .IsRequired()
                         .HasColumnType("integer");
 
                     b.Property<DateTime?>("BirthDate")
@@ -592,19 +593,19 @@ namespace AniTalkApi.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
+                    b.Property<string>("ProviderKey")
+                        .HasColumnType("text");
+
                     b.Property<string>("LoginProvider")
-                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserId")
                         .HasColumnType("text");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("text");
 
-                    b.Property<string>("ProviderKey")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("text");
+                    b.HasKey("ProviderKey", "LoginProvider", "UserId");
 
                     b.ToTable("UserLogins");
                 });
@@ -617,24 +618,26 @@ namespace AniTalkApi.Migrations
                     b.Property<string>("UserId")
                         .HasColumnType("text");
 
+                    b.HasKey("RoleId", "UserId");
+
                     b.ToTable("UserRoles");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
                     b.Property<string>("LoginProvider")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("UserId")
                         .HasColumnType("text");
 
                     b.Property<string>("Value")
                         .HasColumnType("text");
+
+                    b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("UserTokens");
                 });
@@ -728,9 +731,7 @@ namespace AniTalkApi.Migrations
 
                     b.HasOne("AniTalkApi.DataLayer.Models.Review", "Review")
                         .WithMany()
-                        .HasForeignKey("ReviewTitleId", "ReviewUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ReviewTitleId", "ReviewUserId");
 
                     b.Navigation("Image");
 
@@ -836,7 +837,9 @@ namespace AniTalkApi.Migrations
                 {
                     b.HasOne("AniTalkApi.DataLayer.Models.Image", "Avatar")
                         .WithMany()
-                        .HasForeignKey("AvatarId");
+                        .HasForeignKey("AvatarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Avatar");
                 });

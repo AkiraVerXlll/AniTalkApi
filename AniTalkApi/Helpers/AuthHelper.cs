@@ -31,10 +31,11 @@ public class AuthHelper
     /// (used for modal registration)
     /// </summary>
     /// <param name="modelData"></param>
+    /// <param name="avatarId"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentException">If user is already exist</exception>
     /// <exception cref="Exception">Exception while adding user to the database</exception>
-    public async Task CreateUserAsync(RegisterModel modelData)
+    public async Task CreateUserAsync(RegisterModel modelData, int avatarId)
     {
         if (await _userManager.FindByEmailAsync(modelData.Email!) is not null)
             throw new ArgumentException("User with this email already exists!");
@@ -50,7 +51,11 @@ public class AuthHelper
             SecurityStamp = Guid.NewGuid().ToString(),
             Status = UserStatus.Online,
             PersonalInformation = new PersonalInformation()
+            {
+                AvatarId = avatarId
+            }
         };
+
         var result = await _userManager.CreateAsync(user, modelData.Password!);
         if (!result.Succeeded)
             throw new Exception("User creation failed! Please check user data and try again!");

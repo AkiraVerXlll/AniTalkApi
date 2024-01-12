@@ -39,8 +39,7 @@ public class ModalAuthController : ControllerBase
         var refreshTokenLength = int.Parse(_configuration["JWT:RefreshTokenLength"]!);
         
         var tokenModel = await _authHelper.SignInAsync(modelData,
-             refreshTokenValidityInDays,
-             refreshTokenLength);
+             refreshTokenValidityInDays);
 
         return Ok(tokenModel);
     }

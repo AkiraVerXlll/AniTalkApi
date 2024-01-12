@@ -1,6 +1,7 @@
 #pragma warning disable ASP0014
 
 using System.Text;
+using AniTalkApi.CRUD;
 using AniTalkApi.DataLayer;
 using AniTalkApi.DataLayer.Models;
 using AniTalkApi.Helpers;
@@ -26,6 +27,7 @@ public class Program
         builder.Services.AddHttpClient();
         builder.Services.AddHttpClientHelper();
         builder.Services.AddAuthHelper();
+        builder.Services.AddCrudManager();
 
         builder.Services.AddIdentity<User, IdentityRole>()
             .AddEntityFrameworkStores<AppDbContext>()

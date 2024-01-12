@@ -60,8 +60,7 @@ public class AuthHelper
 
     public async Task<TokenModel> SignInAsync(
         LoginModel modelData, 
-        int refreshTokenValidityInDays,
-        int refreshTokenLength)
+        int refreshTokenValidityInDays)
     {
 
         var user = modelData.Login!.Contains('@')

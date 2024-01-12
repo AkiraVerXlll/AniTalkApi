@@ -11,7 +11,7 @@ public class User : IdentityUser
 
     [Required]
     [Column(TypeName = "date")]
-    public DateTime DateOfRegistration { get; set; }
+    public DateTime DateOfRegistration { get; init; }
 
     [Required]
     public UserStatus Status { get; set; }
@@ -19,6 +19,9 @@ public class User : IdentityUser
     public string? RefreshToken { get; set; }
 
     public DateTime RefreshTokenExpiryTime { get; set; }
+
+    [Required]
+    public bool IsOAuthRegistered { get; init; }
 
     public int PersonalInformationId { get; init; }
 

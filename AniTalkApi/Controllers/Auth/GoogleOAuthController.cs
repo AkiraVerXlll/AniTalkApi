@@ -3,18 +3,17 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Cryptography;
 using System.Text;
-using AniTalkApi.DataLayer.Models;
+using AniTalkApi.Filters;
 using AniTalkApi.Helpers;
 using AniTalkApi.ServiceLayer.CryptoGeneratorServices;
 using AniTalkApi.ServiceLayer.OAuthServices;
-using AniTalkApi.ServiceLayer.PhotoServices.Interfaces;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
 namespace AniTalkApi.Controllers.Auth;
 
 [ApiController]
+[CustomExceptionFilter]
 [Route("/[controller]")]
 public class GoogleOAuthController : ControllerBase
 {
@@ -26,27 +25,19 @@ public class GoogleOAuthController : ControllerBase
 
     private readonly JwtSecurityTokenHandler _tokenHandler = new();
 
-    private readonly HttpClientHelper _httpClient;
-
-    private readonly IPhotoUploaderService _photoService;
-
-    private readonly UserManager<User> _userManager;
+    private readonly AuthHelper _authHelper;
 
     public GoogleOAuthController(
         GoogleOAuthService googleOAuthService,
         ICryptoGeneratorService cryptoGenerator,
         IConfiguration configuration,
-        HttpClientHelper httpClient,
-        IPhotoUploaderService photoService,
-        UserManager<User> userManager
+        AuthHelper authHelper
         )
     {
         _cryptoGenerator = cryptoGenerator;
         _googleOAuthService = googleOAuthService;
         _configuration = configuration;
-        _httpClient = httpClient;
-        _photoService = photoService;
-        _userManager = userManager;
+        _authHelper = authHelper;
     }
 
     [HttpGet]
@@ -65,8 +56,8 @@ public class GoogleOAuthController : ControllerBase
     }
 
     [HttpGet]
-    [Route("code")]
-    public async Task<IActionResult> Code([FromQuery] string code)
+    [Route("sign-in")]
+    public async Task<IActionResult> SignIn([FromQuery] string code)
     {
         var codeVerifier = HttpContext.Session.GetString("code_verifier");
 
@@ -77,26 +68,11 @@ public class GoogleOAuthController : ControllerBase
             .Claims
             .ToDictionary(keySelector: claim => claim.Type, 
                 elementSelector: claim => claim.Value);
-        
-        var imageUrl = claims["picture"];
-        var userName = claims["name"];
-        
 
-        var user = new User
-        {
-            Email = claims["email"], 
-            UserName = userName,
-            PersonalInformation = new PersonalInformation()
-            {
-                Avatar = new Image()
-                {
-                    Url = avatarUrl
-                },
-            },
-        };
+        var refreshTokenValidityInDays = int.Parse(_configuration["JWT:RefreshTokenValidityInDays"]!);
+        var tokenModel = await _authHelper
+            .OAuthSignInAsync(claims, refreshTokenValidityInDays);
 
-        await _userManager.CreateAsync(user);
-
-        return Ok(user);
+        return Ok(tokenModel);
     }
 }

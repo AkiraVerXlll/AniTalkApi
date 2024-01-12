@@ -27,7 +27,7 @@ public class ModalAuthController : ControllerBase
     public async Task<IActionResult> SignUp([FromBody] RegisterModel modelData)
     {
         await _authHelper
-            .CreateUserAsync(modelData, int.Parse(_configuration["DefaultAvatarId"]!));
+            .CreateModalUserAsync(modelData, int.Parse(_configuration["DefaultAvatarId"]!));
         return Ok("User created successfully!");
     }
 
@@ -38,7 +38,7 @@ public class ModalAuthController : ControllerBase
         var refreshTokenValidityInDays = int.Parse(_configuration["JWT:RefreshTokenValidityInDays"]!);
         var refreshTokenLength = int.Parse(_configuration["JWT:RefreshTokenLength"]!);
         
-        var tokenModel = await _authHelper.SignInAsync(modelData,
+        var tokenModel = await _authHelper.ModalSignInAsync(modelData,
              refreshTokenValidityInDays);
 
         return Ok(tokenModel);

@@ -20,24 +20,26 @@ public class ImageCrud : BaseCrud
         _httpClient = httpClient;
     }
 
-    public async Task<string> AddImageAsync(IFormFile uploadedFile, string folder = null!)
+    public async Task<Image> CreateAsync(IFormFile uploadedFile, string folder = null!)
     {
         var url = await _photoUploader.UploadAsync(uploadedFile, folder);
 
-        DbContext.Images!.Add(new Image()
+        var image = new Image()
         {
             Url = url,
-        });
+        };
+
+        await DbContext.Images!.AddAsync(image);
         await DbContext.SaveChangesAsync();
 
-        return url;
+        return image;
     }
 
-    public async Task<string> AddImageAsync(string externalUrl, string folder = null!)
+    public async Task<Image> CreateAsync(string externalUrl, string folder = null!)
     {
         var avatar = await _httpClient
             .GetImageAsFormFileAsync(externalUrl);
 
-        return await AddImageAsync(avatar, folder);
+        return await CreateAsync(avatar, folder);
     }
 }

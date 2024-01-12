@@ -71,7 +71,7 @@ public class HttpClientHelper
             await stream.CopyToAsync(memoryStream);
 
             IFormFile imageFile = new FormFile
-                (memoryStream, 0, memoryStream.Length, null, new Guid().ToString());
+                (memoryStream, 0, memoryStream.Length, null!, new Guid().ToString());
             return imageFile;
         }
         else

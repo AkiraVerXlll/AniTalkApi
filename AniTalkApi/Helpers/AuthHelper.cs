@@ -2,7 +2,6 @@
 using AniTalkApi.DataLayer.DTO.Auth;
 using AniTalkApi.DataLayer.Models;
 using AniTalkApi.DataLayer.Models.Enums;
-using AniTalkApi.ServiceLayer.CryptoGeneratorServices;
 using AniTalkApi.ServiceLayer.TokenManagerServices;
 using Microsoft.AspNetCore.Identity;
 
@@ -14,16 +13,12 @@ public class AuthHelper
     
     private readonly ITokenManagerService _tokenManager;
 
-    private readonly ICryptoGeneratorService _cryptoGenerator;
-
     public AuthHelper(
         ITokenManagerService tokenManager,
-        UserManager<User> userManager,
-        ICryptoGeneratorService cryptoGenerator)
+        UserManager<User> userManager)
     {
         _tokenManager = tokenManager;
         _userManager = userManager;
-        _cryptoGenerator = cryptoGenerator;
     }
 
     /// <summary>
@@ -79,7 +74,7 @@ public class AuthHelper
         var userRoles = await _userManager.GetRolesAsync(user);
         var token = _tokenManager.GenerateAccessToken(user, userRoles);
 
-        user.RefreshToken = GenerateRefreshToken(refreshTokenLength);
+        user.RefreshToken = _tokenManager.GenerateRefreshToken();
         user.RefreshTokenExpiryTime = DateTime.Now
             .AddDays(refreshTokenValidityInDays)
             .ToUniversalTime();
@@ -96,6 +91,36 @@ public class AuthHelper
         };
     }
 
-    private string GenerateRefreshToken(int tokenLength) => _cryptoGenerator
-        .GenerateRandomString(tokenLength);
+
+    public async Task<TokenModel> RefreshTokenAsync(TokenModel? tokenModel)
+    {
+        if (tokenModel is null)
+            throw new ArgumentException("Token model is null");
+
+        var accessToken = tokenModel.AccessToken;
+        var refreshToken = tokenModel.RefreshToken;
+
+        var principal = _tokenManager.GetPrincipalFromExpiredToken(accessToken);
+        if (principal == null)
+            throw new ArgumentException("Invalid access token or refresh token");
+
+        var username = principal.Identity!.Name;
+        var user = await _userManager.FindByNameAsync(username!);
+
+        if (user is null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
+            throw new ArgumentException("Invalid access token or refresh token");
+
+        var newAccessToken = _tokenManager.GenerateAccessToken(principal.Claims.ToList());
+        var newRefreshToken = _tokenManager.GenerateRefreshToken();
+
+        user.RefreshToken = newRefreshToken;
+        await _userManager.UpdateAsync(user);
+
+        return new TokenModel()
+        {
+            AccessToken = new JwtSecurityTokenHandler().WriteToken(newAccessToken),
+            RefreshToken = newRefreshToken,
+            ExpiresIn = newAccessToken.ValidTo
+        };
+    }
 }

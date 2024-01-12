@@ -1,6 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 using AniTalkApi.DataLayer.Models;
 using AniTalkApi.ServiceLayer.CryptoGeneratorServices;
 using Microsoft.IdentityModel.Tokens;
@@ -40,7 +39,7 @@ public class BaseTokenManagerService : ITokenManagerService
 
     public JwtSecurityToken GenerateAccessToken(IEnumerable<Claim> authClaims)
     {
-        var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]!));
+        var authSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(_configuration["JWT:Secret"]!));
         var tokenValidityInMinutes = int.Parse(_configuration["JWT:TokenValidityInMinutes"]!);
 
         return new JwtSecurityToken(
@@ -59,9 +58,9 @@ public class BaseTokenManagerService : ITokenManagerService
             ValidateAudience = true,
             ValidateIssuer = true,
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]!)),
-            ValidIssuer = _configuration["JWT:Issuer"],
-            ValidAudience = _configuration["JWT:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(_configuration["JWT:Secret"]!)),
+            ValidIssuer = _configuration["JWT:ValidIssuer"],
+            ValidAudience = _configuration["JWT:ValidAudience"],
             ValidateLifetime = false
         };
 

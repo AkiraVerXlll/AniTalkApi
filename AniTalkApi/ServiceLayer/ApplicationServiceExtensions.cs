@@ -1,4 +1,5 @@
-﻿using AniTalkApi.ServiceLayer.CryptoGeneratorServices;
+﻿using AniTalkApi.Helpers;
+using AniTalkApi.ServiceLayer.CryptoGeneratorServices;
 using AniTalkApi.ServiceLayer.OAuthServices;
 using AniTalkApi.ServiceLayer.PhotoServices.Implementations;
 using AniTalkApi.ServiceLayer.PhotoServices.Interfaces;
@@ -20,7 +21,7 @@ public static class ApplicationServiceExtensions
 
     public static void AddTokenManagerService(this IServiceCollection services)
     {
-        services.AddSingleton<IAccessTokenManagerService, AccessTokenManagerService>();
+        services.AddSingleton<ITokenManagerService, BaseTokenManagerService>();
     }
 
     public static void AddCryptoGeneratorService(this IServiceCollection services)
@@ -35,6 +36,6 @@ public static class ApplicationServiceExtensions
 
     public static void AddHttpClientService(this IServiceCollection services)
     {
-        services.AddSingleton<HttpClientService>();
+        services.AddSingleton<HttpClientHelper>();
     }
 }

@@ -1,14 +1,16 @@
-﻿namespace AniTalkApi.ServiceLayer.OAuthServices;
+﻿using AniTalkApi.Helpers;
+
+namespace AniTalkApi.ServiceLayer.OAuthServices;
 
 public class GoogleOAuthService : IOAuthService
 {
     private readonly IConfiguration _configuration;
 
-    private readonly HttpClientService _httpClient;
+    private readonly HttpClientHelper _httpClient;
 
     public GoogleOAuthService(
         IConfiguration configuration,
-        HttpClientService httpClient)
+        HttpClientHelper httpClient)
     {
         _configuration = configuration;
         _httpClient = httpClient;
@@ -26,14 +28,13 @@ public class GoogleOAuthService : IOAuthService
             {"scope", scope},
             {"code_challenge", codeChallenge},
             {"code_challenge_method", "S256"},
-            {"access_type", "offline"}
         };
         var encodedParameters = string.Join("&", parameters
             .Select(x => $"{x.Key}={x.Value}"));
         return $"{url}?{encodedParameters}";
     }
 
-    public async Task<TokenResultModel> ExchangeCodeToTokenAsync(string code, string codeVerifier)
+    public async Task<string> ExchangeCodeToIdTokenAsync(string code, string codeVerifier)
     {
         var url = _configuration["GoogleOAuth2.0:TokenEndpoint"]!;
 
@@ -48,22 +49,8 @@ public class GoogleOAuthService : IOAuthService
         };
 
         var token = await _httpClient.SendPostRequest<TokenResultModel>(url, parameters);
-        return token ?? throw new Exception("Token is null");
-    }
-
-    public async Task<TokenResultModel> RefreshTokenAsync(string refreshToken)
-    {
-        var url = _configuration["GoogleOAuth2.0:TokenEndpoint"]!;
-
-        var parameters = new Dictionary<string, string>
-        {
-            {"client_id", _configuration["GoogleOAuth2.0:ClientId"]!},
-            {"client_secret", _configuration["GoogleOAuth2.0:ClientSecret"]!},
-            {"grant_type", "refresh_token"},
-            {"refresh_token", refreshToken}
-        };
-
-        var token = await _httpClient.SendPostRequest<TokenResultModel>(url, parameters);
-        return token ?? throw new Exception("Token is null");
+        return token is null ? 
+            throw new Exception("Token is null") : 
+            token.IdToken!;
     }
 }

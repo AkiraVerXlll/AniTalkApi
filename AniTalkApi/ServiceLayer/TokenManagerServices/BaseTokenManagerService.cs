@@ -1,18 +1,44 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using AniTalkApi.DataLayer.Models;
+using AniTalkApi.ServiceLayer.CryptoGeneratorServices;
 using Microsoft.IdentityModel.Tokens;
 
 namespace AniTalkApi.ServiceLayer.TokenManagerServices;
 
-public class AccessTokenManagerService : IAccessTokenManagerService
+public class BaseTokenManagerService : ITokenManagerService
 {
     private readonly IConfiguration _configuration;
 
-    public AccessTokenManagerService (IConfiguration configuration) => 
-        _configuration = configuration;
+    private readonly ICryptoGeneratorService _cryptoGenerator;
 
-    public JwtSecurityToken CreateToken(IEnumerable<Claim> authClaims)
+    public BaseTokenManagerService(
+        IConfiguration configuration,
+        ICryptoGeneratorService cryptoGenerator)
+    {
+        _configuration = configuration;
+        _cryptoGenerator = cryptoGenerator;
+
+    }
+
+    public JwtSecurityToken GenerateAccessToken(User user, IEnumerable<string> roles)
+    {
+        var authClaims = new List<Claim>
+        {
+            new(ClaimTypes.Name, user.UserName!),
+            new(ClaimTypes.Email, user.Email!),
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+        };
+
+        authClaims
+            .AddRange(roles
+                .Select(userRole => new Claim(ClaimTypes.Role, userRole)));
+
+        return GenerateAccessToken(authClaims);
+    }
+
+    public JwtSecurityToken GenerateAccessToken(IEnumerable<Claim> authClaims)
     {
         var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]!));
         var tokenValidityInMinutes = int.Parse(_configuration["JWT:TokenValidityInMinutes"]!);
@@ -49,4 +75,7 @@ public class AccessTokenManagerService : IAccessTokenManagerService
         return principal;
 
     }
+
+    public string GenerateRefreshToken() => _cryptoGenerator.GenerateRandomString(
+               int.Parse(_configuration["JWT:RefreshTokenLength"]!));
 }

@@ -3,13 +3,13 @@ using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text;
 
-namespace AniTalkApi.ServiceLayer;
+namespace AniTalkApi.Helpers;
 
-public class HttpClientService
+public class HttpClientHelper
 {
     private readonly HttpClient _httpClient;
 
-    public HttpClientService(HttpClient httpClient)
+    public HttpClientHelper(HttpClient httpClient)
     {
         _httpClient = httpClient;
     }
@@ -58,5 +58,25 @@ public class HttpClientService
 
         var result = JsonConvert.DeserializeObject<T>(resultJson);
         return result!;
+    }
+
+    public async Task<IFormFile> GetImageAsFormFileAsync(string imageUrl, string fileName)
+    {
+        var response = await _httpClient.GetAsync(imageUrl);
+
+        if (response.IsSuccessStatusCode)
+        {
+            await using var stream = await response.Content.ReadAsStreamAsync();
+            var memoryStream = new MemoryStream();
+            await stream.CopyToAsync(memoryStream);
+
+            IFormFile imageFile = new FormFile(memoryStream, 0, memoryStream.Length, null, fileName);
+            return imageFile;
+        }
+        else
+        {
+            throw new HttpRequestException($"Failed to retrieve image. Status code: {response.StatusCode}");
+        }
+
     }
 }

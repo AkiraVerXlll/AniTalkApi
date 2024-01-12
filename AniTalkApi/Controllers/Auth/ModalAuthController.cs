@@ -8,24 +8,24 @@ using AniTalkApi.DataLayer.Models.Enums;
 using AniTalkApi.ServiceLayer.CryptoGeneratorServices;
 using AniTalkApi.ServiceLayer.TokenManagerServices;
 
-namespace AniTalkApi.Controllers;
+namespace AniTalkApi.Controllers.Auth;
 
 [ApiController]
 [Route("/[controller]")]
-public class AuthController : ControllerBase
+public class ModalAuthController : ControllerBase
 {
     private readonly UserManager<User> _userManager;
 
     private readonly IConfiguration _configuration;
 
-    private readonly IAccessTokenManagerService _tokenManager;
+    private readonly ITokenManagerService _tokenManager;
 
     private readonly ICryptoGeneratorService _cryptoGenerator;
 
-    public AuthController(
+    public ModalAuthController(
         UserManager<User> userManager,
         IConfiguration configuration,
-        IAccessTokenManagerService tokenManager,
+        ITokenManagerService tokenManager,
         ICryptoGeneratorService cryptoGenerator)
     {
         _userManager = userManager;
@@ -55,9 +55,10 @@ public class AuthController : ControllerBase
         };
         var result = await _userManager.CreateAsync(user, formData.Password!);
         if (!result.Succeeded)
-            return StatusCode(StatusCodes.Status500InternalServerError, 
-                "User creation failed! Please check user details and try again." );
+            return StatusCode(StatusCodes.Status500InternalServerError,
+                "User creation failed! Please check user details and try again.");
 
+        await _userManager.AddToRoleAsync(user, UserRoles.User);
         return Ok("User created successfully!");
     }
 
@@ -70,24 +71,14 @@ public class AuthController : ControllerBase
             ? await _userManager.FindByEmailAsync(formData.Login)
             : await _userManager.FindByNameAsync(formData.Login);
 
-        if (user == null || !await _userManager.CheckPasswordAsync(user, formData.Password!)) 
+        if (user == null || !await _userManager.CheckPasswordAsync(user, formData.Password!))
             return Unauthorized();
 
         var userRoles = await _userManager.GetRolesAsync(user);
 
-        var authClaims = new List<Claim>
-        {
-            new(ClaimTypes.Name, user.UserName!),
-            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-        };
-
-        authClaims
-            .AddRange(userRoles
-                .Select(userRole => new Claim(ClaimTypes.Role, userRole)));
-
-        var token = _tokenManager.CreateToken(authClaims);
+        var token = _tokenManager.GenerateAccessToken(user, userRoles);
         var refreshToken = GenerateRefreshToken();
-        
+
         var refreshTokenValidityInDays = int.Parse(_configuration["JWT:RefreshTokenValidityInDays"]!);
 
         user.RefreshToken = GenerateRefreshToken();
@@ -106,7 +97,7 @@ public class AuthController : ControllerBase
     [HttpPost]
     [Route("refresh-token")]
     public async Task<IActionResult> RefreshToken(TokenModel? tokenModel)
-    { 
+    {
         if (tokenModel is null)
             return BadRequest("Invalid client request");
 
@@ -124,7 +115,7 @@ public class AuthController : ControllerBase
         if (user is null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
             return BadRequest("Invalid access token or refresh token");
 
-        var newAccessToken = _tokenManager.CreateToken(principal.Claims.ToList());
+        var newAccessToken = _tokenManager.GenerateAccessToken(principal.Claims.ToList());
         var newRefreshToken = GenerateRefreshToken();
 
         user.RefreshToken = newRefreshToken;
@@ -139,5 +130,5 @@ public class AuthController : ControllerBase
 
     private string GenerateRefreshToken() => _cryptoGenerator.GenerateRandomString(
         int.Parse(_configuration["JWT:RefreshTokenLength"]!));
-    
+
 }

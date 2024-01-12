@@ -2,8 +2,9 @@
 
 public static class ApplicationCrudExtension
 {
-    public static void AddCrudManager(this IServiceCollection services)
+    public static void AddCrud(this IServiceCollection services)
     {
         services.AddScoped<CrudManager, CrudManager>();
+        services.AddSingleton<ImageCrud, ImageCrud>();
     }
 }

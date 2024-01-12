@@ -80,8 +80,7 @@ public class GoogleOAuthController : ControllerBase
         
         var imageUrl = claims["picture"];
         var userName = claims["name"];
-        var avatar = await _httpClient.GetImageAsFormFileAsync(imageUrl, $"{userName}avatar");
-        var avatarUrl = await _photoService.UploadAsync(avatar, _configuration["CloudinarySettings:Paths:Avatar"]!);
+        
 
         var user = new User
         {

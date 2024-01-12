@@ -40,24 +40,27 @@ public class CloudinaryPhotoUploaderService : IPhotoUploaderService
     /// <exception cref="ArgumentException">
     /// If the file is not an image
     /// </exception>
-    public async Task<string> UploadAsync(IFormFile file, string path)
+    public async Task<string> UploadAsync(IFormFile file, string? path)
     {
         if (!_validator.IsImage(file)) 
-            throw new ArgumentException();
+            throw new ArgumentException("Form file isn`t a image");
 
         await using var stream = file.OpenReadStream();
+
+        path = path is null ? 
+            $"{path}/" : "";
 
         var imageUploadParams = new ImageUploadParams()
         {
             File = new FileDescription(file.FileName, stream),
-            PublicId = $"{path}/{file.FileName.Split('.').First()}{Guid.NewGuid()}"
+            PublicId = $"{path}{file.FileName.Split('.').First()}{Guid.NewGuid()}"
         };
 
         var imageUploadResult = 
             await _cloudinary.UploadAsync(imageUploadParams);
 
         if (imageUploadResult is null)
-            throw new ArgumentException();
+            throw new Exception("Unable to upload an image");
           
         return imageUploadResult.SecureUrl.ToString();
     }

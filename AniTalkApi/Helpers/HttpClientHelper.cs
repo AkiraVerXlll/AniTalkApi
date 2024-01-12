@@ -60,7 +60,7 @@ public class HttpClientHelper
         return result!;
     }
 
-    public async Task<IFormFile> GetImageAsFormFileAsync(string imageUrl, string fileName)
+    public async Task<IFormFile> GetImageAsFormFileAsync(string imageUrl)
     {
         var response = await _httpClient.GetAsync(imageUrl);
 
@@ -70,12 +70,14 @@ public class HttpClientHelper
             var memoryStream = new MemoryStream();
             await stream.CopyToAsync(memoryStream);
 
-            IFormFile imageFile = new FormFile(memoryStream, 0, memoryStream.Length, null, fileName);
+            IFormFile imageFile = new FormFile
+                (memoryStream, 0, memoryStream.Length, null, new Guid().ToString());
             return imageFile;
         }
         else
         {
-            throw new HttpRequestException($"Failed to retrieve image. Status code: {response.StatusCode}");
+            throw new HttpRequestException
+                ($"Failed to retrieve image. Status code: {response.StatusCode}");
         }
 
     }

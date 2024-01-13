@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AniTalkApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240112102651_Update")]
-    partial class Update
+    [Migration("20240113225057_DbUpdate")]
+    partial class DbUpdate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -213,29 +213,51 @@ namespace AniTalkApi.Migrations
                     b.Property<int>("AuthorId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("TitleId")
+                    b.Property<int>("TitleTypesId")
                         .HasColumnType("integer");
 
                     b.Property<string>("AuthorType")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.HasKey("AuthorId", "TitleId");
+                    b.HasKey("AuthorId", "TitleTypesId");
 
-                    b.HasIndex("TitleId");
+                    b.HasIndex("TitleTypesId")
+                        .IsUnique();
 
                     b.ToTable("TitleAuthors");
                 });
 
             modelBuilder.Entity("AniTalkApi.DataLayer.Models.ManyToMany.TitleTypes", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CoverId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("ReleaseDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("SpecialDescription")
+                        .HasColumnType("text");
+
                     b.Property<int>("TitleId")
                         .HasColumnType("integer");
+
+                    b.Property<string>("TitleStatus")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<int>("TitleTypeId")
                         .HasColumnType("integer");
 
-                    b.HasKey("TitleId", "TitleTypeId");
+                    b.HasKey("Id");
+
+                    b.HasIndex("TitleId");
 
                     b.HasIndex("TitleTypeId");
 
@@ -412,7 +434,7 @@ namespace AniTalkApi.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CoverId")
+                    b.Property<int?>("CoverId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Description")
@@ -420,13 +442,6 @@ namespace AniTalkApi.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("ReleaseDate")
-                        .HasColumnType("date");
-
-                    b.Property<string>("TitleStatus")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -765,15 +780,15 @@ namespace AniTalkApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("AniTalkApi.DataLayer.Models.Title", "Title")
-                        .WithMany("TitleAuthors")
-                        .HasForeignKey("TitleId")
+                    b.HasOne("AniTalkApi.DataLayer.Models.ManyToMany.TitleTypes", "TitleTypes")
+                        .WithOne("TitleAuthors")
+                        .HasForeignKey("AniTalkApi.DataLayer.Models.ManyToMany.TitleAuthors", "TitleTypesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Author");
 
-                    b.Navigation("Title");
+                    b.Navigation("TitleTypes");
                 });
 
             modelBuilder.Entity("AniTalkApi.DataLayer.Models.ManyToMany.TitleTypes", b =>
@@ -886,9 +901,7 @@ namespace AniTalkApi.Migrations
                 {
                     b.HasOne("AniTalkApi.DataLayer.Models.Image", "Cover")
                         .WithMany()
-                        .HasForeignKey("CoverId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CoverId");
 
                     b.Navigation("Cover");
                 });
@@ -923,6 +936,11 @@ namespace AniTalkApi.Migrations
                     b.Navigation("GenresInTitle");
                 });
 
+            modelBuilder.Entity("AniTalkApi.DataLayer.Models.ManyToMany.TitleTypes", b =>
+                {
+                    b.Navigation("TitleAuthors");
+                });
+
             modelBuilder.Entity("AniTalkApi.DataLayer.Models.PersonalInformation", b =>
                 {
                     b.Navigation("Author");
@@ -946,8 +964,6 @@ namespace AniTalkApi.Migrations
                     b.Navigation("Reviews");
 
                     b.Navigation("Tags");
-
-                    b.Navigation("TitleAuthors");
 
                     b.Navigation("TitleTypes");
                 });

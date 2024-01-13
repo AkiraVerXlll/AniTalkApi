@@ -35,7 +35,7 @@ public class AppDbContext : IdentityDbContext<User>
             .Property(u => u.Status)
             .HasConversion<EnumToStringConverter<UserStatus>>();
 
-        modelBuilder.Entity<Title>()
+        modelBuilder.Entity<TitleTypes>()
             .Property(t => t.TitleStatus)
             .HasConversion<EnumToStringConverter<TitleStatus>>();
 
@@ -58,7 +58,7 @@ public class AppDbContext : IdentityDbContext<User>
             .HasKey(gt => new { gt.GenreId, gt.TitleId });
 
         modelBuilder.Entity<TitleAuthors>()
-            .HasKey(ta => new { ta.AuthorId, ta.TitleId });
+            .HasKey(ta => new { ta.AuthorId, ta.TitleTypesId });
 
         modelBuilder.Entity<FavoriteTitles>()
             .HasKey(ft => new { ft.TitleId, ft.UserId });

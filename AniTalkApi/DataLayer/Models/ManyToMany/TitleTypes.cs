@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using AniTalkApi.DataLayer.Models.Enums;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AniTalkApi.DataLayer.Models.ManyToMany;
 
@@ -16,8 +18,13 @@ public class TitleTypes
     public string? SpecialDescription { get; set; }
 
     [Required]
+    [Column(TypeName = "date")]
     public DateTime ReleaseDate { get; set; }
 
+    [Required]
+    public int CoverId { get; set; }
+
+    public TitleStatus TitleStatus { get; set; }
 
     #region Dependencies
 

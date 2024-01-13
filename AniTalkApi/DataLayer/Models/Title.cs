@@ -16,15 +16,6 @@ public class Title
     [Required]
     public string? Description { get; set; }
 
-    [Required]
-    public int CoverId { get; set; }
-
-    [Column(TypeName = "date")]
-    [Required]
-    public DateTime ReleaseDate { get; set; }
-    
-    public TitleStatus TitleStatus { get; set; }
-
     #region Dependencies
 
     public Image? Cover { get; init; }

@@ -10,6 +10,8 @@ public class TitleTypes
     [Required]
     public int TitleId { get; init; }
 
+    public string? SpecialDescription { get; set; }
+
     #region Dependencies
 
     public Title? Title { get; init; } 

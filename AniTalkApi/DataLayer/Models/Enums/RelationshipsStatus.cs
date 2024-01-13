@@ -5,7 +5,7 @@ public enum RelationshipsStatus
     None,
     Friend,
     InvitePosted,
-    InvitationReceived,
+    InviteReceived,
     Blocked,
     YouAreBlocked
 }

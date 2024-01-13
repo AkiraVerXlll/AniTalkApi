@@ -181,6 +181,42 @@ public class AuthHelper
             
     }
 
+    /// <summary>
+    /// Logout user
+    /// </summary>
+    /// <param name="tokenModel"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException"></exception>
+    public async Task<TokenModel> SignOutAsync(TokenModel? tokenModel)
+    {
+        if (tokenModel is null)
+            throw new ArgumentException("Token model is null");
+
+        var accessToken = tokenModel.AccessToken;
+        var refreshToken = tokenModel.RefreshToken;
+
+        var principal = _tokenManager.GetPrincipalFromExpiredToken(accessToken);
+        if (principal == null)
+            throw new ArgumentException("Invalid access token or refresh token");
+
+        var username = principal.Identity!.Name;
+        var user = await _userManager.FindByNameAsync(username!);
+
+        if (user is null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
+            throw new ArgumentException("Invalid access token or refresh token");
+
+        user.RefreshToken = null;
+        user.RefreshTokenExpiryTime = DateTime.Now;
+        await _userManager.UpdateAsync(user);
+
+        return new TokenModel()
+        {
+            AccessToken = null,
+            RefreshToken = null,
+            ExpiresIn = DateTime.Now
+        };
+    }
+
     private async Task<TokenModel> SignInAsync(User user, int refreshTokenValidityInDays)
     {
         var userRoles = await _userManager.GetRolesAsync(user);

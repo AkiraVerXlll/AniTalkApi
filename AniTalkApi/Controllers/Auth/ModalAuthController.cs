@@ -49,4 +49,12 @@ public class ModalAuthController : ControllerBase
     {
         return Ok(await _authHelper.RefreshTokenAsync(tokenModel));
     }
+
+    [HttpPost]
+    [Route("sign-out")]
+    public async Task<IActionResult> SignOut(TokenModel? tokenModel)
+    {
+        await 
+        return Ok("User signed out successfully!");
+    }
 }

@@ -4,6 +4,9 @@ namespace AniTalkApi.DataLayer.Models.ManyToMany;
 
 public class TitleTypes
 {
+    [Key]
+    public int Id { get; init; }
+
     [Required]
     public int TitleTypeId { get; init; }
 
@@ -11,6 +14,10 @@ public class TitleTypes
     public int TitleId { get; init; }
 
     public string? SpecialDescription { get; set; }
+
+    [Required]
+    public DateTime ReleaseDate { get; set; }
+
 
     #region Dependencies
 

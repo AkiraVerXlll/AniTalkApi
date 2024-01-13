@@ -75,9 +75,6 @@ public class AppDbContext : IdentityDbContext<User>
         modelBuilder.Entity<UsersInDialog>()
             .HasKey(ud => new { ud.DialogId, ud.UserId });
 
-        modelBuilder.Entity<TitleTypes>()
-            .HasKey(t => new { t.TitleId, t.TitleTypeId });
-
         modelBuilder.Entity<IdentityUserRole<string>>()
             .HasKey(iur => new {iur.RoleId, iur.UserId});
 

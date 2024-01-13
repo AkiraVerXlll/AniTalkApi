@@ -23,6 +23,8 @@ public class TitleTypes
 
     public Title? Title { get; init; } 
 
+    public TitleAuthors? TitleAuthors { get; init; }
+
     public TitleType? TitleType { get; init; } 
 
     #endregion

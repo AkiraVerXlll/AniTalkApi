@@ -35,8 +35,6 @@ public class Title
 
     public List<TagsInTitle>? Tags { get; init; }
 
-    public List<TitleAuthors>? TitleAuthors { get; init; }
-
     public List<FavoriteTitles>? FavoriteTitlesOf { get; init; }
 
     public List<Review>? Reviews { get; init; }

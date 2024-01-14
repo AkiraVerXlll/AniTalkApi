@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using AniTalkApi.DataLayer.Models.Enums;
 
-namespace AniTalkApi.DataLayer.Models;
+namespace AniTalkApi.DataLayer.Models.ManyToMany;
 
 public class Relationships
 {

@@ -5,4 +5,5 @@ public enum TitleStatus
     Completed,
     Ongoing,
     Anons,
+    Suspended
 }

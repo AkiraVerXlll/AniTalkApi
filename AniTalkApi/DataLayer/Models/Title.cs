@@ -14,6 +14,9 @@ public class Title
     public string? Name { get; set; }
 
     [Required]
+    public string? NormalizeName { get; set; }
+
+    [Required]
     public string? Description { get; set; }
 
     #region Dependencies

@@ -39,10 +39,6 @@ public class AppDbContext : IdentityDbContext<User>
             .Property(t => t.TitleStatus)
             .HasConversion<EnumToStringConverter<TitleStatus>>();
 
-        modelBuilder.Entity<TitleAuthors>()
-            .Property(ta => ta.AuthorType)
-            .HasConversion<EnumToStringConverter<AuthorType>>();
-
         modelBuilder.Entity<Relationships>()
             .Property(r => r.RelationshipsStatus)
             .HasConversion<EnumToStringConverter<RelationshipsStatus>>();
@@ -92,8 +88,20 @@ public class AppDbContext : IdentityDbContext<User>
             .HasIndex(a => a.PersonalInformationId)
             .IsUnique();
 
+        modelBuilder.Entity<AuthorType>()
+            .HasIndex(at => at.Name)
+            .IsUnique();
+
+        modelBuilder.Entity<AuthorType>()
+            .HasIndex(at => at.NormalizeName)
+            .IsUnique();
+
         modelBuilder.Entity<Title>()
             .HasIndex(t => t.Name)
+            .IsUnique();
+
+        modelBuilder.Entity<Title>()
+            .HasIndex(t => t.NormalizeName)
             .IsUnique();
 
         modelBuilder.Entity<User>()
@@ -104,8 +112,16 @@ public class AppDbContext : IdentityDbContext<User>
             .HasIndex(t => t.Name)
             .IsUnique();
 
+        modelBuilder.Entity<Tag>()
+            .HasIndex(t => t.NormalizeName)
+            .IsUnique();
+
         modelBuilder.Entity<Genre>()
             .HasIndex(g => g.Name)
+            .IsUnique();
+
+        modelBuilder.Entity<Genre>()
+            .HasIndex(g => g.NormalizeName)
             .IsUnique();
 
         modelBuilder.Entity<Forum>()
@@ -114,6 +130,14 @@ public class AppDbContext : IdentityDbContext<User>
 
         modelBuilder.Entity<Image>()
             .HasIndex(i => i.Url)
+            .IsUnique();
+
+        modelBuilder.Entity<TitleType>()
+            .HasIndex(tt => tt.Name)
+            .IsUnique();
+
+        modelBuilder.Entity<TitleType>()
+            .HasIndex(tt => tt.NormalizeName)
             .IsUnique();
 
         #endregion

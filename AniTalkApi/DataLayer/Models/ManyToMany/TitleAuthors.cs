@@ -12,9 +12,10 @@ public class TitleAuthors
     public int TitleTypesId { get; init; }
 
     [Required]
-    public AuthorType AuthorType { get; set; }
+    public int AuthorTypeId { get; init; }
 
     #region Dependencies
+    public AuthorType AuthorType { get; set; }
 
     public TitleTypes? TitleTypes { get; init; } 
 

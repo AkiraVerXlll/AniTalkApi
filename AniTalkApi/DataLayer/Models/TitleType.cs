@@ -11,6 +11,9 @@ public class TitleType
     [Required]
     public string? Name { get; set; }
 
+    [Required] 
+    public string? NormalizeName { get; set; }
+
     #region Dependencies
 
     public List<TitleTypes>? TitleTypes { get; init; }

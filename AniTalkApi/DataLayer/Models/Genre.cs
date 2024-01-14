@@ -11,6 +11,9 @@ public class Genre
     [Required]
     public int Name { get; init; }
 
+    [Required]
+    public string? NormalizeName { get; init; }
+
     #region Dependencies
     
     public List<GenresInTitle>? GenresInTitle { get; init; }

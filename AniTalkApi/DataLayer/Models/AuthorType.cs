@@ -3,20 +3,20 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AniTalkApi.DataLayer.Models;
 
-public class Tag
+public class AuthorType
 {
     [Key]
     public int Id { get; init; }
 
     [Required]
-    public int Name { get; init; }
+    public string? Name { get; set; }
 
     [Required]
-    public string? NormalizeName { get; init; }
+    public string? NormalizeName { get; set; }
 
     #region Dependencies
 
-    public List<TagsInTitle>? TagsInTitle { get; init; }
+    public List<TitleAuthors>?  TitleAuthors { get; init; }
 
     #endregion
 }

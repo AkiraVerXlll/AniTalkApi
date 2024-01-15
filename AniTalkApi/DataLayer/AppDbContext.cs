@@ -80,6 +80,9 @@ public class AppDbContext : IdentityDbContext<User>
         modelBuilder.Entity<IdentityUserToken<string>>()
             .HasKey(iut => new {iut.UserId, iut.LoginProvider, iut.Name});
 
+        modelBuilder.Entity<MessageReadBy>()
+            .HasKey(mrb => new {mrb.MessageId, mrb.UserId});
+
         #endregion
 
         #region UniqueFields

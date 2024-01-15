@@ -17,6 +17,11 @@ public class Message
     public string? Text { get; set; }
 
     [Required]
+    public bool IsRead { get; set; }
+
+    [Required]
+    public bool IsEdited { get; set; }
+    
     [DataType("timestamp with time zone")]
     public DateTime SendingTime { get; set; }
 

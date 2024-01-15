@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using AniTalkApi.DataLayer.Models.Enums;
 
 namespace AniTalkApi.DataLayer.Models.ManyToMany;
 
@@ -15,7 +14,7 @@ public class TitleAuthors
     public int AuthorTypeId { get; init; }
 
     #region Dependencies
-    public AuthorType AuthorType { get; set; }
+    public AuthorType? AuthorType { get; set; }
 
     public TitleTypes? TitleTypes { get; init; } 
 

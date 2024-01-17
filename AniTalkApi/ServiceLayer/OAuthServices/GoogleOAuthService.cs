@@ -1,4 +1,4 @@
-﻿using AniTalkApi.DataLayer.DTO.Auth;
+﻿using AniTalkApi.DataLayer.Model.Auth;
 using AniTalkApi.Helpers;
 
 namespace AniTalkApi.ServiceLayer.OAuthServices;

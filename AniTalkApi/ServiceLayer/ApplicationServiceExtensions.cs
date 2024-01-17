@@ -1,4 +1,5 @@
 ﻿using AniTalkApi.ServiceLayer.CryptoGeneratorServices;
+using AniTalkApi.ServiceLayer.EmailServices;
 using AniTalkApi.ServiceLayer.OAuthServices;
 using AniTalkApi.ServiceLayer.PhotoServices.Implementations;
 using AniTalkApi.ServiceLayer.PhotoServices.Interfaces;
@@ -31,5 +32,10 @@ public static class ApplicationServiceExtensions
     public static void AddGoogleOAuthService(this IServiceCollection services)
     {
         services.AddSingleton<GoogleOAuthService, GoogleOAuthService>();
+    }
+
+    public static void AddEmailSenderService(this IServiceCollection services)
+    {
+        services.AddSingleton<IEmailSenderService, SendGridEmailSenderService>();
     }
 }

@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace AniTalkApi.DataLayer.DTO.Auth;
+namespace AniTalkApi.DataLayer.Model.Auth;
 
 public class IdTokenModel
 {

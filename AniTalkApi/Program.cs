@@ -4,11 +4,14 @@ using System.Text;
 using AniTalkApi.CRUD;
 using AniTalkApi.DataLayer;
 using AniTalkApi.DataLayer.Models;
+using AniTalkApi.DataLayer.Settings;
 using AniTalkApi.Helpers;
 using AniTalkApi.ServiceLayer;
+using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using SendGrid.Extensions.DependencyInjection;
 
 namespace AniTalkApi;
 
@@ -25,14 +28,15 @@ public class Program
         builder.Services.AddSession();
         builder.Services.AddDbContext<AppDbContext>();
         builder.Services.AddHttpClient();
-        builder.Services.AddHttpClientHelper();
-        builder.Services.AddAuthHelper();
-        builder.Services.AddCrud();
 
         builder.Services.AddIdentity<User, IdentityRole>()
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
 
+        builder.Services.AddHttpClientHelper();
+        builder.Services.AddAuthHelper();
+        builder.Services.AddEmailSenderService();
+        builder.Services.AddCrud();
         builder.Services.AddPhotoValidatorService();
         builder.Services.AddCloudinaryPhotoLoaderService();
         builder.Services.AddTokenManagerService();
@@ -65,6 +69,8 @@ public class Program
         );
         builder.Services.AddAuthorization();
 
+        builder.Services.Configure<EmailSettings>
+            (options => builder.Configuration.GetSection("EmailSettings").Bind(options));
 
         var app = builder.Build();
 

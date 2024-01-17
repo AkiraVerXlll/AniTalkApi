@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace AniTalkApi.DataLayer.DTO.Auth;
+namespace AniTalkApi.DataLayer.Model.Auth;
 
 public class LoginModel
 {

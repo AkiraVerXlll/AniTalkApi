@@ -47,9 +47,6 @@ public class AppDbContext : IdentityDbContext<User>
 
         #region PrimaryKeys
 
-        modelBuilder.Entity<TagsInTitle>()
-            .HasKey(tt => new { tt.TagId, tt.TitleId });
-
         modelBuilder.Entity<GenresInTitle>()
             .HasKey(gt => new { gt.GenreId, gt.TitleId });
 
@@ -109,14 +106,6 @@ public class AppDbContext : IdentityDbContext<User>
 
         modelBuilder.Entity<User>()
             .HasIndex(u => u.PersonalInformationId)
-            .IsUnique();
-
-        modelBuilder.Entity<Tag>()
-            .HasIndex(t => t.Name)
-            .IsUnique();
-
-        modelBuilder.Entity<Tag>()
-            .HasIndex(t => t.NormalizeName)
             .IsUnique();
 
         modelBuilder.Entity<Genre>()
@@ -197,8 +186,6 @@ public class AppDbContext : IdentityDbContext<User>
     public DbSet<PersonalInformation>? PersonalInformation { get; set; }
 
     public DbSet<Review>? Reviews { get; set; }
-
-    public DbSet<Tag>? Tags { get; set; }
 
     public DbSet<Title>? Titles { get; set; }
 

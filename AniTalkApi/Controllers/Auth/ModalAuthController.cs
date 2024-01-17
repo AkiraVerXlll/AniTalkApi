@@ -1,7 +1,7 @@
-﻿using AniTalkApi.DataLayer.DTO.Auth;
-using AniTalkApi.Filters;
+﻿using AniTalkApi.Filters;
 using Microsoft.AspNetCore.Mvc;
 using AniTalkApi.Helpers;
+using AniTalkApi.DataLayer.Model.Auth;
 
 namespace AniTalkApi.Controllers.Auth;
 

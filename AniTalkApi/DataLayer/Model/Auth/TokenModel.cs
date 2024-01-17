@@ -1,13 +1,13 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace AniTalkApi.DataLayer.DTO.Auth;
+namespace AniTalkApi.DataLayer.Model.Auth;
 
 public class TokenModel
 {
-    [JsonPropertyName("access_token")] 
+    [JsonPropertyName("access_token")]
     public string? AccessToken { get; set; }
 
-    [JsonPropertyName("refresh_token")] 
+    [JsonPropertyName("refresh_token")]
     public string? RefreshToken { get; set; }
 
     [JsonPropertyName("expires_in")]

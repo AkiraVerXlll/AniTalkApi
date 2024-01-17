@@ -27,8 +27,6 @@ public class Title
 
     public List<GenresInTitle>? Genres { get; init; }
 
-    public List<TagsInTitle>? Tags { get; init; }
-
     public List<FavoriteTitles>? FavoriteTitlesOf { get; init; }
 
     public List<Review>? Reviews { get; init; }

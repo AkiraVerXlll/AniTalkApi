@@ -33,7 +33,11 @@ public class ModalAuthController : ControllerBase
     public async Task<IActionResult> SignUp([FromBody] RegisterModel modelData)
     {
         await _authHelper
-            .CreateModalUserAsync(modelData, _avatarSettings.DefaultAvatarId);
+            .CreateModalUserAsync
+                (modelData, 
+                _avatarSettings.DefaultAvatarId, 
+                _jwtSettings.RefreshTokenValidityInDays);
+
         return Ok("User created successfully!");
     }
 
@@ -49,6 +53,12 @@ public class ModalAuthController : ControllerBase
         return Ok(tokenModel);
     }
 
+    public async Task<IActionResult> VerifyEmail(string email, string token)
+    {
+        await _authHelper.SendVerificationLink(email, token);
+        return Ok("Email verified successfully!");
+    }
+
     [HttpPost]
     [Route("refresh-token")]
     public async Task<IActionResult> RefreshToken(TokenModel? tokenModel)
@@ -60,7 +70,7 @@ public class ModalAuthController : ControllerBase
     [Route("sign-out")]
     public async Task<IActionResult> SignOut(TokenModel? tokenModel)
     {
-        await _authHelper.SignOutAsync(tokenModel);
+        
         return Ok("User signed out successfully!");
     }
 }

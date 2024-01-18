@@ -4,7 +4,7 @@ namespace AniTalkApi.CRUD;
 
 public class BaseCrud
 {
-    protected AniTalkDbContext DbContext;
+    protected readonly AniTalkDbContext DbContext;
 
     public BaseCrud(AniTalkDbContext dbContext)
     {

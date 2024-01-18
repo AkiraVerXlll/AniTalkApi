@@ -1,30 +1,32 @@
-﻿using AniTalkApi.DataLayer.Model.Auth;
+﻿using AniTalkApi.DataLayer.Models.Auth;
+using AniTalkApi.DataLayer.Settings;
 using AniTalkApi.Helpers;
+using Microsoft.Extensions.Options;
 
 namespace AniTalkApi.ServiceLayer.OAuthServices;
 
 public class GoogleOAuthService : IOAuthService
 {
-    private readonly IConfiguration _configuration;
+    private readonly GoogleOAuthSettings _settings;
 
     private readonly HttpClientHelper _httpClient;
 
     public GoogleOAuthService(
-        IConfiguration configuration,
+        IOptions<GoogleOAuthSettings> options,
         HttpClientHelper httpClient)
     {
-        _configuration = configuration;
+        _settings = options.Value;
         _httpClient = httpClient;
     }
 
     public string GetOAuthUrl(string scope, string codeChallenge)
     {
-        var url = _configuration["GoogleOAuth2.0:AuthorizationEndpoint"];
+        var url = _settings.AuthorizationEndpoint;
 
         var parameters = new Dictionary<string, string>
         {
-            {"client_id", _configuration["GoogleOAuth2.0:ClientId"]!},
-            {"redirect_uri", _configuration["GoogleOAuth2.0:RedirectUrl"]!},
+            {"client_id", _settings.ClientId!},
+            {"redirect_uri", _settings.RedirectUrl!},
             {"response_type", "code"},
             {"scope", scope},
             {"code_challenge", codeChallenge},
@@ -37,16 +39,16 @@ public class GoogleOAuthService : IOAuthService
 
     public async Task<string> ExchangeCodeToIdTokenAsync(string code, string codeVerifier)
     {
-        var url = _configuration["GoogleOAuth2.0:TokenEndpoint"]!;
+        var url = _settings.TokenEndpoint!;
 
         var parameters = new Dictionary<string, string>
         {
             {"code", code},
-            {"client_id", _configuration["GoogleOAuth2.0:ClientId"]!},
-            {"client_secret", _configuration["GoogleOAuth2.0:ClientSecret"]!},
+            {"client_id", _settings.ClientId!},
+            {"client_secret", _settings.ClientSecret!},
             {"code_verifier", codeVerifier},
             {"grant_type", "authorization_code"},
-            {"redirect_uri", _configuration["GoogleOAuth2.0:RedirectUrl"]!}
+            {"redirect_uri", _settings.RedirectUrl!}
         };
 
         var token = await _httpClient.SendPostRequest<IdTokenModel>(url, parameters);

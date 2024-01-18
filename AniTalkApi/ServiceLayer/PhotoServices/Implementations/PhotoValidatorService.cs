@@ -21,9 +21,7 @@ public class PhotoValidatorService : IPhotoValidatorService
     public bool IsImage(IFormFile formFile)
     {
         if (formFile is null)
-        {
             throw new ArgumentNullException(nameof(formFile));
-        }
 
         using var stream = formFile.OpenReadStream();
         try

@@ -1,22 +1,24 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using AniTalkApi.DataLayer.Models;
+using AniTalkApi.DataLayer.Settings;
 using AniTalkApi.ServiceLayer.CryptoGeneratorServices;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace AniTalkApi.ServiceLayer.TokenManagerServices;
 
 public class BaseTokenManagerService : ITokenManagerService
 {
-    private readonly IConfiguration _configuration;
+    private readonly JwtSettings _jwtSettings;
 
     private readonly ICryptoGeneratorService _cryptoGenerator;
 
     public BaseTokenManagerService(
-        IConfiguration configuration,
+        IOptions<JwtSettings> jwtSettings,
         ICryptoGeneratorService cryptoGenerator)
     {
-        _configuration = configuration;
+        _jwtSettings = jwtSettings.Value;
         _cryptoGenerator = cryptoGenerator;
 
     }
@@ -39,12 +41,12 @@ public class BaseTokenManagerService : ITokenManagerService
 
     public JwtSecurityToken GenerateAccessToken(IEnumerable<Claim> authClaims)
     {
-        var authSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(_configuration["JWT:Secret"]!));
-        var tokenValidityInMinutes = int.Parse(_configuration["JWT:TokenValidityInMinutes"]!);
+        var authSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(_jwtSettings.Secret!));
+        var tokenValidityInMinutes = _jwtSettings.TokenValidityInMinutes;
 
         return new JwtSecurityToken(
-            issuer: _configuration["JWT:ValidIssuer"],
-            audience: _configuration["JWT:ValidAudience"],
+            issuer: _jwtSettings.Issuer,
+            audience: _jwtSettings.Audience,
             expires: DateTime.Now.AddMinutes(tokenValidityInMinutes),
             claims: authClaims,
             signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
@@ -58,9 +60,9 @@ public class BaseTokenManagerService : ITokenManagerService
             ValidateAudience = true,
             ValidateIssuer = true,
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(_configuration["JWT:Secret"]!)),
-            ValidIssuer = _configuration["JWT:ValidIssuer"],
-            ValidAudience = _configuration["JWT:ValidAudience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(_jwtSettings.Secret!)),
+            ValidIssuer = _jwtSettings.Issuer,
+            ValidAudience = _jwtSettings.Audience,
             ValidateLifetime = false
         };
 
@@ -76,5 +78,5 @@ public class BaseTokenManagerService : ITokenManagerService
     }
 
     public string GenerateRefreshToken() => _cryptoGenerator.GenerateRandomString(
-               int.Parse(_configuration["JWT:RefreshTokenLength"]!));
+               _jwtSettings.RefreshTokenLength);
 }

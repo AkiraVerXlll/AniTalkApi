@@ -1,6 +1,8 @@
-﻿using AniTalkApi.ServiceLayer.PhotoServices.Interfaces;
+﻿using AniTalkApi.DataLayer.Settings;
+using AniTalkApi.ServiceLayer.PhotoServices.Interfaces;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
+using Microsoft.Extensions.Options;
 
 namespace AniTalkApi.ServiceLayer.PhotoServices.Implementations;
 
@@ -14,15 +16,17 @@ public class CloudinaryPhotoUploaderService : IPhotoUploaderService
     private readonly Cloudinary _cloudinary;
 
     public CloudinaryPhotoUploaderService(
-        IPhotoValidatorService validator, 
-        IConfiguration configuration)
+        IPhotoValidatorService validator,
+        IOptions<CloudinarySettings> cloudinaryOptions)
     {
         _validator = validator;
 
-        var cloudName = configuration.GetValue<string>("CloudinarySettings:CloudName");
-        var apiKey = configuration.GetValue<string>("CloudinarySettings:ApiKey");
-        var apiSecret = configuration.GetValue<string>("CloudinarySettings:ApiSecret");
-        _cloudinary = new Cloudinary(new Account(cloudName, apiKey, apiSecret));
+        var cloudinarySettings = cloudinaryOptions.Value;
+
+        _cloudinary = new Cloudinary(new Account(
+            cloudinarySettings.CloudName, 
+            cloudinarySettings.ApiKey, 
+            cloudinarySettings.ApiSecret));
     }
 
     /// <summary>

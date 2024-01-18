@@ -1,7 +1,6 @@
 ﻿#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 
 using System.IdentityModel.Tokens.Jwt;
-using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 using AniTalkApi.DataLayer.Settings;
@@ -10,6 +9,7 @@ using AniTalkApi.Helpers;
 using AniTalkApi.ServiceLayer.CryptoGeneratorServices;
 using AniTalkApi.ServiceLayer.OAuthServices;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace AniTalkApi.Controllers.Auth;
@@ -19,11 +19,11 @@ namespace AniTalkApi.Controllers.Auth;
 [Route("/[controller]")]
 public class GoogleOAuthController : ControllerBase
 {
-    private readonly GoogleOAuthSettings
-
+    private readonly ICryptoGeneratorService _cryptoGenerator;
+    
     private readonly GoogleOAuthService _googleOAuthService;
 
-    private readonly ICryptoGeneratorService _cryptoGenerator;
+    private readonly JwtSettings _jwtSettings;
 
     private readonly JwtSecurityTokenHandler _tokenHandler = new();
 
@@ -32,13 +32,13 @@ public class GoogleOAuthController : ControllerBase
     public GoogleOAuthController(
         GoogleOAuthService googleOAuthService,
         ICryptoGeneratorService cryptoGenerator,
-        IConfiguration configuration,
+        IOptions<JwtSettings> options,
         AuthHelper authHelper
         )
     {
+        _jwtSettings = options.Value;
         _cryptoGenerator = cryptoGenerator;
         _googleOAuthService = googleOAuthService;
-        _configuration = configuration;
         _authHelper = authHelper;
     }
 
@@ -46,7 +46,7 @@ public class GoogleOAuthController : ControllerBase
     [Route("google-oauth")]
     public async Task<IActionResult> RedirectOnOAuthServer()
     {
-        var scope = _configuration["JWT:Scope"]!;
+        var scope = _jwtSettings.Scope!;
         var codeVerifier = _cryptoGenerator.GenerateRandomString(64);
         var codeChallenge = Base64UrlEncoder.Encode(SHA256
                 .HashData(Encoding.UTF8.GetBytes(codeVerifier)));
@@ -71,7 +71,7 @@ public class GoogleOAuthController : ControllerBase
             .ToDictionary(keySelector: claim => claim.Type, 
                 elementSelector: claim => claim.Value);
 
-        var refreshTokenValidityInDays = int.Parse(_configuration["JWT:RefreshTokenValidityInDays"]!);
+        var refreshTokenValidityInDays = _jwtSettings.RefreshTokenValidityInDays;
         var tokenModel = await _authHelper
             .OAuthSignInAsync(claims, refreshTokenValidityInDays);
 

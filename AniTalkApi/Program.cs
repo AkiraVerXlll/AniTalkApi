@@ -24,9 +24,9 @@ public class Program
         builder.Services.AddSwaggerGen();
         builder.Services.AddDistributedMemoryCache();
         builder.Services.AddSession();
-        builder.Services.AddDbContext<AniTalkDbContext>();
         builder.Services.AddHttpClient();
 
+        builder.Services.AddDbContext<AniTalkDbContext>();
         builder.Services.AddIdentity<User, IdentityRole>()
             .AddEntityFrameworkStores<AniTalkDbContext>()
             .AddDefaultTokenProviders();
@@ -58,8 +58,8 @@ public class Program
                     ValidateIssuerSigningKey = true,
                     ClockSkew = TimeSpan.Zero,
 
-                    ValidAudience = builder.Configuration["JWT:ValidAudience"],
-                    ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
+                    ValidAudience = builder.Configuration["JWT:Audience"],
+                    ValidIssuer = builder.Configuration["JWT:Issuer"],
                     IssuerSigningKey =
                         new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]!))
                 };
@@ -76,7 +76,9 @@ public class Program
         builder.Services.Configure<ConnectionStringSettings>
             (options => builder.Configuration.GetSection("ConnectionStrings").Bind(options));
         builder.Services.Configure<GoogleOAuthSettings>
-            (options => builder.Configuration.GetSection("GoogleOAuthSettings").Bind(options));
+            (options => builder.Configuration.GetSection("GoogleOAuth2.0Settings").Bind(options));
+        builder.Services.Configure<AvatarSettings>
+            (options => builder.Configuration.GetSection("AvatarSettings").Bind(options));
 
         var app = builder.Build();
 

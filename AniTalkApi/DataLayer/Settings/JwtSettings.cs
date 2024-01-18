@@ -2,17 +2,17 @@
 
 public class JwtSettings
 {
-    public string? ValidAudience { get; init; }
+    public string? Audience { get; init; }
 
-    public string? ValidIssuer { get; init; }
+    public string? Issuer { get; init; }
 
     public string? Secret { get; init; }
 
-    public string? TokenValidityInMinutes { get; init; }
+    public int TokenValidityInMinutes { get; init; }
 
-    public string? RefreshTokenValidityInDays { get; init; }
+    public int RefreshTokenValidityInDays { get; init; }
 
-    public string? RefreshTokenLength { get; init; }
+    public int RefreshTokenLength { get; init; }
 
     public string? Scope { get; init; }
 }

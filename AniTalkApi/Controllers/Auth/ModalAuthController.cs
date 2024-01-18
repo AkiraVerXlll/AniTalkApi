@@ -1,7 +1,9 @@
 ﻿using AniTalkApi.Filters;
 using Microsoft.AspNetCore.Mvc;
 using AniTalkApi.Helpers;
-using AniTalkApi.DataLayer.Model.Auth;
+using AniTalkApi.DataLayer.Models.Auth;
+using AniTalkApi.DataLayer.Settings;
+using Microsoft.Extensions.Options;
 
 namespace AniTalkApi.Controllers.Auth;
 
@@ -10,16 +12,20 @@ namespace AniTalkApi.Controllers.Auth;
 [Route("/[controller]")]
 public class ModalAuthController : ControllerBase
 {
-    private readonly IConfiguration _configuration;
+    private readonly JwtSettings _jwtSettings;
+
+    private readonly AvatarSettings _avatarSettings;
 
     private readonly AuthHelper _authHelper;
 
     public ModalAuthController(
-        IConfiguration configuration,
+        IOptions<JwtSettings> options,
+        IOptions<AvatarSettings> avatarOptions,
         AuthHelper authHelper)
     {
         _authHelper = authHelper;
-        _configuration = configuration;
+        _jwtSettings = options.Value;
+        _avatarSettings = avatarOptions.Value;
     }
 
     [HttpPost]
@@ -27,7 +33,7 @@ public class ModalAuthController : ControllerBase
     public async Task<IActionResult> SignUp([FromBody] RegisterModel modelData)
     {
         await _authHelper
-            .CreateModalUserAsync(modelData, int.Parse(_configuration["DefaultAvatarId"]!));
+            .CreateModalUserAsync(modelData, _avatarSettings.DefaultAvatarId);
         return Ok("User created successfully!");
     }
 
@@ -35,7 +41,7 @@ public class ModalAuthController : ControllerBase
     [Route("sign-in")]
     public async Task<IActionResult> SignIn([FromBody] LoginModel modelData)
     {
-        var refreshTokenValidityInDays = int.Parse(_configuration["JWT:RefreshTokenValidityInDays"]!);
+        var refreshTokenValidityInDays = _jwtSettings.RefreshTokenValidityInDays;
         
         var tokenModel = await _authHelper.ModalSignInAsync(modelData,
              refreshTokenValidityInDays);

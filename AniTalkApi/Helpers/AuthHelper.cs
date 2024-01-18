@@ -1,6 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using AniTalkApi.CRUD;
-using AniTalkApi.DataLayer.Model.Auth;
+using AniTalkApi.DataLayer.Models.Auth;
 using AniTalkApi.DataLayer.Models;
 using AniTalkApi.DataLayer.Models.Enums;
 using AniTalkApi.ServiceLayer.TokenManagerServices;

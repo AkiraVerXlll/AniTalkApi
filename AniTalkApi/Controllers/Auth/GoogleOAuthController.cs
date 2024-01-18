@@ -1,8 +1,10 @@
 ﻿#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 
 using System.IdentityModel.Tokens.Jwt;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
+using AniTalkApi.DataLayer.Settings;
 using AniTalkApi.Filters;
 using AniTalkApi.Helpers;
 using AniTalkApi.ServiceLayer.CryptoGeneratorServices;
@@ -17,11 +19,11 @@ namespace AniTalkApi.Controllers.Auth;
 [Route("/[controller]")]
 public class GoogleOAuthController : ControllerBase
 {
+    private readonly GoogleOAuthSettings
+
     private readonly GoogleOAuthService _googleOAuthService;
 
     private readonly ICryptoGeneratorService _cryptoGenerator;
-
-    private readonly IConfiguration _configuration;
 
     private readonly JwtSecurityTokenHandler _tokenHandler = new();
 

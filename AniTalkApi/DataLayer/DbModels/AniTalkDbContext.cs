@@ -7,17 +7,17 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Image = AniTalkApi.DataLayer.Models.Image;
 
-namespace AniTalkApi.DataLayer;
+namespace AniTalkApi.DataLayer.DbModels;
 
-public class AppDbContext : IdentityDbContext<User>
+public class AniTalkDbContext : IdentityDbContext<User>
 {
     private readonly string _connectionString;
 
-    public AppDbContext(IConfiguration configuration, IWebHostEnvironment environment)
+    public AniTalkDbContext(IConfiguration configuration, IWebHostEnvironment environment)
     {
         var connectionStringName = environment.IsDevelopment() ? "Development" : "Production";
         _connectionString = configuration
-                                .GetConnectionString(connectionStringName) 
+                                .GetConnectionString(connectionStringName)
                             ?? throw new ArgumentNullException
                                 ($"Invalid onnection string \"{connectionStringName}\"");
     }
@@ -69,16 +69,16 @@ public class AppDbContext : IdentityDbContext<User>
             .HasKey(ud => new { ud.DialogId, ud.UserId });
 
         modelBuilder.Entity<IdentityUserRole<string>>()
-            .HasKey(iur => new {iur.RoleId, iur.UserId});
+            .HasKey(iur => new { iur.RoleId, iur.UserId });
 
         modelBuilder.Entity<IdentityUserLogin<string>>()
-            .HasKey(iul => new {iul.ProviderKey, iul.LoginProvider, iul.UserId});
+            .HasKey(iul => new { iul.ProviderKey, iul.LoginProvider, iul.UserId });
 
         modelBuilder.Entity<IdentityUserToken<string>>()
-            .HasKey(iut => new {iut.UserId, iut.LoginProvider, iut.Name});
+            .HasKey(iut => new { iut.UserId, iut.LoginProvider, iut.Name });
 
         modelBuilder.Entity<MessageReadBy>()
-            .HasKey(mrb => new {mrb.MessageId, mrb.UserId});
+            .HasKey(mrb => new { mrb.MessageId, mrb.UserId });
 
         #endregion
 
@@ -178,7 +178,7 @@ public class AppDbContext : IdentityDbContext<User>
     public DbSet<Forum>? Forums { get; set; }
 
     public DbSet<Genre>? Genres { get; set; }
-    
+
     public DbSet<Image>? Images { get; set; }
 
     public DbSet<Message>? Messages { get; set; }

@@ -1,12 +1,12 @@
-﻿using AniTalkApi.DataLayer;
+﻿using AniTalkApi.DataLayer.DbModels;
 
 namespace AniTalkApi.CRUD;
 
 public class BaseCrud
 {
-    protected AppDbContext DbContext;
+    protected AniTalkDbContext DbContext;
 
-    public BaseCrud(AppDbContext dbContext)
+    public BaseCrud(AniTalkDbContext dbContext)
     {
         DbContext = dbContext;
     }

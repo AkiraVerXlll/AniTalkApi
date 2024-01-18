@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace AniTalkApi.DataLayer.Model.Auth;
+namespace AniTalkApi.DataLayer.Models.Auth;
 
 public class TokenModel
 {

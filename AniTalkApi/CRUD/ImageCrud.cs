@@ -1,7 +1,7 @@
-﻿using AniTalkApi.DataLayer;
-using AniTalkApi.DataLayer.Models;
+﻿using AniTalkApi.DataLayer.Models;
 using AniTalkApi.ServiceLayer.PhotoServices.Interfaces;
 using AniTalkApi.Helpers;
+using AniTalkApi.DataLayer.DbModels;
 
 namespace AniTalkApi.CRUD;
 
@@ -12,7 +12,7 @@ public class ImageCrud : BaseCrud
     private readonly HttpClientHelper _httpClient;
 
     public ImageCrud(
-        AppDbContext dbContext, 
+        AniTalkDbContext dbContext, 
         IPhotoUploaderService photoUploader,
         HttpClientHelper httpClient) : base(dbContext)
     {

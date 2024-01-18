@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace AniTalkApi.DataLayer.Model.Auth;
+namespace AniTalkApi.DataLayer.Models.Auth;
 
 public class RegisterModel
 {

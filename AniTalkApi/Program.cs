@@ -2,16 +2,14 @@
 
 using System.Text;
 using AniTalkApi.CRUD;
-using AniTalkApi.DataLayer;
+using AniTalkApi.DataLayer.DbModels;
 using AniTalkApi.DataLayer.Models;
 using AniTalkApi.DataLayer.Settings;
 using AniTalkApi.Helpers;
 using AniTalkApi.ServiceLayer;
-using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-using SendGrid.Extensions.DependencyInjection;
 
 namespace AniTalkApi;
 
@@ -26,11 +24,11 @@ public class Program
         builder.Services.AddSwaggerGen();
         builder.Services.AddDistributedMemoryCache();
         builder.Services.AddSession();
-        builder.Services.AddDbContext<AppDbContext>();
+        builder.Services.AddDbContext<AniTalkDbContext>();
         builder.Services.AddHttpClient();
 
         builder.Services.AddIdentity<User, IdentityRole>()
-            .AddEntityFrameworkStores<AppDbContext>()
+            .AddEntityFrameworkStores<AniTalkDbContext>()
             .AddDefaultTokenProviders();
 
         builder.Services.AddHttpClientHelper();
@@ -71,6 +69,14 @@ public class Program
 
         builder.Services.Configure<EmailSettings>
             (options => builder.Configuration.GetSection("EmailSettings").Bind(options));
+        builder.Services.Configure<JwtSettings>
+            (options => builder.Configuration.GetSection("JWT").Bind(options));
+        builder.Services.Configure<CloudinarySettings>
+            (options => builder.Configuration.GetSection("CloudinarySettings").Bind(options));
+        builder.Services.Configure<ConnectionStringSettings>
+            (options => builder.Configuration.GetSection("ConnectionStrings").Bind(options));
+        builder.Services.Configure<GoogleOAuthSettings>
+            (options => builder.Configuration.GetSection("GoogleOAuthSettings").Bind(options));
 
         var app = builder.Build();
 

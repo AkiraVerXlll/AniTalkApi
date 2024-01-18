@@ -3,7 +3,6 @@ using System;
 using AniTalkApi.DataLayer.DbModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,11 +11,9 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AniTalkApi.Migrations
 {
     [DbContext(typeof(AniTalkDbContext))]
-    [Migration("20240115212326_AddMessageReadBy")]
-    partial class AddMessageReadBy
+    partial class AniTalkDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -263,24 +260,6 @@ namespace AniTalkApi.Migrations
                     b.ToTable("Relationships");
                 });
 
-            modelBuilder.Entity("AniTalkApi.DataLayer.Models.ManyToMany.TagsInTitle", b =>
-                {
-                    b.Property<int>("TagId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("TitleId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Order")
-                        .HasColumnType("integer");
-
-                    b.HasKey("TagId", "TitleId");
-
-                    b.HasIndex("TitleId");
-
-                    b.ToTable("TagsInTitle");
-                });
-
             modelBuilder.Entity("AniTalkApi.DataLayer.Models.ManyToMany.TitleAuthors", b =>
                 {
                     b.Property<int>("AuthorId")
@@ -464,32 +443,6 @@ namespace AniTalkApi.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Reviews");
-                });
-
-            modelBuilder.Entity("AniTalkApi.DataLayer.Models.Tag", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Name")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("NormalizeName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.HasIndex("NormalizeName")
-                        .IsUnique();
-
-                    b.ToTable("Tags");
                 });
 
             modelBuilder.Entity("AniTalkApi.DataLayer.Models.Title", b =>
@@ -874,25 +827,6 @@ namespace AniTalkApi.Migrations
                     b.Navigation("RelationshipsWithUser");
                 });
 
-            modelBuilder.Entity("AniTalkApi.DataLayer.Models.ManyToMany.TagsInTitle", b =>
-                {
-                    b.HasOne("AniTalkApi.DataLayer.Models.Tag", "Tag")
-                        .WithMany("TagsInTitle")
-                        .HasForeignKey("TagId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("AniTalkApi.DataLayer.Models.Title", "Title")
-                        .WithMany("Tags")
-                        .HasForeignKey("TitleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Tag");
-
-                    b.Navigation("Title");
-                });
-
             modelBuilder.Entity("AniTalkApi.DataLayer.Models.ManyToMany.TitleAuthors", b =>
                 {
                     b.HasOne("AniTalkApi.DataLayer.Models.Author", "Author")
@@ -1063,11 +997,6 @@ namespace AniTalkApi.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("AniTalkApi.DataLayer.Models.Tag", b =>
-                {
-                    b.Navigation("TagsInTitle");
-                });
-
             modelBuilder.Entity("AniTalkApi.DataLayer.Models.Title", b =>
                 {
                     b.Navigation("FavoriteTitlesOf");
@@ -1077,8 +1006,6 @@ namespace AniTalkApi.Migrations
                     b.Navigation("Genres");
 
                     b.Navigation("Reviews");
-
-                    b.Navigation("Tags");
 
                     b.Navigation("TitleTypes");
                 });

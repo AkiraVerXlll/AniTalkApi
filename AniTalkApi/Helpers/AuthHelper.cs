@@ -1,9 +1,11 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Text;
 using AniTalkApi.CRUD;
 using AniTalkApi.DataLayer.Models.Auth;
 using AniTalkApi.DataLayer.Models;
 using AniTalkApi.DataLayer.Models.Enums;
 using AniTalkApi.DataLayer.Settings;
+using AniTalkApi.ServiceLayer.EmailServices;
 using AniTalkApi.ServiceLayer.TokenManagerServices;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
@@ -20,13 +22,21 @@ public class AuthHelper
 
     private readonly CloudinarySettings _cloudinarySettings;
 
+    private readonly ModalAuthSettings _modalAuthSettings;
+
+    private readonly IEmailSenderService _emailSenderService;
+
     public AuthHelper(
         ITokenManagerService tokenManager,
         UserManager<User> userManager,
         ImageCrud imageCrud,
-        IOptions<CloudinarySettings> options)
+        IEmailSenderService emailSenderService,
+        IOptions<CloudinarySettings> cloudinaryOptions,
+        IOptions<ModalAuthSettings> modalAuthOptions)
     {
-        _cloudinarySettings = options.Value;
+        _cloudinarySettings = cloudinaryOptions.Value;
+        _modalAuthSettings = modalAuthOptions.Value;
+        _emailSenderService = emailSenderService;
         _tokenManager = tokenManager;
         _userManager = userManager;
         _imageCrud = imageCrud;
@@ -97,7 +107,8 @@ public class AuthHelper
             {
                 AvatarId = avatarId
             },
-            RefreshTokenExpiryTime = DateTime.Now.AddDays(refreshTokenValidityInDays)
+            RefreshTokenExpiryTime = 
+                DateTime.Now.AddDays(refreshTokenValidityInDays).ToUniversalTime()
         };
 
         var result = await _userManager.CreateAsync(user, modelData.Password!);
@@ -105,7 +116,7 @@ public class AuthHelper
             throw new ArgumentException($"User creation failed! {result.Errors.First().Description}");
 
         await _userManager.AddToRoleAsync(user, UserRoles.User);
-        SendVerificationLink(user.Email);
+        await SendVerificationLink(user.Email!);
     }
 
     /// <summary>
@@ -137,7 +148,8 @@ public class AuthHelper
             DateOfRegistration = DateTime.Now,
             Status = UserStatus.Online,
             EmailConfirmed = true,
-            RefreshTokenExpiryTime = DateTime.Now.AddDays(refreshTokenValidityInDays)
+            RefreshTokenExpiryTime = 
+                DateTime.Now.AddDays(refreshTokenValidityInDays).ToUniversalTime()
         };
 
         await _userManager.CreateAsync(user);
@@ -157,11 +169,9 @@ public class AuthHelper
             int refreshTokenValidityInDays)
     {
 
-        var user = modelData.Login!.Contains('@')
-            ? await _userManager.FindByEmailAsync(modelData.Login)
-            : await _userManager.FindByNameAsync(modelData.Login);
+        var user = await GetUserAsync(modelData.Login!);
 
-        if (user == null || !await _userManager.CheckPasswordAsync(user, modelData.Password!))
+        if (!await _userManager.CheckPasswordAsync(user, modelData.Password!))
             throw new ArgumentException("Bad login data");
 
         return await SignInAsync(user, refreshTokenValidityInDays, false);
@@ -227,12 +237,51 @@ public class AuthHelper
         };
     }
 
+    /// <summary>
+    /// Send verification link to user email
+    /// </summary>
+    /// <param name="email"></param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
     public async Task SendVerificationLink(string email)
     {
         var user = await _userManager.FindByEmailAsync(email);
 
-        var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-        var confirmationLink = $"https://localhost:5001/api/auth/verify-email?email={email}&token={token}";
+        var token = await _userManager.GenerateEmailConfirmationTokenAsync(user!);
+        token = Convert.ToBase64String(Encoding.UTF8.GetBytes(token));
+        var confirmationLink = $"{_modalAuthSettings.EmailConfirmationLink}?email={email}&token={token}";
+
+        await _emailSenderService.SendEmailVerificationLinkAsync(email, confirmationLink);
+    }
+
+    /// <summary>
+    /// Verify user email
+    /// </summary>
+    /// <param name="email"></param>
+    /// <param name="token"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException"></exception>
+    public async Task VerifyEmailAsync(string email, string token)
+    {
+        token = Encoding.UTF8.GetString(Convert.FromBase64String(token));
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user is null)
+            throw new ArgumentException("User not found");
+
+        var result = await _userManager.ConfirmEmailAsync(user, token);
+        if (!result.Succeeded)
+            throw new ArgumentException("Email confirmation failed");
+    }
+
+    /// <summary>
+    /// Check if user email is confirmed
+    /// </summary>
+    /// <param name="login"></param>
+    /// <returns></returns>
+    public async Task<bool> IsEmailConfirmedAsync(string login)
+    {
+        var user = await GetUserAsync(login);
+        return user.EmailConfirmed;
     }
 
     private async Task<TokenModel> SignInAsync( 
@@ -258,6 +307,15 @@ public class AuthHelper
             RefreshToken = user.RefreshToken,
             ExpiresIn = token.ValidTo
         };
+    }
+
+    private async Task<User> GetUserAsync(string login)
+    {
+        var user = login.Contains('@') ? 
+            await _userManager.FindByEmailAsync(login) :
+            await _userManager.FindByNameAsync(login);
+
+        return user ?? throw new ArgumentException("User not found"); ;
     }
 
     private async Task<bool> IsUsernameExistAsync(string username)

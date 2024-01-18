@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AniTalkApi.Migrations
 {
     [DbContext(typeof(AniTalkDbContext))]
-    [Migration("20240113225057_DbUpdate")]
-    partial class DbUpdate
+    [Migration("20240118221355_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -42,6 +42,33 @@ namespace AniTalkApi.Migrations
                         .IsUnique();
 
                     b.ToTable("Authors");
+                });
+
+            modelBuilder.Entity("AniTalkApi.DataLayer.Models.AuthorType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("NormalizeName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.HasIndex("NormalizeName")
+                        .IsUnique();
+
+                    b.ToTable("AuthorType");
                 });
 
             modelBuilder.Entity("AniTalkApi.DataLayer.Models.Dialog", b =>
@@ -102,9 +129,16 @@ namespace AniTalkApi.Migrations
                     b.Property<int>("Name")
                         .HasColumnType("integer");
 
+                    b.Property<string>("NormalizeName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.HasIndex("NormalizeName")
                         .IsUnique();
 
                     b.ToTable("Genres");
@@ -190,22 +224,43 @@ namespace AniTalkApi.Migrations
                     b.ToTable("ImagesInReview");
                 });
 
-            modelBuilder.Entity("AniTalkApi.DataLayer.Models.ManyToMany.TagsInTitle", b =>
+            modelBuilder.Entity("AniTalkApi.DataLayer.Models.ManyToMany.MessageReadBy", b =>
                 {
-                    b.Property<int>("TagId")
+                    b.Property<int>("MessageId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("TitleId")
-                        .HasColumnType("integer");
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
 
-                    b.Property<int>("Order")
-                        .HasColumnType("integer");
+                    b.Property<DateTime>("ReadingTime")
+                        .HasColumnType("timestamp with time zone");
 
-                    b.HasKey("TagId", "TitleId");
+                    b.HasKey("MessageId", "UserId");
 
-                    b.HasIndex("TitleId");
+                    b.HasIndex("UserId");
 
-                    b.ToTable("TagsInTitle");
+                    b.ToTable("MessageReadBy");
+                });
+
+            modelBuilder.Entity("AniTalkApi.DataLayer.Models.ManyToMany.Relationships", b =>
+                {
+                    b.Property<string>("MainUserId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RelationshipsWithUserId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RelationshipsStatus")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("MainUserId", "RelationshipsWithUserId");
+
+                    b.HasIndex("RelationshipsStatus");
+
+                    b.HasIndex("RelationshipsWithUserId");
+
+                    b.ToTable("Relationships");
                 });
 
             modelBuilder.Entity("AniTalkApi.DataLayer.Models.ManyToMany.TitleAuthors", b =>
@@ -216,11 +271,12 @@ namespace AniTalkApi.Migrations
                     b.Property<int>("TitleTypesId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("AuthorType")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("AuthorTypeId")
+                        .HasColumnType("integer");
 
                     b.HasKey("AuthorId", "TitleTypesId");
+
+                    b.HasIndex("AuthorTypeId");
 
                     b.HasIndex("TitleTypesId")
                         .IsUnique();
@@ -289,6 +345,12 @@ namespace AniTalkApi.Migrations
 
                     b.Property<int>("DialogId")
                         .HasColumnType("integer");
+
+                    b.Property<bool>("IsEdited")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("SenderId")
                         .IsRequired()
@@ -363,27 +425,6 @@ namespace AniTalkApi.Migrations
                     b.ToTable("PersonalInformation");
                 });
 
-            modelBuilder.Entity("AniTalkApi.DataLayer.Models.Relationships", b =>
-                {
-                    b.Property<string>("MainUserId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RelationshipsWithUserId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RelationshipsStatus")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("MainUserId", "RelationshipsWithUserId");
-
-                    b.HasIndex("RelationshipsStatus");
-
-                    b.HasIndex("RelationshipsWithUserId");
-
-                    b.ToTable("Relationships");
-                });
-
             modelBuilder.Entity("AniTalkApi.DataLayer.Models.Review", b =>
                 {
                     b.Property<int>("TitleId")
@@ -407,25 +448,6 @@ namespace AniTalkApi.Migrations
                     b.ToTable("Reviews");
                 });
 
-            modelBuilder.Entity("AniTalkApi.DataLayer.Models.Tag", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Name")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("Tags");
-                });
-
             modelBuilder.Entity("AniTalkApi.DataLayer.Models.Title", b =>
                 {
                     b.Property<int>("Id")
@@ -445,11 +467,18 @@ namespace AniTalkApi.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("NormalizeName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CoverId");
 
                     b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.HasIndex("NormalizeName")
                         .IsUnique();
 
                     b.ToTable("Titles");
@@ -467,7 +496,17 @@ namespace AniTalkApi.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("NormalizeName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.HasIndex("NormalizeName")
+                        .IsUnique();
 
                     b.ToTable("TitleType");
                 });
@@ -753,23 +792,42 @@ namespace AniTalkApi.Migrations
                     b.Navigation("Review");
                 });
 
-            modelBuilder.Entity("AniTalkApi.DataLayer.Models.ManyToMany.TagsInTitle", b =>
+            modelBuilder.Entity("AniTalkApi.DataLayer.Models.ManyToMany.MessageReadBy", b =>
                 {
-                    b.HasOne("AniTalkApi.DataLayer.Models.Tag", "Tag")
-                        .WithMany("TagsInTitle")
-                        .HasForeignKey("TagId")
+                    b.HasOne("AniTalkApi.DataLayer.Models.Message", "Message")
+                        .WithMany()
+                        .HasForeignKey("MessageId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("AniTalkApi.DataLayer.Models.Title", "Title")
-                        .WithMany("Tags")
-                        .HasForeignKey("TitleId")
+                    b.HasOne("AniTalkApi.DataLayer.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Tag");
+                    b.Navigation("Message");
 
-                    b.Navigation("Title");
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("AniTalkApi.DataLayer.Models.ManyToMany.Relationships", b =>
+                {
+                    b.HasOne("AniTalkApi.DataLayer.Models.User", "MainUser")
+                        .WithMany("RelationshipsAsMainUser")
+                        .HasForeignKey("MainUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AniTalkApi.DataLayer.Models.User", "RelationshipsWithUser")
+                        .WithMany("RelationshipsAsSubjectUser")
+                        .HasForeignKey("RelationshipsWithUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MainUser");
+
+                    b.Navigation("RelationshipsWithUser");
                 });
 
             modelBuilder.Entity("AniTalkApi.DataLayer.Models.ManyToMany.TitleAuthors", b =>
@@ -780,6 +838,12 @@ namespace AniTalkApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("AniTalkApi.DataLayer.Models.AuthorType", "AuthorType")
+                        .WithMany("TitleAuthors")
+                        .HasForeignKey("AuthorTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("AniTalkApi.DataLayer.Models.ManyToMany.TitleTypes", "TitleTypes")
                         .WithOne("TitleAuthors")
                         .HasForeignKey("AniTalkApi.DataLayer.Models.ManyToMany.TitleAuthors", "TitleTypesId")
@@ -787,6 +851,8 @@ namespace AniTalkApi.Migrations
                         .IsRequired();
 
                     b.Navigation("Author");
+
+                    b.Navigation("AuthorType");
 
                     b.Navigation("TitleTypes");
                 });
@@ -859,25 +925,6 @@ namespace AniTalkApi.Migrations
                     b.Navigation("Avatar");
                 });
 
-            modelBuilder.Entity("AniTalkApi.DataLayer.Models.Relationships", b =>
-                {
-                    b.HasOne("AniTalkApi.DataLayer.Models.User", "MainUser")
-                        .WithMany("RelationshipsAsMainUser")
-                        .HasForeignKey("MainUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("AniTalkApi.DataLayer.Models.User", "RelationshipsWithUser")
-                        .WithMany("RelationshipsAsSubjectUser")
-                        .HasForeignKey("RelationshipsWithUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("MainUser");
-
-                    b.Navigation("RelationshipsWithUser");
-                });
-
             modelBuilder.Entity("AniTalkApi.DataLayer.Models.Review", b =>
                 {
                     b.HasOne("AniTalkApi.DataLayer.Models.Title", "Title")
@@ -922,6 +969,11 @@ namespace AniTalkApi.Migrations
                     b.Navigation("Works");
                 });
 
+            modelBuilder.Entity("AniTalkApi.DataLayer.Models.AuthorType", b =>
+                {
+                    b.Navigation("TitleAuthors");
+                });
+
             modelBuilder.Entity("AniTalkApi.DataLayer.Models.Dialog", b =>
                 {
                     b.Navigation("Forum");
@@ -948,11 +1000,6 @@ namespace AniTalkApi.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("AniTalkApi.DataLayer.Models.Tag", b =>
-                {
-                    b.Navigation("TagsInTitle");
-                });
-
             modelBuilder.Entity("AniTalkApi.DataLayer.Models.Title", b =>
                 {
                     b.Navigation("FavoriteTitlesOf");
@@ -962,8 +1009,6 @@ namespace AniTalkApi.Migrations
                     b.Navigation("Genres");
 
                     b.Navigation("Reviews");
-
-                    b.Navigation("Tags");
 
                     b.Navigation("TitleTypes");
                 });

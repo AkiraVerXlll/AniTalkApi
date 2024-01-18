@@ -13,12 +13,27 @@ namespace AniTalkApi.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "AuthorType",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    NormalizeName = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AuthorType", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Genres",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<int>(type: "integer", nullable: false)
+                    Name = table.Column<int>(type: "integer", nullable: false),
+                    NormalizeName = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -68,25 +83,13 @@ namespace AniTalkApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Tags",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Tags", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "TitleType",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false)
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    NormalizeName = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -114,35 +117,38 @@ namespace AniTalkApi.Migrations
                 {
                     LoginProvider = table.Column<string>(type: "text", nullable: false),
                     ProviderKey = table.Column<string>(type: "text", nullable: false),
-                    ProviderDisplayName = table.Column<string>(type: "text", nullable: true),
-                    UserId = table.Column<string>(type: "text", nullable: true)
+                    UserId = table.Column<string>(type: "text", nullable: false),
+                    ProviderDisplayName = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
+                    table.PrimaryKey("PK_UserLogins", x => new { x.ProviderKey, x.LoginProvider, x.UserId });
                 });
 
             migrationBuilder.CreateTable(
                 name: "UserRoles",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(type: "text", nullable: true),
-                    RoleId = table.Column<string>(type: "text", nullable: true)
+                    UserId = table.Column<string>(type: "text", nullable: false),
+                    RoleId = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
+                    table.PrimaryKey("PK_UserRoles", x => new { x.RoleId, x.UserId });
                 });
 
             migrationBuilder.CreateTable(
                 name: "UserTokens",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(type: "text", nullable: true),
+                    UserId = table.Column<string>(type: "text", nullable: false),
                     LoginProvider = table.Column<string>(type: "text", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Value = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
+                    table.PrimaryKey("PK_UserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
                 });
 
             migrationBuilder.CreateTable(
@@ -198,10 +204,9 @@ namespace AniTalkApi.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: false),
+                    NormalizeName = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
-                    CoverId = table.Column<int>(type: "integer", nullable: false),
-                    ReleaseDate = table.Column<DateTime>(type: "date", nullable: false),
-                    TitleStatus = table.Column<string>(type: "text", nullable: false)
+                    CoverId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -210,8 +215,7 @@ namespace AniTalkApi.Migrations
                         name: "FK_Titles_Images_CoverId",
                         column: x => x.CoverId,
                         principalTable: "Images",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -243,9 +247,9 @@ namespace AniTalkApi.Migrations
                     RefreshToken = table.Column<string>(type: "text", nullable: true),
                     RefreshTokenExpiryTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     PersonalInformationId = table.Column<int>(type: "integer", nullable: false),
-                    UserName = table.Column<string>(type: "text", nullable: false),
+                    UserName = table.Column<string>(type: "text", nullable: true),
                     NormalizedUserName = table.Column<string>(type: "text", nullable: true),
-                    Email = table.Column<string>(type: "text", nullable: false),
+                    Email = table.Column<string>(type: "text", nullable: true),
                     NormalizedEmail = table.Column<string>(type: "text", nullable: true),
                     EmailConfirmed = table.Column<bool>(type: "boolean", nullable: false),
                     PasswordHash = table.Column<string>(type: "text", nullable: true),
@@ -321,40 +325,21 @@ namespace AniTalkApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TagsInTitle",
-                columns: table => new
-                {
-                    TitleId = table.Column<int>(type: "integer", nullable: false),
-                    TagId = table.Column<int>(type: "integer", nullable: false),
-                    Order = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TagsInTitle", x => new { x.TagId, x.TitleId });
-                    table.ForeignKey(
-                        name: "FK_TagsInTitle_Tags_TagId",
-                        column: x => x.TagId,
-                        principalTable: "Tags",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_TagsInTitle_Titles_TitleId",
-                        column: x => x.TitleId,
-                        principalTable: "Titles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "TitleTypes",
                 columns: table => new
                 {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     TitleTypeId = table.Column<int>(type: "integer", nullable: false),
-                    TitleId = table.Column<int>(type: "integer", nullable: false)
+                    TitleId = table.Column<int>(type: "integer", nullable: false),
+                    SpecialDescription = table.Column<string>(type: "text", nullable: true),
+                    ReleaseDate = table.Column<DateTime>(type: "date", nullable: false),
+                    CoverId = table.Column<int>(type: "integer", nullable: false),
+                    TitleStatus = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TitleTypes", x => new { x.TitleId, x.TitleTypeId });
+                    table.PrimaryKey("PK_TitleTypes", x => x.Id);
                     table.ForeignKey(
                         name: "FK_TitleTypes_TitleType_TitleTypeId",
                         column: x => x.TitleTypeId,
@@ -363,31 +348,6 @@ namespace AniTalkApi.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_TitleTypes_Titles_TitleId",
-                        column: x => x.TitleId,
-                        principalTable: "Titles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TitleAuthors",
-                columns: table => new
-                {
-                    AuthorId = table.Column<int>(type: "integer", nullable: false),
-                    TitleId = table.Column<int>(type: "integer", nullable: false),
-                    AuthorType = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TitleAuthors", x => new { x.AuthorId, x.TitleId });
-                    table.ForeignKey(
-                        name: "FK_TitleAuthors_Authors_AuthorId",
-                        column: x => x.AuthorId,
-                        principalTable: "Authors",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_TitleAuthors_Titles_TitleId",
                         column: x => x.TitleId,
                         principalTable: "Titles",
                         principalColumn: "Id",
@@ -428,6 +388,8 @@ namespace AniTalkApi.Migrations
                     DialogId = table.Column<int>(type: "integer", nullable: false),
                     SenderId = table.Column<string>(type: "text", nullable: false),
                     Text = table.Column<string>(type: "text", nullable: false),
+                    IsRead = table.Column<bool>(type: "boolean", nullable: false),
+                    IsEdited = table.Column<bool>(type: "boolean", nullable: false),
                     SendingTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
@@ -523,6 +485,62 @@ namespace AniTalkApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "TitleAuthors",
+                columns: table => new
+                {
+                    AuthorId = table.Column<int>(type: "integer", nullable: false),
+                    TitleTypesId = table.Column<int>(type: "integer", nullable: false),
+                    AuthorTypeId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TitleAuthors", x => new { x.AuthorId, x.TitleTypesId });
+                    table.ForeignKey(
+                        name: "FK_TitleAuthors_AuthorType_AuthorTypeId",
+                        column: x => x.AuthorTypeId,
+                        principalTable: "AuthorType",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TitleAuthors_Authors_AuthorId",
+                        column: x => x.AuthorId,
+                        principalTable: "Authors",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TitleAuthors_TitleTypes_TitleTypesId",
+                        column: x => x.TitleTypesId,
+                        principalTable: "TitleTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MessageReadBy",
+                columns: table => new
+                {
+                    MessageId = table.Column<int>(type: "integer", nullable: false),
+                    UserId = table.Column<string>(type: "text", nullable: false),
+                    ReadingTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MessageReadBy", x => new { x.MessageId, x.UserId });
+                    table.ForeignKey(
+                        name: "FK_MessageReadBy_Messages_MessageId",
+                        column: x => x.MessageId,
+                        principalTable: "Messages",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MessageReadBy_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ImagesInReview",
                 columns: table => new
                 {
@@ -555,6 +573,18 @@ namespace AniTalkApi.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_AuthorType_Name",
+                table: "AuthorType",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AuthorType_NormalizeName",
+                table: "AuthorType",
+                column: "NormalizeName",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Dialogs_AvatarId",
                 table: "Dialogs",
                 column: "AvatarId");
@@ -582,6 +612,12 @@ namespace AniTalkApi.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Genres_NormalizeName",
+                table: "Genres",
+                column: "NormalizeName",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_GenresInTitle_TitleId",
                 table: "GenresInTitle",
                 column: "TitleId");
@@ -596,6 +632,11 @@ namespace AniTalkApi.Migrations
                 name: "IX_ImagesInReview_ReviewTitleId_ReviewUserId",
                 table: "ImagesInReview",
                 columns: new[] { "ReviewTitleId", "ReviewUserId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MessageReadBy_UserId",
+                table: "MessageReadBy",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Messages_DialogId",
@@ -653,20 +694,15 @@ namespace AniTalkApi.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tags_Name",
-                table: "Tags",
-                column: "Name",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TagsInTitle_TitleId",
-                table: "TagsInTitle",
-                column: "TitleId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TitleAuthors_TitleId",
+                name: "IX_TitleAuthors_AuthorTypeId",
                 table: "TitleAuthors",
-                column: "TitleId");
+                column: "AuthorTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TitleAuthors_TitleTypesId",
+                table: "TitleAuthors",
+                column: "TitleTypesId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Titles_CoverId",
@@ -678,6 +714,29 @@ namespace AniTalkApi.Migrations
                 table: "Titles",
                 column: "Name",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Titles_NormalizeName",
+                table: "Titles",
+                column: "NormalizeName",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TitleType_Name",
+                table: "TitleType",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TitleType_NormalizeName",
+                table: "TitleType",
+                column: "NormalizeName",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TitleTypes_TitleId",
+                table: "TitleTypes",
+                column: "TitleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TitleTypes_TitleTypeId",
@@ -712,7 +771,7 @@ namespace AniTalkApi.Migrations
                 name: "ImagesInReview");
 
             migrationBuilder.DropTable(
-                name: "Messages");
+                name: "MessageReadBy");
 
             migrationBuilder.DropTable(
                 name: "Relationships");
@@ -724,13 +783,7 @@ namespace AniTalkApi.Migrations
                 name: "Roles");
 
             migrationBuilder.DropTable(
-                name: "TagsInTitle");
-
-            migrationBuilder.DropTable(
                 name: "TitleAuthors");
-
-            migrationBuilder.DropTable(
-                name: "TitleTypes");
 
             migrationBuilder.DropTable(
                 name: "UserClaims");
@@ -754,22 +807,28 @@ namespace AniTalkApi.Migrations
                 name: "Reviews");
 
             migrationBuilder.DropTable(
-                name: "Tags");
+                name: "Messages");
+
+            migrationBuilder.DropTable(
+                name: "AuthorType");
 
             migrationBuilder.DropTable(
                 name: "Authors");
 
             migrationBuilder.DropTable(
-                name: "TitleType");
+                name: "TitleTypes");
 
             migrationBuilder.DropTable(
                 name: "Dialogs");
 
             migrationBuilder.DropTable(
-                name: "Titles");
+                name: "Users");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "TitleType");
+
+            migrationBuilder.DropTable(
+                name: "Titles");
 
             migrationBuilder.DropTable(
                 name: "PersonalInformation");

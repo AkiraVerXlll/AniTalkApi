@@ -7,22 +7,27 @@ namespace AniTalkApi.ServiceLayer.EmailServices;
 
 public class SendGridEmailSenderService : IEmailSenderService
 {
-    private readonly EmailSettings _emailSettings;
+    private readonly SendGridClient _sendGridClient;
 
-    public SendGridEmailSenderService(IOptions<EmailSettings> emailSettings)
+    private readonly EmailAddress _from;
+
+    public SendGridEmailSenderService(IOptions<EmailSettings> emailOptions)
     {
-        _emailSettings = emailSettings.Value;
+        var emailSettings = emailOptions.Value;
+        var fromEmail = emailSettings.SenderEmail;
+        var fromName = emailSettings.SenderName;
+        var apiKey = emailSettings.ApiKey;
+        _sendGridClient = new SendGridClient(apiKey);
+        _from = new EmailAddress(fromEmail, fromName);
     }
 
-    public async Task<bool> SendEmailAsync(string email, string subject, string htmlMessage)
+    public async Task SendEmailVerificationLinkAsync(string email, string verificationLink)
     {
-        var fromEmail = _emailSettings.SenderEmail;
-        var fromName = _emailSettings.SenderName;
-        var apiKey = _emailSettings.ApiKey;
-        var sendGridClient = new SendGridClient(apiKey);
-        var from = new EmailAddress(fromEmail, fromName);
         var to = new EmailAddress(email);
-        var m = MailHelper.CreateSingleTemplateEmail(from, to, "d-ea5228c967b94dcbb189732e0ccd6f84", null);
-        return (await sendGridClient.SendEmailAsync(m)).IsSuccessStatusCode;
+        await _sendGridClient.SendEmailAsync(
+            MailHelper.CreateSingleTemplateEmail(
+                _from, to, 
+                "d-56d2992d7db745fa85040e673215a537",
+                new {Link = verificationLink}));
     }
 }

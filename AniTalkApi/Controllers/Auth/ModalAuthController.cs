@@ -45,6 +45,9 @@ public class ModalAuthController : ControllerBase
     [Route("sign-in")]
     public async Task<IActionResult> SignIn([FromBody] LoginModel modelData)
     {
+        if(!await _authHelper.IsEmailConfirmedAsync(modelData.Login!))
+            return BadRequest("Email is not confirmed!");
+
         var refreshTokenValidityInDays = _jwtSettings.RefreshTokenValidityInDays;
         
         var tokenModel = await _authHelper.ModalSignInAsync(modelData,
@@ -53,9 +56,19 @@ public class ModalAuthController : ControllerBase
         return Ok(tokenModel);
     }
 
+    [HttpPost]
+    [Route("send-verification-link")]
+    public async Task<IActionResult> SendVerificationLink(string email)
+    {
+        await _authHelper.SendVerificationLink(email);
+        return Ok("Verification link sent successfully!");
+    }
+
+    [HttpGet]
+    [Route("verify-email")]
     public async Task<IActionResult> VerifyEmail(string email, string token)
     {
-        await _authHelper.SendVerificationLink(email, token);
+        await _authHelper.VerifyEmailAsync(email, token);
         return Ok("Email verified successfully!");
     }
 

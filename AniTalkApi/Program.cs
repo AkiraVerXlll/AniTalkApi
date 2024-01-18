@@ -73,8 +73,6 @@ public class Program
             (options => builder.Configuration.GetSection("JWT").Bind(options));
         builder.Services.Configure<CloudinarySettings>
             (options => builder.Configuration.GetSection("CloudinarySettings").Bind(options));
-        builder.Services.Configure<ConnectionStringSettings>
-            (options => builder.Configuration.GetSection("ConnectionStrings").Bind(options));
         builder.Services.Configure<GoogleOAuthSettings>
             (options => builder.Configuration.GetSection("GoogleOAuth2.0Settings").Bind(options));
         builder.Services.Configure<AvatarSettings>

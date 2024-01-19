@@ -169,12 +169,12 @@ public class AuthHelper
             int refreshTokenValidityInDays)
     {
 
-        var user = await GetUserAsync(modelData.Login!);
+        var user = await GetUserByLoginAsync(modelData.Login!);
 
         if (!await _userManager.CheckPasswordAsync(user, modelData.Password!))
             throw new ArgumentException("Bad login data");
 
-        return await SignInAsync(user, refreshTokenValidityInDays, false);
+        return await SignInAsync(user, refreshTokenValidityInDays);
     }
 
     
@@ -197,7 +197,7 @@ public class AuthHelper
         else 
             user = await _userManager.FindByEmailAsync(email);
 
-        return await SignInAsync(user!, refreshTokenValidityInDays, true);
+        return await SignInAsync(user!, refreshTokenValidityInDays);
             
     }
 
@@ -246,7 +246,6 @@ public class AuthHelper
     public async Task SendVerificationLink(string email)
     {
         var user = await _userManager.FindByEmailAsync(email);
-
         var token = await _userManager.GenerateEmailConfirmationTokenAsync(user!);
         token = Convert.ToBase64String(Encoding.UTF8.GetBytes(token));
         var confirmationLink = $"{_modalAuthSettings.EmailConfirmationLink}?email={email}&token={token}";
@@ -280,14 +279,31 @@ public class AuthHelper
     /// <returns></returns>
     public async Task<bool> IsEmailConfirmedAsync(string login)
     {
-        var user = await GetUserAsync(login);
+        var user = await GetUserByLoginAsync(login);
         return user.EmailConfirmed;
+    }
+
+    /// <summary>
+    /// Send two factor verification code to user email
+    /// </summary>
+    /// <param name="email"></param>
+    /// <returns></returns>
+    public async Task SendTwoFactorCodeAsync(string email)
+    {
+        var user = await GetUserByLoginAsync(email);
+        var token = await _userManager.GenerateTwoFactorTokenAsync(user, "Email");
+        await _emailSenderService.SendTwoFactorCodeAsync(user.Email!, token);
+    }
+
+    public async Task<bool> IsTwoFactorEnabledAsync(string email)
+    {
+        var user = await GetUserByLoginAsync(email);
+        return await _userManager.GetTwoFactorEnabledAsync(user);
     }
 
     private async Task<TokenModel> SignInAsync( 
         User user, 
-        int refreshTokenValidityInDays, 
-        bool isOAuthSignIn)
+        int refreshTokenValidityInDays)
     {
         var userRoles = await _userManager.GetRolesAsync(user);
         var token = _tokenManager.GenerateAccessToken(user, userRoles);
@@ -309,7 +325,7 @@ public class AuthHelper
         };
     }
 
-    private async Task<User> GetUserAsync(string login)
+    public async Task<User> GetUserByLoginAsync(string login)
     {
         var user = login.Contains('@') ? 
             await _userManager.FindByEmailAsync(login) :

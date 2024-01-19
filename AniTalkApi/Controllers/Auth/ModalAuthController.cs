@@ -48,12 +48,30 @@ public class ModalAuthController : ControllerBase
         if(!await _authHelper.IsEmailConfirmedAsync(modelData.Login!))
             return BadRequest("Email is not confirmed!");
 
+
         var refreshTokenValidityInDays = _jwtSettings.RefreshTokenValidityInDays;
         
         var tokenModel = await _authHelper.ModalSignInAsync(modelData,
              refreshTokenValidityInDays);
+        
+        var user = await _authHelper.GetUserByLoginAsync(modelData.Login!);
 
-        return Ok(tokenModel);
+        if (!await _authHelper.IsTwoFactorEnabledAsync(user.Email!))
+            return Ok(tokenModel);
+
+        HttpContext.Response.Cookies.Append("Email", user.Email!);
+        return StatusCode(300, "Redirect to two-factor authentication");
+    }
+
+    [HttpPost]
+    [Route("two-factor-verification")]
+    public async Task<IActionResult> TwoFactorVerification()
+    {
+        var email = HttpContext.Request.Cookies["Email"];
+        if (email == null)
+            return StatusCode(300, "Redirect to login");
+        await _authHelper.SendTwoFactorCodeAsync(email);
+        return Ok("Two factor verification code is sent");
     }
 
     [HttpPost]

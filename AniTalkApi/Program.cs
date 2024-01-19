@@ -67,8 +67,15 @@ public class Program
         );
         builder.Services.AddAuthorization();
 
-        builder.Services.Configure<EmailSettings>
-            (options => builder.Configuration.GetSection("EmailSettings").Bind(options));
+        builder.Services.Configure<CookiePolicyOptions>(options =>
+        {
+            options.MinimumSameSitePolicy = SameSiteMode.None;
+            options.HttpOnly = Microsoft.AspNetCore.CookiePolicy.HttpOnlyPolicy.Always;
+            options.Secure = CookieSecurePolicy.Always; 
+        });
+
+        builder.Services.Configure<SendGridSettings>
+            (options => builder.Configuration.GetSection("SendGridSettings").Bind(options));
         builder.Services.Configure<JwtSettings>
             (options => builder.Configuration.GetSection("JWT").Bind(options));
         builder.Services.Configure<CloudinarySettings>

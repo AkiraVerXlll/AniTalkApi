@@ -4,5 +4,5 @@ public class AuthSettings
 {
     public string? EmailConfirmationLink { get; init; }
 
-    public string? ResetPasswordLink { get; init; }
+    public string? PasswordResetLink { get; init; }
 }

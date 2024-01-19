@@ -22,8 +22,8 @@ public static class ApplicationServiceExtensions
         services.AddScoped<OAuthSignInService, OAuthSignInService>();
         services.AddScoped<TwoFactorVerificationService, TwoFactorVerificationService>();
         services.AddScoped<EmailVerificationService, EmailVerificationService>();
-        services.AddScoped<ModalSignInService, ModalSignInService>();
-        services.AddScoped<ModalSignUpService, ModalSignUpService>();
+        services.AddScoped<ManualSignInService, ManualSignInService>();
+        services.AddScoped<ManualSignUpService, ManualSignUpService>();
         services.AddScoped<GoogleOAuthService, GoogleOAuthService>();
         services.AddScoped<TokenManagerService,  TokenManagerService>();
         services.AddScoped<ResetPasswordService,  ResetPasswordService>();
@@ -31,11 +31,11 @@ public static class ApplicationServiceExtensions
 
     public static void AddCryptoGeneratorService(this IServiceCollection services)
     {
-        services.AddSingleton<ICryptoGeneratorService, BaseCryptoGeneratorService>();
+        services.AddScoped<ICryptoGeneratorService, BaseCryptoGeneratorService>();
     }
 
     public static void AddEmailSenderService(this IServiceCollection services)
     {
-        services.AddSingleton<IEmailSenderService, SendGridEmailSenderService>();
+        services.AddScoped<IEmailSenderService, SendGridEmailSenderService>();
     }
 }

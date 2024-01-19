@@ -5,11 +5,11 @@ using Microsoft.Extensions.Options;
 
 namespace AniTalkApi.ServiceLayer.AuthServices.SignUpServices;
 
-public class ModalSignUpService : BaseSignUpService
+public class ManualSignUpService : BaseSignUpService
 {
     private readonly EmailVerificationService _emailVerificationService;
 
-    public ModalSignUpService(
+    public ManualSignUpService(
         UserManager<User> userManager,
         IOptions<AvatarSettings> avatarOptions,
         IOptions<JwtSettings> jwtOptions,

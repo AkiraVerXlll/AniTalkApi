@@ -3,7 +3,7 @@ using AniTalkApi.ServiceLayer.AuthServices;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AniTalkApi.Controllers.Auth;
-[Route("[controller]")]
+[Route("api/[controller]")]
 [ApiController]
 public class AuthController : ControllerBase
 {
@@ -77,7 +77,7 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> ResetPassword(
         string email,
         string token,
-        string newPassword)
+        [FromBody] string newPassword)
     {
         await _resetPassword
             .ChangeForgottenPasswordAsync(email, token, newPassword);
@@ -89,11 +89,10 @@ public class AuthController : ControllerBase
     [Route("change-password")]
     public async Task<IActionResult> ChangePassword(
         string email,
-        string oldPassword,
-        string newPassword)
+        [FromBody] ChangePasswordFormModel formData)
     {
         await _resetPassword
-            .ChangePasswordAsync(email, oldPassword, newPassword);
+            .ChangePasswordAsync(email, formData.OldPassword!, formData.NewPassword!);
 
         return Ok("Password changed successfully!");
     }

@@ -11,25 +11,25 @@ namespace AniTalkApi.Controllers.Auth;
 
 [ApiController]
 [CustomExceptionFilter]
-[Route("/[controller]")]
-public class ModalAuthController : ControllerBase
+[Route("api/[controller]")]
+public class ManualAuthController : ControllerBase
 {
     private readonly UserManager<User> _userManager;
 
-    private readonly ModalSignInService _modalSignIn;
+    private readonly ManualSignInService _manualSignIn;
 
-    private readonly ModalSignUpService _modalSignUp;
+    private readonly ManualSignUpService _manualSignUp;
 
     private readonly TwoFactorVerificationService _twoFactorVerification;
 
-    public ModalAuthController(
-        ModalSignInService modalSignIn,
-        ModalSignUpService modalSignUp,
+    public ManualAuthController(
+        ManualSignInService manualSignIn,
+        ManualSignUpService manualSignUp,
         UserManager<User> userManager,
         TwoFactorVerificationService twoFactorVerification)
     {
-        _modalSignIn = modalSignIn;
-        _modalSignUp = modalSignUp;
+        _manualSignIn = manualSignIn;
+        _manualSignUp = manualSignUp;
         _userManager = userManager;
         _twoFactorVerification = twoFactorVerification;
     }
@@ -44,7 +44,7 @@ public class ModalAuthController : ControllerBase
             { "username", modelData.Username! },
             { "password", modelData.Password! }
         };
-        await _modalSignUp.SignUpAsync(claims);
+        await _manualSignUp.SignUpAsync(claims);
         return Ok("User created successfully!");
     }
 
@@ -73,7 +73,7 @@ public class ModalAuthController : ControllerBase
             { "email", user.Email! },
             { "password", formModelData.Password!}
         };
-        var tokenModel = await _modalSignIn.SignInAsync(claims);
+        var tokenModel = await _manualSignIn.SignInAsync(claims);
         
         return Ok(tokenModel);
     }

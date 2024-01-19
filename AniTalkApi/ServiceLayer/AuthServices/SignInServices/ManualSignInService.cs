@@ -6,19 +6,17 @@ using Microsoft.Extensions.Options;
 
 namespace AniTalkApi.ServiceLayer.AuthServices.SignInServices;
 
-public class ModalSignInService : BaseSignInService
+public class ManualSignInService : BaseSignInService
 {
-    public ModalSignInService(
+    public ManualSignInService(
         UserManager<User> userManager, 
         IOptions<JwtSettings> options, 
         TokenManagerService tokenManager) : base(userManager, options, tokenManager) { }
 
     public override async Task<TokenModel> SignInAsync(Dictionary<string, string> claims)
     {
-        var login = claims["login"];
-        var user = login.Contains('@') ?
-            await UserManager.FindByEmailAsync(login) :
-            await UserManager.FindByNameAsync(login);
+        var email = claims["email"];
+        var user = await UserManager.FindByEmailAsync(email);
 
         if (user is null)
             throw new ArgumentException("Bad login data");

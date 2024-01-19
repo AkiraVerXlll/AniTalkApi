@@ -81,7 +81,7 @@ public class Program
         builder.Services.Configure<AvatarSettings>
             (options => builder.Configuration.GetSection("AvatarSettings").Bind(options));
         builder.Services.Configure<AuthSettings>(
-            options => builder.Configuration.GetSection("ModalAuth").Bind(options));
+            options => builder.Configuration.GetSection("Auth").Bind(options));
 
         var app = builder.Build();
 

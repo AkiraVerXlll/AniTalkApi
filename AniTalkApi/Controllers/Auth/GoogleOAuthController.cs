@@ -16,7 +16,7 @@ namespace AniTalkApi.Controllers.Auth;
 
 [ApiController]
 [CustomExceptionFilter]
-[Route("/[controller]")]
+[Route("api/[controller]")]
 public class GoogleOAuthController : ControllerBase
 {
     private readonly ICryptoGeneratorService _cryptoGenerator;

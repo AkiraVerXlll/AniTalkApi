@@ -30,6 +30,8 @@ public class AuthHelper
 
     private readonly AvatarSettings _avatarSettings;
 
+    private readonly SendGridSettings _sendGridSettings;
+
     public AuthHelper(
         ITokenManagerService tokenManager,
         UserManager<User> userManager,
@@ -38,12 +40,14 @@ public class AuthHelper
         IOptions<CloudinarySettings> cloudinaryOptions,
         IOptions<ModalAuthSettings> modalAuthOptions,
         IOptions<JwtSettings> jwtOptions,
-        IOptions<AvatarSettings> avatarOptions)
+        IOptions<AvatarSettings> avatarOptions,
+        IOptions<SendGridSettings> sendGridOptions)
     {
         _cloudinarySettings = cloudinaryOptions.Value;
         _modalAuthSettings = modalAuthOptions.Value;
         _jwtSettings = jwtOptions.Value;
         _avatarSettings = avatarOptions.Value;
+        _sendGridSettings = sendGridOptions.Value;
         _emailSenderService = emailSenderService;
         _tokenManager = tokenManager;
         _userManager = userManager;
@@ -243,7 +247,10 @@ public class AuthHelper
         token = Convert.ToBase64String(Encoding.UTF8.GetBytes(token));
         var confirmationLink = $"{_modalAuthSettings.EmailConfirmationLink}?email={email}&token={token}";
 
-        await _emailSenderService.SendEmailVerificationLinkAsync(email, confirmationLink);
+        await _emailSenderService.SendTemplateEmailAsync(
+            email,
+            _sendGridSettings.EmailTemplates!.EmailConfirmation!,
+            new { Link = confirmationLink });
     }
 
     /// <summary>
@@ -274,7 +281,10 @@ public class AuthHelper
     {
         var user = await GetUserByLoginAsync(email);
         var token = await _userManager.GenerateTwoFactorTokenAsync(user, "Email");
-        await _emailSenderService.SendTwoFactorCodeAsync(user.Email!, token);
+        await _emailSenderService.SendTemplateEmailAsync(
+            user.Email!, 
+            _sendGridSettings.EmailTemplates!.TwoFactorVerification!, 
+            new {Code = token});
     }
 
     /// <summary>

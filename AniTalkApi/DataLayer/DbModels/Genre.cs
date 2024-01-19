@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using AniTalkApi.DataLayer.Models.ManyToMany;
+using AniTalkApi.DataLayer.DbModels.ManyToMany;
 
-namespace AniTalkApi.DataLayer.Models;
+namespace AniTalkApi.DataLayer.DbModels;
 
 public class Genre
 {

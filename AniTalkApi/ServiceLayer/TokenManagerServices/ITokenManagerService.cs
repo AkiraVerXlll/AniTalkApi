@@ -1,6 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using AniTalkApi.DataLayer.Models;
+using AniTalkApi.DataLayer.DbModels;
 
 namespace AniTalkApi.ServiceLayer.TokenManagerServices;
 

@@ -1,4 +1,4 @@
-﻿namespace AniTalkApi.DataLayer.Models.Enums;
+﻿namespace AniTalkApi.DataLayer.DbModels.Enums;
 
 public enum TitleStatus
 {

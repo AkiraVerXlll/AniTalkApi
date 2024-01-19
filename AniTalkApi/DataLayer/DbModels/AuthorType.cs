@@ -1,7 +1,7 @@
-﻿using AniTalkApi.DataLayer.Models.ManyToMany;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using AniTalkApi.DataLayer.DbModels.ManyToMany;
 
-namespace AniTalkApi.DataLayer.Models;
+namespace AniTalkApi.DataLayer.DbModels;
 
 public class AuthorType
 {

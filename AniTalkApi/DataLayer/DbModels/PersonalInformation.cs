@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace AniTalkApi.DataLayer.Models;
+namespace AniTalkApi.DataLayer.DbModels;
 
 public class PersonalInformation
 {

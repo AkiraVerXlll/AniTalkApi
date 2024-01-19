@@ -1,8 +1,8 @@
-﻿using AniTalkApi.DataLayer.Models.Enums;
+﻿using AniTalkApi.DataLayer.DbModels.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace AniTalkApi.DataLayer.Models.ManyToMany;
+namespace AniTalkApi.DataLayer.DbModels.ManyToMany;
 
 public class TitleTypes
 {

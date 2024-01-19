@@ -1,6 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using AniTalkApi.DataLayer.Models;
+using AniTalkApi.DataLayer.DbModels;
 using AniTalkApi.DataLayer.Settings;
 using AniTalkApi.ServiceLayer.CryptoGeneratorServices;
 using Microsoft.Extensions.Options;

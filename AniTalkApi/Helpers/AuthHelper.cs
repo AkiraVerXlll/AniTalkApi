@@ -1,9 +1,9 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using AniTalkApi.CRUD;
+using AniTalkApi.DataLayer.DbModels;
+using AniTalkApi.DataLayer.DbModels.Enums;
 using AniTalkApi.DataLayer.Models.Auth;
-using AniTalkApi.DataLayer.Models;
-using AniTalkApi.DataLayer.Models.Enums;
 using AniTalkApi.DataLayer.Settings;
 using AniTalkApi.ServiceLayer.EmailServices;
 using AniTalkApi.ServiceLayer.TokenManagerServices;
@@ -20,11 +20,15 @@ public class AuthHelper
 
     private readonly ImageCrud _imageCrud;
 
+    private readonly IEmailSenderService _emailSenderService;
+    
     private readonly CloudinarySettings _cloudinarySettings;
 
     private readonly ModalAuthSettings _modalAuthSettings;
 
-    private readonly IEmailSenderService _emailSenderService;
+    private readonly JwtSettings _jwtSettings;
+
+    private readonly AvatarSettings _avatarSettings;
 
     public AuthHelper(
         ITokenManagerService tokenManager,
@@ -32,10 +36,14 @@ public class AuthHelper
         ImageCrud imageCrud,
         IEmailSenderService emailSenderService,
         IOptions<CloudinarySettings> cloudinaryOptions,
-        IOptions<ModalAuthSettings> modalAuthOptions)
+        IOptions<ModalAuthSettings> modalAuthOptions,
+        IOptions<JwtSettings> jwtOptions,
+        IOptions<AvatarSettings> avatarOptions)
     {
         _cloudinarySettings = cloudinaryOptions.Value;
         _modalAuthSettings = modalAuthOptions.Value;
+        _jwtSettings = jwtOptions.Value;
+        _avatarSettings = avatarOptions.Value;
         _emailSenderService = emailSenderService;
         _tokenManager = tokenManager;
         _userManager = userManager;
@@ -77,15 +85,10 @@ public class AuthHelper
     /// Creates user in database by LoginModel data
     /// </summary>
     /// <param name="modelData"></param>
-    /// <param name="avatarId"></param>
-    /// <param name="refreshTokenValidityInDays"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentException">If user is already exist</exception>
     /// <exception cref="Exception">Exception while adding user to the database</exception>
-    public async Task CreateModalUserAsync(
-        RegisterModel modelData, 
-        int avatarId,
-        int refreshTokenValidityInDays)
+    public async Task CreateModalUserAsync(RegisterModel modelData)
     {
         if (!await IsEmailExistAsync(modelData.Email!))
             throw new ArgumentException("User with this email already exists!");
@@ -105,10 +108,10 @@ public class AuthHelper
             Status = UserStatus.Online,
             PersonalInformation = new PersonalInformation()
             {
-                AvatarId = avatarId
+                AvatarId = _avatarSettings.DefaultAvatarId
             },
             RefreshTokenExpiryTime = 
-                DateTime.Now.AddDays(refreshTokenValidityInDays).ToUniversalTime()
+                DateTime.Now.AddDays(_jwtSettings.RefreshTokenValidityInDays).ToUniversalTime()
         };
 
         var result = await _userManager.CreateAsync(user, modelData.Password!);
@@ -123,11 +126,8 @@ public class AuthHelper
     /// Creates user in database by OAuth data
     /// </summary>
     /// <param name="claims"></param>
-    /// <param name="refreshTokenValidityInDays"></param>
     /// <returns>Created user</returns>
-    public async Task<User> CreateOAuthUserAsync(
-        Dictionary<string, string> claims,
-        int refreshTokenValidityInDays)
+    public async Task<User> CreateOAuthUserAsync(Dictionary<string, string> claims)
     {
         var avatarExternalUrl = claims["picture"];
         var avatar = await _imageCrud
@@ -149,7 +149,7 @@ public class AuthHelper
             Status = UserStatus.Online,
             EmailConfirmed = true,
             RefreshTokenExpiryTime = 
-                DateTime.Now.AddDays(refreshTokenValidityInDays).ToUniversalTime()
+                DateTime.Now.AddDays(_jwtSettings.RefreshTokenValidityInDays).ToUniversalTime()
         };
 
         await _userManager.CreateAsync(user);
@@ -160,13 +160,10 @@ public class AuthHelper
     /// Login user by LoginModel data
     /// </summary>
     /// <param name="modelData"></param>
-    /// <param name="refreshTokenValidityInDays"></param>
     /// <returns> AccessToken and RefreshToken</returns>
     /// <exception cref="ArgumentException"></exception>
     /// <exception cref="Exception"></exception>
-    public async Task<TokenModel> ModalSignInAsync(
-            LoginModel modelData,
-            int refreshTokenValidityInDays)
+    public async Task<TokenModel> ModalSignInAsync(LoginModel modelData)
     {
 
         var user = await GetUserByLoginAsync(modelData.Login!);
@@ -174,7 +171,7 @@ public class AuthHelper
         if (!await _userManager.CheckPasswordAsync(user, modelData.Password!))
             throw new ArgumentException("Bad login data");
 
-        return await SignInAsync(user, refreshTokenValidityInDays);
+        return await SignInAsync(user);
     }
 
     
@@ -182,23 +179,19 @@ public class AuthHelper
     /// Login user by OAuth data
     /// </summary>
     /// <param name="claims"></param>
-    /// <param name="refreshTokenValidityInDays"></param>
     /// <returns></returns>
-    public async Task<TokenModel> OAuthSignInAsync(
-        Dictionary<string, string> claims, 
-        int refreshTokenValidityInDays)
+    public async Task<TokenModel> OAuthSignInAsync(Dictionary<string, string> claims)
     {
         var email = claims["email"];
 
         User? user;
 
         if(await IsEmailExistAsync(email))
-            user = await CreateOAuthUserAsync(claims, refreshTokenValidityInDays);
+            user = await CreateOAuthUserAsync(claims);
         else 
             user = await _userManager.FindByEmailAsync(email);
 
-        return await SignInAsync(user!, refreshTokenValidityInDays);
-            
+        return await SignInAsync(user!);
     }
 
     /// <summary>
@@ -273,17 +266,6 @@ public class AuthHelper
     }
 
     /// <summary>
-    /// Check if user email is confirmed
-    /// </summary>
-    /// <param name="login"></param>
-    /// <returns></returns>
-    public async Task<bool> IsEmailConfirmedAsync(string login)
-    {
-        var user = await GetUserByLoginAsync(login);
-        return user.EmailConfirmed;
-    }
-
-    /// <summary>
     /// Send two factor verification code to user email
     /// </summary>
     /// <param name="email"></param>
@@ -295,22 +277,46 @@ public class AuthHelper
         await _emailSenderService.SendTwoFactorCodeAsync(user.Email!, token);
     }
 
+    /// <summary>
+    /// Validate two factor verification code
+    /// </summary>
+    /// <param name="email"></param>
+    /// <param name="code"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException"></exception>
+    public async Task<TokenModel> TwoFactorVerificationValidateAsync(string email, string code)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        var result = await _userManager.VerifyTwoFactorTokenAsync(user!, "Email", code);
+        if (!result)
+            throw new ArgumentException("Invalid two factor code");
+
+        return await SignInAsync(user!);
+    }
+    
+    public async Task<User> GetUserByLoginAsync(string login)
+    {
+        var user = login.Contains('@') ? 
+            await _userManager.FindByEmailAsync(login) :
+            await _userManager.FindByNameAsync(login);
+
+        return user ?? throw new ArgumentException("User not found"); 
+    }
+
     public async Task<bool> IsTwoFactorEnabledAsync(string email)
     {
         var user = await GetUserByLoginAsync(email);
         return await _userManager.GetTwoFactorEnabledAsync(user);
     }
 
-    private async Task<TokenModel> SignInAsync( 
-        User user, 
-        int refreshTokenValidityInDays)
+    private async Task<TokenModel> SignInAsync(User user)
     {
         var userRoles = await _userManager.GetRolesAsync(user);
         var token = _tokenManager.GenerateAccessToken(user, userRoles);
 
         user.RefreshToken = _tokenManager.GenerateRefreshToken();
         user.RefreshTokenExpiryTime = DateTime.Now
-            .AddDays(refreshTokenValidityInDays)
+            .AddDays(_jwtSettings.RefreshTokenValidityInDays)
             .ToUniversalTime();
 
         var result = await _userManager.UpdateAsync(user);
@@ -325,15 +331,6 @@ public class AuthHelper
         };
     }
 
-    public async Task<User> GetUserByLoginAsync(string login)
-    {
-        var user = login.Contains('@') ? 
-            await _userManager.FindByEmailAsync(login) :
-            await _userManager.FindByNameAsync(login);
-
-        return user ?? throw new ArgumentException("User not found"); ;
-    }
-
     private async Task<bool> IsUsernameExistAsync(string username)
     {
         return await _userManager.FindByNameAsync(username) is null;
@@ -343,5 +340,4 @@ public class AuthHelper
     {
         return await _userManager.FindByEmailAsync(email) is null;
     }
-
 }

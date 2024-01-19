@@ -1,9 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using AniTalkApi.DataLayer.Models.Enums;
-using AniTalkApi.DataLayer.Models.ManyToMany;
+using AniTalkApi.DataLayer.DbModels.ManyToMany;
 
-namespace AniTalkApi.DataLayer.Models;
+namespace AniTalkApi.DataLayer.DbModels;
 
 public class Title
 {

@@ -3,7 +3,6 @@
 using System.Text;
 using AniTalkApi.CRUD;
 using AniTalkApi.DataLayer.DbModels;
-using AniTalkApi.DataLayer.Models;
 using AniTalkApi.DataLayer.Settings;
 using AniTalkApi.Helpers;
 using AniTalkApi.ServiceLayer;

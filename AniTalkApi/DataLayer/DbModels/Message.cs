@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace AniTalkApi.DataLayer.Models;
+namespace AniTalkApi.DataLayer.DbModels;
 
 public class Message
 {

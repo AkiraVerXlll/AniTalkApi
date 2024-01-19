@@ -2,8 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using AniTalkApi.Helpers;
 using AniTalkApi.DataLayer.Models.Auth;
-using AniTalkApi.DataLayer.Settings;
-using Microsoft.Extensions.Options;
 
 namespace AniTalkApi.Controllers.Auth;
 
@@ -12,20 +10,12 @@ namespace AniTalkApi.Controllers.Auth;
 [Route("/[controller]")]
 public class ModalAuthController : ControllerBase
 {
-    private readonly JwtSettings _jwtSettings;
-
-    private readonly AvatarSettings _avatarSettings;
-
     private readonly AuthHelper _authHelper;
 
     public ModalAuthController(
-        IOptions<JwtSettings> options,
-        IOptions<AvatarSettings> avatarOptions,
         AuthHelper authHelper)
     {
         _authHelper = authHelper;
-        _jwtSettings = options.Value;
-        _avatarSettings = avatarOptions.Value;
     }
 
     [HttpPost]
@@ -33,10 +23,7 @@ public class ModalAuthController : ControllerBase
     public async Task<IActionResult> SignUp([FromBody] RegisterModel modelData)
     {
         await _authHelper
-            .CreateModalUserAsync
-                (modelData, 
-                _avatarSettings.DefaultAvatarId, 
-                _jwtSettings.RefreshTokenValidityInDays);
+            .CreateModalUserAsync(modelData);
 
         return Ok("User created successfully!");
     }
@@ -45,33 +32,42 @@ public class ModalAuthController : ControllerBase
     [Route("sign-in")]
     public async Task<IActionResult> SignIn([FromBody] LoginModel modelData)
     {
-        if(!await _authHelper.IsEmailConfirmedAsync(modelData.Login!))
-            return BadRequest("Email is not confirmed!");
-
-
-        var refreshTokenValidityInDays = _jwtSettings.RefreshTokenValidityInDays;
-        
-        var tokenModel = await _authHelper.ModalSignInAsync(modelData,
-             refreshTokenValidityInDays);
-        
         var user = await _authHelper.GetUserByLoginAsync(modelData.Login!);
 
-        if (!await _authHelper.IsTwoFactorEnabledAsync(user.Email!))
-            return Ok(tokenModel);
+        if(!user.EmailConfirmed)
+            return BadRequest("Email is not confirmed!");
 
-        HttpContext.Response.Cookies.Append("Email", user.Email!);
-        return StatusCode(300, "Redirect to two-factor authentication");
+        if (await _authHelper.IsTwoFactorEnabledAsync(user.Email!))
+        {
+            HttpContext.Response.Cookies.Append("Email", user.Email!);
+            return StatusCode(300, "Redirect to two-factor authentication");
+        }
+        
+        var tokenModel = await _authHelper.ModalSignInAsync(modelData);
+        
+        return Ok(tokenModel);
     }
 
     [HttpPost]
-    [Route("two-factor-verification")]
-    public async Task<IActionResult> TwoFactorVerification()
+    [Route("send-two-factor-code")]
+    public async Task<IActionResult> SendTwoFactorCode()
     {
         var email = HttpContext.Request.Cookies["Email"];
         if (email == null)
             return StatusCode(300, "Redirect to login");
         await _authHelper.SendTwoFactorCodeAsync(email);
         return Ok("Two factor verification code is sent");
+    }
+
+    [HttpPost]
+    [Route("two-factor-verification-validate")]
+    public async Task<IActionResult> TwoFactorVerificationValidate(string code)
+    {
+        var email = HttpContext.Request.Cookies["Email"];
+        if (email == null)
+            return StatusCode(300, "Redirect to login");
+        var tokenModel = await _authHelper.TwoFactorVerificationValidateAsync(email, code);
+        return Ok(tokenModel);
     }
 
     [HttpPost]
@@ -101,7 +97,7 @@ public class ModalAuthController : ControllerBase
     [Route("sign-out")]
     public async Task<IActionResult> SignOut(TokenModel? tokenModel)
     {
-        
+        await _authHelper.SignOutAsync(tokenModel);
         return Ok("User signed out successfully!");
     }
 }

@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using AniTalkApi.DataLayer.Models.Enums;
-using AniTalkApi.DataLayer.Models.ManyToMany;
+using AniTalkApi.DataLayer.DbModels.Enums;
+using AniTalkApi.DataLayer.DbModels.ManyToMany;
 using Microsoft.AspNetCore.Identity;
 
-namespace AniTalkApi.DataLayer.Models;
+namespace AniTalkApi.DataLayer.DbModels;
 
 public class User : IdentityUser
 {

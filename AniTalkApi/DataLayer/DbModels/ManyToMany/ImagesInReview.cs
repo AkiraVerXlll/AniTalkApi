@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace AniTalkApi.DataLayer.Models.ManyToMany;
+namespace AniTalkApi.DataLayer.DbModels.ManyToMany;
 
 public class ImagesInReview
 {

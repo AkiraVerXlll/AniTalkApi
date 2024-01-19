@@ -1,11 +1,9 @@
-﻿using AniTalkApi.DataLayer.Models;
-using AniTalkApi.DataLayer.Models.Enums;
-using AniTalkApi.DataLayer.Models.ManyToMany;
+﻿using AniTalkApi.DataLayer.DbModels.Enums;
+using AniTalkApi.DataLayer.DbModels.ManyToMany;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Image = AniTalkApi.DataLayer.Models.Image;
 
 namespace AniTalkApi.DataLayer.DbModels;
 

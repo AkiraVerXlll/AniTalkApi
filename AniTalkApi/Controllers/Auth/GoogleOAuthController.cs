@@ -71,9 +71,8 @@ public class GoogleOAuthController : ControllerBase
             .ToDictionary(keySelector: claim => claim.Type, 
                 elementSelector: claim => claim.Value);
 
-        var refreshTokenValidityInDays = _jwtSettings.RefreshTokenValidityInDays;
         var tokenModel = await _authHelper
-            .OAuthSignInAsync(claims, refreshTokenValidityInDays);
+            .OAuthSignInAsync(claims);
 
         return Ok(tokenModel);
     }

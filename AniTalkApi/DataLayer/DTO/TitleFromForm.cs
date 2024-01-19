@@ -1,5 +1,5 @@
-﻿using AniTalkApi.DataLayer.Models.Enums;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using AniTalkApi.DataLayer.DbModels.Enums;
 
 namespace AniTalkApi.DataLayer.DTO;
 

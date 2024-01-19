@@ -5,7 +5,6 @@ using System.Security.Cryptography;
 using System.Text;
 using AniTalkApi.DataLayer.Settings;
 using AniTalkApi.Filters;
-using AniTalkApi.Helpers;
 using AniTalkApi.ServiceLayer.AuthServices.OAuthServices;
 using AniTalkApi.ServiceLayer.AuthServices.SignInServices;
 using AniTalkApi.ServiceLayer.CryptoGeneratorServices;

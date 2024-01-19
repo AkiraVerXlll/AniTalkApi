@@ -80,7 +80,7 @@ public class Program
             (options => builder.Configuration.GetSection("GoogleOAuth2.0Settings").Bind(options));
         builder.Services.Configure<AvatarSettings>
             (options => builder.Configuration.GetSection("AvatarSettings").Bind(options));
-        builder.Services.Configure<ModalAuthSettings>(
+        builder.Services.Configure<AuthSettings>(
             options => builder.Configuration.GetSection("ModalAuth").Bind(options));
 
         var app = builder.Build();

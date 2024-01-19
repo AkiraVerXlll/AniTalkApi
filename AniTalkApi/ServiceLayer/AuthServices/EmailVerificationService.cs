@@ -11,7 +11,7 @@ public class EmailVerificationService
 {
     private readonly UserManager<User> _userManager;
 
-    private readonly ModalAuthSettings _modalAuthSettings;
+    private readonly AuthSettings _modalAuthSettings;
 
     private readonly IEmailSenderService _emailSender;
 
@@ -19,7 +19,7 @@ public class EmailVerificationService
 
     public EmailVerificationService(
         UserManager<User> userManager,
-        IOptions<ModalAuthSettings> modalAuthOptions,
+        IOptions<AuthSettings> modalAuthOptions,
         IOptions<SendGridSettings> sendGridOptions,
         IEmailSenderService emailSender)
     {

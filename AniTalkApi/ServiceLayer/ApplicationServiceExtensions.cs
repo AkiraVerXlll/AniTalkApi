@@ -26,6 +26,7 @@ public static class ApplicationServiceExtensions
         services.AddScoped<ModalSignUpService, ModalSignUpService>();
         services.AddScoped<GoogleOAuthService, GoogleOAuthService>();
         services.AddScoped<TokenManagerService,  TokenManagerService>();
+        services.AddScoped<ResetPasswordService,  ResetPasswordService>();
     }
 
     public static void AddCryptoGeneratorService(this IServiceCollection services)

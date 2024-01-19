@@ -12,5 +12,7 @@ public class SendGridSettings
     {
         public string? EmailConfirmation { get; init; }
         public string? TwoFactorVerification { get; init; }
+
+        public string? ResetPassword { get; init; }
     }
 }

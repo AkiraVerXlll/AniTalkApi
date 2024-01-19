@@ -30,7 +30,7 @@ public class TwoFactorVerificationService
         _oAuthSignIn = oAuthSignIn;
     }
 
-    public async Task SendTwoFactorCodeAsync(string email)
+    public async Task SendCodeAsync(string email)
     {
         var user = await _userManager.FindByEmailAsync(email);
         if (user is null)
@@ -44,7 +44,7 @@ public class TwoFactorVerificationService
     }
 
 
-    public async Task<TokenModel> TwoFactorVerificationValidateAsync(string email, string code)
+    public async Task<TokenModel> ValidateCodeAsync(string email, string code)
     {
         var user = await _userManager.FindByEmailAsync(email);
         var result = await _userManager.VerifyTwoFactorTokenAsync(user!, "Email", code);
@@ -57,7 +57,7 @@ public class TwoFactorVerificationService
         return await _oAuthSignIn.SignInAsync(claims);
     }
 
-    public async Task<bool> IsTwoFactorEnabledAsync(string email)
+    public async Task<bool> IsEnabledAsync(string email)
     {
         var user = await _userManager.FindByEmailAsync(email);
         if (user is null)

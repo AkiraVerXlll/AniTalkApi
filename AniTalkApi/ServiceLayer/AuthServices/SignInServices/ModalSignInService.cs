@@ -1,7 +1,6 @@
 ﻿using AniTalkApi.DataLayer.DbModels;
 using AniTalkApi.DataLayer.Models.Auth;
 using AniTalkApi.DataLayer.Settings;
-using AniTalkApi.ServiceLayer.TokenManagerServices;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 
@@ -12,7 +11,7 @@ public class ModalSignInService : BaseSignInService
     public ModalSignInService(
         UserManager<User> userManager, 
         IOptions<JwtSettings> options, 
-        ITokenManagerService tokenManager) : base(userManager, options, tokenManager) { }
+        TokenManagerService tokenManager) : base(userManager, options, tokenManager) { }
 
     public override async Task<TokenModel> SignInAsync(Dictionary<string, string> claims)
     {

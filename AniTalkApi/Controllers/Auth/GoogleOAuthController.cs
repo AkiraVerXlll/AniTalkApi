@@ -7,6 +7,7 @@ using AniTalkApi.DataLayer.Settings;
 using AniTalkApi.Filters;
 using AniTalkApi.Helpers;
 using AniTalkApi.ServiceLayer.AuthServices.OAuthServices;
+using AniTalkApi.ServiceLayer.AuthServices.SignInServices;
 using AniTalkApi.ServiceLayer.CryptoGeneratorServices;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -21,25 +22,25 @@ public class GoogleOAuthController : ControllerBase
 {
     private readonly ICryptoGeneratorService _cryptoGenerator;
     
-    private readonly GoogleOAuthService _googleOAuthService;
+    private readonly GoogleOAuthService _googleOAuth;
 
     private readonly JwtSettings _jwtSettings;
 
     private readonly JwtSecurityTokenHandler _tokenHandler = new();
 
-    private readonly AuthHelper _authHelper;
+    private readonly OAuthSignInService _oAuthSignIn;
 
     public GoogleOAuthController(
-        GoogleOAuthService googleOAuthService,
+        GoogleOAuthService googleOAuth,
         ICryptoGeneratorService cryptoGenerator,
         IOptions<JwtSettings> options,
-        AuthHelper authHelper
+        OAuthSignInService oAuthSignIn
         )
     {
         _jwtSettings = options.Value;
         _cryptoGenerator = cryptoGenerator;
-        _googleOAuthService = googleOAuthService;
-        _authHelper = authHelper;
+        _googleOAuth = googleOAuth;
+        _oAuthSignIn = oAuthSignIn;
     }
 
     [HttpGet]
@@ -53,7 +54,7 @@ public class GoogleOAuthController : ControllerBase
 
         HttpContext.Session.SetString("code_verifier", codeVerifier);
 
-        var url = _googleOAuthService.GetOAuthUrl(scope, codeChallenge);
+        var url = _googleOAuth.GetOAuthUrl(scope, codeChallenge);
         return Ok(url);
     }
 
@@ -63,7 +64,7 @@ public class GoogleOAuthController : ControllerBase
     {
         var codeVerifier = HttpContext.Session.GetString("code_verifier");
 
-        var idToken = await _googleOAuthService
+        var idToken = await _googleOAuth
             .ExchangeCodeToIdTokenAsync(code, codeVerifier!);
 
         var claims = _tokenHandler.ReadJwtToken(idToken)
@@ -71,8 +72,7 @@ public class GoogleOAuthController : ControllerBase
             .ToDictionary(keySelector: claim => claim.Type, 
                 elementSelector: claim => claim.Value);
 
-        var tokenModel = await _authHelper
-            .OAuthSignInAsync(claims);
+        var tokenModel = await _oAuthSignIn.SignInAsync(claims);
 
         return Ok(tokenModel);
     }

@@ -2,7 +2,6 @@
 using AniTalkApi.DataLayer.Models.Auth;
 using System.IdentityModel.Tokens.Jwt;
 using AniTalkApi.DataLayer.Settings;
-using AniTalkApi.ServiceLayer.TokenManagerServices;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 
@@ -14,12 +13,12 @@ public abstract class BaseSignInService
 
     protected readonly JwtSettings JwtSettings;
 
-    protected readonly ITokenManagerService TokenManager;
+    protected readonly TokenManagerService TokenManager;
 
     protected BaseSignInService(
         UserManager<User> userManager,
         IOptions<JwtSettings> options,
-        ITokenManagerService tokenManager)
+        TokenManagerService tokenManager)
     {
         UserManager = userManager;
         JwtSettings = options.Value;

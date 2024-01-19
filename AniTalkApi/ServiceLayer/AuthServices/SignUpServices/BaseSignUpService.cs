@@ -24,7 +24,7 @@ public abstract class BaseSignUpService
         _jwtSettings = jwtOptions.Value;
     }
 
-    public abstract Task<User> SignUpAsync<T>(T signUpData);
+    public abstract Task<User> SignUpAsync(Dictionary<string, string> claims);
 
     protected User CreateUserStrategy(string email, string username, Image? avatar = null)
     {

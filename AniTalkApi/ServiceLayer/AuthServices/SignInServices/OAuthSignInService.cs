@@ -2,7 +2,6 @@
 using AniTalkApi.DataLayer.Models.Auth;
 using AniTalkApi.DataLayer.Settings;
 using AniTalkApi.ServiceLayer.AuthServices.SignUpServices;
-using AniTalkApi.ServiceLayer.TokenManagerServices;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 
@@ -15,7 +14,7 @@ public class OAuthSignInService : BaseSignInService
     public OAuthSignInService(
         UserManager<User> userManager,
         IOptions<JwtSettings> options,
-        ITokenManagerService tokenManager, 
+        TokenManagerService tokenManager, 
         OAuthSignUpService oAuthSignUp) : base(userManager, options, tokenManager)
     {
         _oAuthSignUp = oAuthSignUp;

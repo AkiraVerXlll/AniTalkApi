@@ -1,6 +1,4 @@
 ﻿using AniTalkApi.DataLayer.DbModels;
-using AniTalkApi.DataLayer.DbModels.Enums;
-using AniTalkApi.DataLayer.Models.Auth;
 using AniTalkApi.DataLayer.Settings;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
@@ -20,24 +18,24 @@ public class ModalSignUpService : BaseSignUpService
         _emailVerificationService = emailVerificationService;
     }
 
-    public override async Task<User> SignUpAsync<T>(T signUpData)
+    public override async Task<User> SignUpAsync(Dictionary<string, string> claims)
     {
-        if (signUpData is not SignUpFormModel modelData)
-            throw new ArgumentException("Invalid sign up data type!");
+        var email = claims["email"];
+        var username = claims["username"];
+        var password = claims["password"];
 
-        if (await UserManager.FindByEmailAsync(modelData.Email!) is not null)
+        if (await UserManager.FindByEmailAsync(email) is not null)
             throw new ArgumentException("User with this email already exists!");
 
-        var username = modelData.Username!;
         var normalizedName = UserManager.KeyNormalizer.NormalizeName(username);
 
-        if (await UserManager.FindByNameAsync(modelData.Username!) is not null ||
+        if (await UserManager.FindByNameAsync(username) is not null ||
             normalizedName.StartsWith("USER-"))
             throw new ArgumentException("User with this username already exists!");
 
-        var user = CreateUserStrategy(modelData.Email!, modelData.Username!);
+        var user = CreateUserStrategy(email, username);
 
-        var result = await UserManager.CreateAsync(user, modelData.Password!);
+        var result = await UserManager.CreateAsync(user, password);
         if (!result.Succeeded)
             throw new ArgumentException($"User creation failed! {result.Errors.First().Description}");
 

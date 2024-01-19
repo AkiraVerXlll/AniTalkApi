@@ -19,11 +19,8 @@ public class OAuthSignUpService : BaseSignUpService
         _imageCrud = imageCrud;
     }
 
-    public override async Task<User> SignUpAsync<T>(T signUpData)
+    public override async Task<User> SignUpAsync(Dictionary<string, string> claims)
     {
-        if(signUpData is not Dictionary<string, string> claims)
-            throw new ArgumentException("Invalid sign up data type!");
-
         var avatarExternalUrl = claims["picture"];
         var avatar = await _imageCrud
             .CreateAvatarAsync(avatarExternalUrl);

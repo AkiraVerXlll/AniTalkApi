@@ -6,9 +6,4 @@ public static class ApplicationHelpersExtension
     {
         services.AddSingleton<HttpClientHelper>();
     }
-
-    public static void AddAuthHelper(this IServiceCollection services)
-    {
-        services.AddScoped<AuthHelper>();
-    }
 }

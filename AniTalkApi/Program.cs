@@ -31,14 +31,11 @@ public class Program
             .AddDefaultTokenProviders();
 
         builder.Services.AddHttpClientHelper();
-        builder.Services.AddAuthHelper();
         builder.Services.AddEmailSenderService();
         builder.Services.AddCrud();
-        builder.Services.AddPhotoValidatorService();
-        builder.Services.AddCloudinaryPhotoLoaderService();
-        builder.Services.AddTokenManagerService();
         builder.Services.AddCryptoGeneratorService();
-        builder.Services.AddGoogleOAuthService();
+        builder.Services.AddAuthServices();
+        builder.Services.AddPhotoServices();
 
         builder.Services.AddAuthentication(options =>
         {

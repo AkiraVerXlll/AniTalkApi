@@ -26,8 +26,17 @@ public abstract class BaseSignUpService
 
     public abstract Task<User> SignUpAsync<T>(T signUpData);
 
-    protected User CreateUserStrategy(string email, string username)
+    protected User CreateUserStrategy(string email, string username, Image? avatar = null)
     {
+        var personalInformation = avatar is null
+            ? new PersonalInformation()
+            {
+                AvatarId = _avatarSettings.DefaultAvatarId,
+            }
+            : new PersonalInformation()
+            {
+                Avatar = avatar,
+            };
         var user = new User()
         {
             Email = email,
@@ -35,13 +44,11 @@ public abstract class BaseSignUpService
             DateOfRegistration = DateTime.Now,
             SecurityStamp = Guid.NewGuid().ToString(),
             Status = UserStatus.Online,
-            PersonalInformation = new PersonalInformation()
-            {
-                AvatarId = _avatarSettings.DefaultAvatarId
-            },
+            PersonalInformation = personalInformation,
             RefreshTokenExpiryTime =
                 DateTime.Now.AddDays(_jwtSettings.RefreshTokenValidityInDays).ToUniversalTime()
         };
+
         return user;
     }
 }

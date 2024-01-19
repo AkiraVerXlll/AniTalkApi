@@ -9,10 +9,16 @@ namespace AniTalkApi.ServiceLayer.AuthServices.SignUpServices;
 
 public class ModalSignUpService : BaseSignUpService
 {
+    private readonly EmailVerificationService _emailVerificationService;
+
     public ModalSignUpService(
-        UserManager<User> userManager, 
-        IOptions<AvatarSettings> avatarOptions, 
-        IOptions<JwtSettings> jwtOptions) : base(userManager, avatarOptions, jwtOptions) {}
+        UserManager<User> userManager,
+        IOptions<AvatarSettings> avatarOptions,
+        IOptions<JwtSettings> jwtOptions,
+        EmailVerificationService emailVerificationService) : base(userManager, avatarOptions, jwtOptions)
+    {
+        _emailVerificationService = emailVerificationService;
+    }
 
     public override async Task<User> SignUpAsync<T>(T signUpData)
     {
@@ -25,7 +31,7 @@ public class ModalSignUpService : BaseSignUpService
         var username = modelData.Username!;
         var normalizedName = UserManager.KeyNormalizer.NormalizeName(username);
 
-        if (await UserManager.FindByNameAsync(modelData.Username!) is not null || 
+        if (await UserManager.FindByNameAsync(modelData.Username!) is not null ||
             normalizedName.StartsWith("USER-"))
             throw new ArgumentException("User with this username already exists!");
 
@@ -36,7 +42,7 @@ public class ModalSignUpService : BaseSignUpService
             throw new ArgumentException($"User creation failed! {result.Errors.First().Description}");
 
         await UserManager.AddToRoleAsync(user, UserRoles.User);
-        await SendVerificationLink(user.Email!);
+        await _emailVerificationService.SendVerificationLink(user.Email!);
         return user;
     }
 }

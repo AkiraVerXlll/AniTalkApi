@@ -26,16 +26,8 @@ public abstract class BaseSignInService
         TokenManager = tokenManager;
     }
 
-    /// <summary>
-    ///  Sign in user and return access and refresh tokens
-    /// </summary>
-    /// <typeparam name="T">Type of signIn data</typeparam>
-    /// <param name="signInData"></param>
-    /// <returns></returns>
-    /// <exception cref="Exception"></exception>
-    public async Task<TokenModel> SignInAsync<T>(T signInData)
+    protected async Task<TokenModel> SignInAsyncStrategy(User user)
     {
-        var user = await SignInTemplate(signInData);
         var userRoles = await UserManager.GetRolesAsync(user);
         var token = TokenManager.GenerateAccessToken(user, userRoles);
 
@@ -56,5 +48,5 @@ public abstract class BaseSignInService
         };
     }
 
-    protected abstract Task<User> SignInTemplate<T>(T signInData);
+    public abstract Task<TokenModel> SignIn(Dictionary<string, string> claims);
 }

@@ -14,12 +14,9 @@ public class ModalSignInService : BaseSignInService
         IOptions<JwtSettings> options, 
         ITokenManagerService tokenManager) : base(userManager, options, tokenManager) { }
 
-    protected override async Task<User> SignInTemplate<T>(T signInData)
+    public override async Task<TokenModel> SignIn(Dictionary<string, string> claims)
     {
-        if (signInData is not LoginFormModel loginFormModel)
-            throw new Exception("Invalid sign in data");
-
-        var login = loginFormModel.Login!;
+        var login = claims["login"];
         var user = login.Contains('@') ?
             await UserManager.FindByEmailAsync(login) :
             await UserManager.FindByNameAsync(login);
@@ -27,9 +24,9 @@ public class ModalSignInService : BaseSignInService
         if (user is null)
             throw new ArgumentException("Bad login data");
 
-        if (!await UserManager.CheckPasswordAsync(user, loginFormModel.Password!))
+        if (!await UserManager.CheckPasswordAsync(user, claims["password"]))
             throw new ArgumentException("Bad login data");
 
-        return user;
+        return await SignInAsyncStrategy(user);
     }
 }

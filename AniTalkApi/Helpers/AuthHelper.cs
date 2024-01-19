@@ -86,42 +86,6 @@ public class AuthHelper
     }
 
 
-
-    /// <summary>
-    /// Creates user in database by OAuth data
-    /// </summary>
-    /// <param name="claims"></param>
-    /// <returns>Created user</returns>
-    public async Task<User> CreateOAuthUserAsync(Dictionary<string, string> claims)
-    {
-        var avatarExternalUrl = claims["picture"];
-        var avatar = await _imageCrud
-            .CreateAsync(avatarExternalUrl, _cloudinarySettings.Paths!.Avatar!);
-
-        var username = claims["name"];
-        if (!await IsUsernameExistAsync(username))
-            username = $"user-7200{_userManager.Users.Count()+1}";
-
-        var user = new User
-        {
-            Email = claims["email"],
-            UserName = username,
-            PersonalInformation = new PersonalInformation()
-            {
-                Avatar = avatar,
-            },
-            DateOfRegistration = DateTime.Now,
-            Status = UserStatus.Online,
-            EmailConfirmed = true,
-            RefreshTokenExpiryTime = 
-                DateTime.Now.AddDays(_jwtSettings.RefreshTokenValidityInDays).ToUniversalTime()
-        };
-
-        await _userManager.CreateAsync(user);
-        return user;
-    }
-
-
     /// <summary>
     /// Logout user
     /// </summary>
@@ -158,89 +122,8 @@ public class AuthHelper
         };
     }
 
-    /// <summary>
-    /// Send verification link to user email
-    /// </summary>
-    /// <param name="email"></param>
-    /// <returns></returns>
-    /// <exception cref="Exception"></exception>
-    public async Task SendVerificationLink(string email)
-    {
-        var user = await _userManager.FindByEmailAsync(email);
-        var token = await _userManager.GenerateEmailConfirmationTokenAsync(user!);
-        token = Convert.ToBase64String(Encoding.UTF8.GetBytes(token));
-        var confirmationLink = $"{_modalAuthSettings.EmailConfirmationLink}?email={email}&token={token}";
 
-        await _emailSenderService.SendTemplateEmailAsync(
-            email,
-            _sendGridSettings.EmailTemplates!.EmailConfirmation!,
-            new { Link = confirmationLink });
-    }
 
-    /// <summary>
-    /// Verify user email
-    /// </summary>
-    /// <param name="email"></param>
-    /// <param name="token"></param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentException"></exception>
-    public async Task VerifyEmailAsync(string email, string token)
-    {
-        token = Encoding.UTF8.GetString(Convert.FromBase64String(token));
-        var user = await _userManager.FindByEmailAsync(email);
-        if (user is null)
-            throw new ArgumentException("User not found");
 
-        var result = await _userManager.ConfirmEmailAsync(user, token);
-        if (!result.Succeeded)
-            throw new ArgumentException("Email confirmation failed");
-    }
 
-    /// <summary>
-    /// Send two factor verification code to user email
-    /// </summary>
-    /// <param name="email"></param>
-    /// <returns></returns>
-    public async Task SendTwoFactorCodeAsync(string email)
-    {
-        var user = await GetUserByLoginAsync(email);
-        var token = await _userManager.GenerateTwoFactorTokenAsync(user, "Email");
-        await _emailSenderService.SendTemplateEmailAsync(
-            user.Email!, 
-            _sendGridSettings.EmailTemplates!.TwoFactorVerification!, 
-            new {Code = token});
-    }
-
-    /// <summary>
-    /// Validate two factor verification code
-    /// </summary>
-    /// <param name="email"></param>
-    /// <param name="code"></param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentException"></exception>
-    public async Task<TokenModel> TwoFactorVerificationValidateAsync(string email, string code)
-    {
-        var user = await _userManager.FindByEmailAsync(email);
-        var result = await _userManager.VerifyTwoFactorTokenAsync(user!, "Email", code);
-        if (!result)
-            throw new ArgumentException("Invalid two factor code");
-
-        return await SignInAsync(user!);
-    }
-
-    public async Task<bool> IsTwoFactorEnabledAsync(string email)
-    {
-        var user = await GetUserByLoginAsync(email);
-        return await _userManager.GetTwoFactorEnabledAsync(user);
-    }
-
-    private async Task<bool> IsUsernameExistAsync(string username)
-    {
-        return await _userManager.FindByNameAsync(username) is null;
-    }
-
-    private async Task<bool> IsEmailExistAsync(string email)
-    {
-        return await _userManager.FindByEmailAsync(email) is null;
-    }
 }

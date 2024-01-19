@@ -1,7 +1,9 @@
 ﻿using AniTalkApi.DataLayer.Models;
 using AniTalkApi.Helpers;
 using AniTalkApi.DataLayer.DbModels;
+using AniTalkApi.DataLayer.Settings;
 using AniTalkApi.ServiceLayer.PhotoServices.PhotoUploaderServices;
+using Microsoft.Extensions.Options;
 
 namespace AniTalkApi.CRUD;
 
@@ -11,13 +13,17 @@ public class ImageCrud : BaseCrud
 
     private readonly HttpClientHelper _httpClient;
 
+    private readonly CloudinarySettings _cloudinarySettings;
+
     public ImageCrud(
         AniTalkDbContext dbContext, 
         IPhotoUploaderService photoUploader,
-        HttpClientHelper httpClient) : base(dbContext)
+        HttpClientHelper httpClient,
+        IOptions<CloudinarySettings> cloudinaryOptions) : base(dbContext)
     {
         _photoUploader = photoUploader;
         _httpClient = httpClient;
+        _cloudinarySettings = cloudinaryOptions.Value;
     }
 
     public async Task<Image> CreateAsync(IFormFile uploadedFile, string folder = null!)
@@ -41,5 +47,10 @@ public class ImageCrud : BaseCrud
             .GetImageAsFormFileAsync(externalUrl);
 
         return await CreateAsync(avatar, folder);
+    }
+
+    public async Task<Image> CreateAvatarAsync(string externalUrl)
+    {
+        return await CreateAsync(externalUrl, _cloudinarySettings.Paths!.Avatar!);
     }
 }

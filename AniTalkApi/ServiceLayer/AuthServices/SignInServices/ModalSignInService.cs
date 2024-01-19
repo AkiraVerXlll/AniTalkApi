@@ -14,7 +14,7 @@ public class ModalSignInService : BaseSignInService
         IOptions<JwtSettings> options, 
         ITokenManagerService tokenManager) : base(userManager, options, tokenManager) { }
 
-    public override async Task<TokenModel> SignIn(Dictionary<string, string> claims)
+    public override async Task<TokenModel> SignInAsync(Dictionary<string, string> claims)
     {
         var login = claims["login"];
         var user = login.Contains('@') ?

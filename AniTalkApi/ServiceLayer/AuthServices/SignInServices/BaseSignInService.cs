@@ -48,5 +48,5 @@ public abstract class BaseSignInService
         };
     }
 
-    public abstract Task<TokenModel> SignIn(Dictionary<string, string> claims);
+    public abstract Task<TokenModel> SignInAsync(Dictionary<string, string> claims);
 }

@@ -21,7 +21,7 @@ public class OAuthSignInService : BaseSignInService
         _oAuthSignUp = oAuthSignUp;
     }
 
-    public override async Task<TokenModel> SignIn(Dictionary<string, string> claims)
+    public override async Task<TokenModel> SignInAsync(Dictionary<string, string> claims)
     {
         var email = claims["email"];
 

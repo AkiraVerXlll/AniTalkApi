@@ -1,7 +1,6 @@
-﻿using AniTalkApi.ServiceLayer.PhotoServices.Interfaces;
-using SixLabors.ImageSharp;
+﻿using SixLabors.ImageSharp;
 
-namespace AniTalkApi.ServiceLayer.PhotoServices.Implementations;
+namespace AniTalkApi.ServiceLayer.PhotoServices.PhotoValidatorServices;
 
 /// <summary>
 /// This service validates image.

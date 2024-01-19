@@ -2,7 +2,7 @@
 
 namespace AniTalkApi.DataLayer.Models.Auth;
 
-public class RegisterModel
+public class SignUpFormModel
 {
     [Required]
     public string? Email { get; set; }

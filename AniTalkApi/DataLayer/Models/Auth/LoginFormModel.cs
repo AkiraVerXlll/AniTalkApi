@@ -2,7 +2,7 @@
 
 namespace AniTalkApi.DataLayer.Models.Auth;
 
-public class LoginModel
+public class LoginFormModel
 {
     [Required]
     public string? Login { get; init; }

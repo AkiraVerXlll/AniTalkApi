@@ -1,4 +1,4 @@
-﻿namespace AniTalkApi.ServiceLayer.PhotoServices.Interfaces;
+﻿namespace AniTalkApi.ServiceLayer.PhotoServices.PhotoValidatorServices;
 
 /// <summary>
 /// Services that implemented validate image.

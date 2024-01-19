@@ -85,46 +85,7 @@ public class AuthHelper
         };
     }
 
-    /// <summary>
-    /// Creates user in database by LoginModel data
-    /// </summary>
-    /// <param name="modelData"></param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentException">If user is already exist</exception>
-    /// <exception cref="Exception">Exception while adding user to the database</exception>
-    public async Task CreateModalUserAsync(RegisterModel modelData)
-    {
-        if (!await IsEmailExistAsync(modelData.Email!))
-            throw new ArgumentException("User with this email already exists!");
 
-        var username = modelData.Username!;
-        var normalizedName = _userManager.KeyNormalizer.NormalizeName(username);
-
-        if (!await IsUsernameExistAsync(username) || normalizedName.StartsWith("USER-"))
-            throw new ArgumentException("User with this username already exists!");
-
-        User user = new()
-        {
-            Email = modelData.Email,
-            UserName = username,
-            DateOfRegistration = DateTime.Now,
-            SecurityStamp = Guid.NewGuid().ToString(),
-            Status = UserStatus.Online,
-            PersonalInformation = new PersonalInformation()
-            {
-                AvatarId = _avatarSettings.DefaultAvatarId
-            },
-            RefreshTokenExpiryTime = 
-                DateTime.Now.AddDays(_jwtSettings.RefreshTokenValidityInDays).ToUniversalTime()
-        };
-
-        var result = await _userManager.CreateAsync(user, modelData.Password!);
-        if (!result.Succeeded)
-            throw new ArgumentException($"User creation failed! {result.Errors.First().Description}");
-
-        await _userManager.AddToRoleAsync(user, UserRoles.User);
-        await SendVerificationLink(user.Email!);
-    }
 
     /// <summary>
     /// Creates user in database by OAuth data
@@ -160,43 +121,6 @@ public class AuthHelper
         return user;
     }
 
-    /// <summary>
-    /// Login user by LoginModel data
-    /// </summary>
-    /// <param name="modelData"></param>
-    /// <returns> AccessToken and RefreshToken</returns>
-    /// <exception cref="ArgumentException"></exception>
-    /// <exception cref="Exception"></exception>
-    public async Task<TokenModel> ModalSignInAsync(LoginModel modelData)
-    {
-
-        var user = await GetUserByLoginAsync(modelData.Login!);
-
-        if (!await _userManager.CheckPasswordAsync(user, modelData.Password!))
-            throw new ArgumentException("Bad login data");
-
-        return await SignInAsync(user);
-    }
-
-    
-    /// <summary>
-    /// Login user by OAuth data
-    /// </summary>
-    /// <param name="claims"></param>
-    /// <returns></returns>
-    public async Task<TokenModel> OAuthSignInAsync(Dictionary<string, string> claims)
-    {
-        var email = claims["email"];
-
-        User? user;
-
-        if(await IsEmailExistAsync(email))
-            user = await CreateOAuthUserAsync(claims);
-        else 
-            user = await _userManager.FindByEmailAsync(email);
-
-        return await SignInAsync(user!);
-    }
 
     /// <summary>
     /// Logout user
@@ -303,42 +227,11 @@ public class AuthHelper
 
         return await SignInAsync(user!);
     }
-    
-    public async Task<User> GetUserByLoginAsync(string login)
-    {
-        var user = login.Contains('@') ? 
-            await _userManager.FindByEmailAsync(login) :
-            await _userManager.FindByNameAsync(login);
-
-        return user ?? throw new ArgumentException("User not found"); 
-    }
 
     public async Task<bool> IsTwoFactorEnabledAsync(string email)
     {
         var user = await GetUserByLoginAsync(email);
         return await _userManager.GetTwoFactorEnabledAsync(user);
-    }
-
-    private async Task<TokenModel> SignInAsync(User user)
-    {
-        var userRoles = await _userManager.GetRolesAsync(user);
-        var token = _tokenManager.GenerateAccessToken(user, userRoles);
-
-        user.RefreshToken = _tokenManager.GenerateRefreshToken();
-        user.RefreshTokenExpiryTime = DateTime.Now
-            .AddDays(_jwtSettings.RefreshTokenValidityInDays)
-            .ToUniversalTime();
-
-        var result = await _userManager.UpdateAsync(user);
-        if (!result.Succeeded)
-            throw new Exception("Error while updating user data");
-
-        return new TokenModel
-        {
-            AccessToken = new JwtSecurityTokenHandler().WriteToken(token),
-            RefreshToken = user.RefreshToken,
-            ExpiresIn = token.ValidTo
-        };
     }
 
     private async Task<bool> IsUsernameExistAsync(string username)

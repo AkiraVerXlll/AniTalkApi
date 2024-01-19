@@ -20,7 +20,7 @@ public class ModalAuthController : ControllerBase
 
     [HttpPost]
     [Route("sign-up")]
-    public async Task<IActionResult> SignUp([FromBody] RegisterModel modelData)
+    public async Task<IActionResult> SignUp([FromBody] SignUpFormModel modelData)
     {
         await _authHelper
             .CreateModalUserAsync(modelData);
@@ -30,9 +30,9 @@ public class ModalAuthController : ControllerBase
 
     [HttpPost]
     [Route("sign-in")]
-    public async Task<IActionResult> SignIn([FromBody] LoginModel modelData)
+    public async Task<IActionResult> SignIn([FromBody] LoginFormModel formModelData)
     {
-        var user = await _authHelper.GetUserByLoginAsync(modelData.Login!);
+        var user = await _authHelper.GetUserByLoginAsync(formModelData.Login!);
 
         if(!user.EmailConfirmed)
             return BadRequest("Email is not confirmed!");
@@ -43,7 +43,7 @@ public class ModalAuthController : ControllerBase
             return StatusCode(300, "Redirect to two-factor authentication");
         }
         
-        var tokenModel = await _authHelper.ModalSignInAsync(modelData);
+        var tokenModel = await _authHelper.ModalSignInAsync(formModelData);
         
         return Ok(tokenModel);
     }

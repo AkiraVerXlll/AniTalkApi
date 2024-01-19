@@ -1,10 +1,10 @@
 ﻿using AniTalkApi.DataLayer.Settings;
-using AniTalkApi.ServiceLayer.PhotoServices.Interfaces;
+using AniTalkApi.ServiceLayer.PhotoServices.PhotoValidatorServices;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Microsoft.Extensions.Options;
 
-namespace AniTalkApi.ServiceLayer.PhotoServices.Implementations;
+namespace AniTalkApi.ServiceLayer.PhotoServices.PhotoUploaderServices;
 
 /// <summary>
 /// This service uploads photos to Cloudinary.
@@ -24,8 +24,8 @@ public class CloudinaryPhotoUploaderService : IPhotoUploaderService
         var cloudinarySettings = cloudinaryOptions.Value;
 
         _cloudinary = new Cloudinary(new Account(
-            cloudinarySettings.CloudName, 
-            cloudinarySettings.ApiKey, 
+            cloudinarySettings.CloudName,
+            cloudinarySettings.ApiKey,
             cloudinarySettings.ApiSecret));
     }
 
@@ -46,12 +46,12 @@ public class CloudinaryPhotoUploaderService : IPhotoUploaderService
     /// </exception>
     public async Task<string> UploadAsync(IFormFile file, string? path)
     {
-        if (!_validator.IsImage(file)) 
+        if (!_validator.IsImage(file))
             throw new ArgumentException("Form file isn`t a image");
 
         await using var stream = file.OpenReadStream();
 
-        path = path is null ? 
+        path = path is null ?
             $"{path}/" : "";
 
         var imageUploadParams = new ImageUploadParams()
@@ -60,12 +60,12 @@ public class CloudinaryPhotoUploaderService : IPhotoUploaderService
             PublicId = $"{path}{file.FileName.Split('.').First()}{Guid.NewGuid()}"
         };
 
-        var imageUploadResult = 
+        var imageUploadResult =
             await _cloudinary.UploadAsync(imageUploadParams);
 
         if (imageUploadResult is null)
             throw new Exception("Unable to upload an image");
-          
+
         return imageUploadResult.SecureUrl.ToString();
     }
 }

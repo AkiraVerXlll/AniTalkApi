@@ -1,8 +1,8 @@
-﻿using AniTalkApi.ServiceLayer.CryptoGeneratorServices;
+﻿using AniTalkApi.ServiceLayer.AuthServices.OAuthServices;
+using AniTalkApi.ServiceLayer.CryptoGeneratorServices;
 using AniTalkApi.ServiceLayer.EmailServices;
-using AniTalkApi.ServiceLayer.OAuthServices;
-using AniTalkApi.ServiceLayer.PhotoServices.Implementations;
-using AniTalkApi.ServiceLayer.PhotoServices.Interfaces;
+using AniTalkApi.ServiceLayer.PhotoServices.PhotoUploaderServices;
+using AniTalkApi.ServiceLayer.PhotoServices.PhotoValidatorServices;
 using AniTalkApi.ServiceLayer.TokenManagerServices;
 
 namespace AniTalkApi.ServiceLayer;

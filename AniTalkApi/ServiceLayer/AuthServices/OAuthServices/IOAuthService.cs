@@ -1,4 +1,4 @@
-﻿namespace AniTalkApi.ServiceLayer.OAuthServices;
+﻿namespace AniTalkApi.ServiceLayer.AuthServices.OAuthServices;
 
 public interface IOAuthService
 {

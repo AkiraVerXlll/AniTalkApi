@@ -1,4 +1,4 @@
-﻿namespace AniTalkApi.ServiceLayer.PhotoServices.Interfaces;
+﻿namespace AniTalkApi.ServiceLayer.PhotoServices.PhotoUploaderServices;
 
 /// <summary>
 /// Services that implemented that interface upload photos to the cloud.

@@ -1,7 +1,7 @@
 ﻿using AniTalkApi.DataLayer.Models;
-using AniTalkApi.ServiceLayer.PhotoServices.Interfaces;
 using AniTalkApi.Helpers;
 using AniTalkApi.DataLayer.DbModels;
+using AniTalkApi.ServiceLayer.PhotoServices.PhotoUploaderServices;
 
 namespace AniTalkApi.CRUD;
 

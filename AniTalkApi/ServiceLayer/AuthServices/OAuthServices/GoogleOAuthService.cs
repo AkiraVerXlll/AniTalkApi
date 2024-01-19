@@ -3,7 +3,7 @@ using AniTalkApi.DataLayer.Settings;
 using AniTalkApi.Helpers;
 using Microsoft.Extensions.Options;
 
-namespace AniTalkApi.ServiceLayer.OAuthServices;
+namespace AniTalkApi.ServiceLayer.AuthServices.OAuthServices;
 
 public class GoogleOAuthService : IOAuthService
 {
@@ -52,8 +52,8 @@ public class GoogleOAuthService : IOAuthService
         };
 
         var token = await _httpClient.SendPostRequest<IdTokenModel>(url, parameters);
-        return token is null ? 
-            throw new Exception("Token is null") : 
+        return token is null ?
+            throw new Exception("Token is null") :
             token.IdToken!;
     }
 }

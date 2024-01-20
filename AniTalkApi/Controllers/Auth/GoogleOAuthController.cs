@@ -1,16 +1,10 @@
 ﻿#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Cryptography;
-using System.Text;
-using AniTalkApi.DataLayer.Settings;
 using AniTalkApi.Filters;
 using AniTalkApi.ServiceLayer.AuthServices.OAuthServices;
 using AniTalkApi.ServiceLayer.AuthServices.SignInServices;
-using AniTalkApi.ServiceLayer.CryptoGeneratorServices;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 
 namespace AniTalkApi.Controllers.Auth;
 
@@ -19,8 +13,6 @@ namespace AniTalkApi.Controllers.Auth;
 [Route("api/[controller]")]
 public class GoogleOAuthController : ControllerBase
 {
-    private readonly ICryptoGeneratorService _cryptoGenerator;
-    
     private readonly GoogleOAuthService _googleOAuth;
 
     private readonly JwtSecurityTokenHandler _tokenHandler = new();
@@ -29,12 +21,9 @@ public class GoogleOAuthController : ControllerBase
 
     public GoogleOAuthController(
         GoogleOAuthService googleOAuth,
-        ICryptoGeneratorService cryptoGenerator,
-        IOptions<JwtSettings> options,
         OAuthSignInService oAuthSignIn
         )
     {
-        _cryptoGenerator = cryptoGenerator;
         _googleOAuth = googleOAuth;
         _oAuthSignIn = oAuthSignIn;
     }
@@ -43,9 +32,8 @@ public class GoogleOAuthController : ControllerBase
     [Route("google-oauth")]
     public async Task<IActionResult> RedirectOnOAuthServer()
     {
-        var codeVerifier = _cryptoGenerator.GenerateRandomString(64);
-        var codeChallenge = Base64UrlEncoder.Encode(SHA256
-                .HashData(Encoding.UTF8.GetBytes(codeVerifier)));
+        var codeVerifier = _googleOAuth.GenerateCodeVerifier();
+        var codeChallenge = _googleOAuth.GenerateCodeChallenge(codeVerifier);
 
         HttpContext.Session.SetString("code_verifier", codeVerifier);
 

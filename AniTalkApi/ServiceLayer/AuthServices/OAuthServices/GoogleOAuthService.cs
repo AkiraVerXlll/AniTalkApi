@@ -1,7 +1,11 @@
-﻿using AniTalkApi.DataLayer.Models.Auth;
+﻿using System.Security.Cryptography;
+using System.Text;
+using AniTalkApi.DataLayer.Models.Auth;
 using AniTalkApi.DataLayer.Settings;
 using AniTalkApi.Helpers;
+using AniTalkApi.ServiceLayer.CryptoGeneratorServices;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 
 namespace AniTalkApi.ServiceLayer.AuthServices.OAuthServices;
 
@@ -11,12 +15,16 @@ public class GoogleOAuthService : IOAuthService
 
     private readonly HttpClientHelper _httpClient;
 
+    private readonly ICryptoGeneratorService _cryptoGenerator;
+
     public GoogleOAuthService(
         IOptions<GoogleOAuthSettings> options,
-        HttpClientHelper httpClient)
+        HttpClientHelper httpClient, 
+        ICryptoGeneratorService cryptoGenerator)
     {
         _settings = options.Value;
         _httpClient = httpClient;
+        _cryptoGenerator = cryptoGenerator;
     }
 
     public string GetOAuthUrl(string codeChallenge)
@@ -55,5 +63,16 @@ public class GoogleOAuthService : IOAuthService
         return token is null ?
             throw new Exception("Token is null") :
             token.IdToken!;
+    }
+
+    public string GenerateCodeVerifier()
+    {
+        return _cryptoGenerator.GenerateRandomString(64);
+    }
+
+    public string GenerateCodeChallenge(string codeVerifier)
+    {
+        return Base64UrlEncoder.Encode(SHA256
+            .HashData(Encoding.UTF8.GetBytes(codeVerifier)));
     }
 }

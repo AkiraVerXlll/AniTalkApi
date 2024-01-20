@@ -14,4 +14,5 @@ public class GoogleOAuthSettings
 
     public string? Scope { get; init; }
 
+    public int CodeVerifierLength { get; init; }
 }

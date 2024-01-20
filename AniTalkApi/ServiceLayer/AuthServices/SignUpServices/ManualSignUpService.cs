@@ -1,7 +1,6 @@
-﻿using AniTalkApi.DataLayer.DbModels;
-using AniTalkApi.DataLayer.Settings;
+﻿using AniTalkApi.CRUD;
+using AniTalkApi.DataLayer.DbModels;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
 
 namespace AniTalkApi.ServiceLayer.AuthServices.SignUpServices;
 
@@ -11,9 +10,8 @@ public class ManualSignUpService : BaseSignUpService
 
     public ManualSignUpService(
         UserManager<User> userManager,
-        IOptions<AvatarSettings> avatarOptions,
-        IOptions<JwtSettings> jwtOptions,
-        EmailVerificationService emailVerificationService) : base(userManager, avatarOptions, jwtOptions)
+        EmailVerificationService emailVerificationService,
+        UserCrud userCrud) : base(userManager, userCrud)
     {
         _emailVerificationService = emailVerificationService;
     }
@@ -33,7 +31,7 @@ public class ManualSignUpService : BaseSignUpService
             normalizedName.StartsWith("USER-"))
             throw new ArgumentException("User with this username already exists!");
 
-        var user = CreateUserStrategy(email, username);
+        var user = UserCrud.CreateUser(email, username);
 
         var result = await UserManager.CreateAsync(user, password);
         if (!result.Succeeded)

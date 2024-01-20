@@ -1,8 +1,6 @@
 ﻿using AniTalkApi.CRUD;
 using AniTalkApi.DataLayer.DbModels;
-using AniTalkApi.DataLayer.Settings;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
 
 namespace AniTalkApi.ServiceLayer.AuthServices.SignUpServices;
 
@@ -12,9 +10,8 @@ public class OAuthSignUpService : BaseSignUpService
 
     public OAuthSignUpService(
         UserManager<User> userManager, 
-        IOptions<AvatarSettings> avatarOptions, 
-        IOptions<JwtSettings> jwtOptions,
-        ImageCrud imageCrud) : base(userManager, avatarOptions, jwtOptions)
+        ImageCrud imageCrud,
+        UserCrud userCrud) : base(userManager, userCrud)
     {
         _imageCrud = imageCrud;
     }
@@ -29,7 +26,7 @@ public class OAuthSignUpService : BaseSignUpService
         if (await UserManager.FindByNameAsync(username) is not null)
             username = $"user-7200{UserManager.Users.Count() + 1}";
 
-        var user = CreateUserStrategy(claims["email"], username, avatar);
+        var user = UserCrud.CreateUser(claims["email"], username, avatar);
         user.EmailConfirmed = true;
 
         await UserManager.CreateAsync(user);

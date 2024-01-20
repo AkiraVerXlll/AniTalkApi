@@ -67,7 +67,7 @@ public class GoogleOAuthService : IOAuthService
 
     public string GenerateCodeVerifier()
     {
-        return _cryptoGenerator.GenerateRandomString(64);
+        return _cryptoGenerator.GenerateRandomString(_settings.CodeVerifierLength);
     }
 
     public string GenerateCodeChallenge(string codeVerifier)

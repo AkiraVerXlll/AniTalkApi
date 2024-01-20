@@ -6,9 +6,7 @@ using Microsoft.Extensions.Options;
 
 namespace AniTalkApi.ServiceLayer.PhotoServices.PhotoUploaderServices;
 
-/// <summary>
-/// This service uploads photos to Cloudinary.
-/// </summary>
+
 public class CloudinaryPhotoUploaderService : IPhotoUploaderService
 {
     private readonly IPhotoValidatorService _validator;
@@ -29,21 +27,6 @@ public class CloudinaryPhotoUploaderService : IPhotoUploaderService
             cloudinarySettings.ApiSecret));
     }
 
-    /// <summary>
-    /// Uploads a photo to Cloudinary.
-    /// </summary>
-    /// <param name="file">
-    /// File to upload
-    /// </param>
-    /// <param name="path">
-    /// Path to upload on Cloudinary
-    /// </param>
-    /// <returns>
-    /// Url of uploaded photo
-    /// </returns>
-    /// <exception cref="ArgumentException">
-    /// If the file is not an image
-    /// </exception>
     public async Task<string> UploadAsync(IFormFile file, string? path)
     {
         if (!_validator.IsImage(file))

@@ -13,6 +13,4 @@ public class JwtSettings
     public int RefreshTokenValidityInDays { get; init; }
 
     public int RefreshTokenLength { get; init; }
-
-    public string? Scope { get; init; }
 }

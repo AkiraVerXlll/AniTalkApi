@@ -23,8 +23,6 @@ public class GoogleOAuthController : ControllerBase
     
     private readonly GoogleOAuthService _googleOAuth;
 
-    private readonly JwtSettings _jwtSettings;
-
     private readonly JwtSecurityTokenHandler _tokenHandler = new();
 
     private readonly OAuthSignInService _oAuthSignIn;
@@ -36,7 +34,6 @@ public class GoogleOAuthController : ControllerBase
         OAuthSignInService oAuthSignIn
         )
     {
-        _jwtSettings = options.Value;
         _cryptoGenerator = cryptoGenerator;
         _googleOAuth = googleOAuth;
         _oAuthSignIn = oAuthSignIn;
@@ -46,14 +43,13 @@ public class GoogleOAuthController : ControllerBase
     [Route("google-oauth")]
     public async Task<IActionResult> RedirectOnOAuthServer()
     {
-        var scope = _jwtSettings.Scope!;
         var codeVerifier = _cryptoGenerator.GenerateRandomString(64);
         var codeChallenge = Base64UrlEncoder.Encode(SHA256
                 .HashData(Encoding.UTF8.GetBytes(codeVerifier)));
 
         HttpContext.Session.SetString("code_verifier", codeVerifier);
 
-        var url = _googleOAuth.GetOAuthUrl(scope, codeChallenge);
+        var url = _googleOAuth.GetOAuthUrl(codeChallenge);
         return Ok(url);
     }
 

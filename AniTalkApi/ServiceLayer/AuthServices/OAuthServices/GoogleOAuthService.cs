@@ -19,7 +19,7 @@ public class GoogleOAuthService : IOAuthService
         _httpClient = httpClient;
     }
 
-    public string GetOAuthUrl(string scope, string codeChallenge)
+    public string GetOAuthUrl(string codeChallenge)
     {
         var url = _settings.AuthorizationEndpoint;
 
@@ -28,7 +28,7 @@ public class GoogleOAuthService : IOAuthService
             {"client_id", _settings.ClientId!},
             {"redirect_uri", _settings.RedirectUrl!},
             {"response_type", "code"},
-            {"scope", scope},
+            {"scope", _settings.Scope!},
             {"code_challenge", codeChallenge},
             {"code_challenge_method", "S256"},
         };

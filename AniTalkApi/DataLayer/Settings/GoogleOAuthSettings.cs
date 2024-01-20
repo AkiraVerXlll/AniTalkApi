@@ -11,4 +11,7 @@ public class GoogleOAuthSettings
     public string? TokenEndpoint { get; init; }
 
     public string? RedirectUrl { get; init; }
+
+    public string? Scope { get; init; }
+
 }

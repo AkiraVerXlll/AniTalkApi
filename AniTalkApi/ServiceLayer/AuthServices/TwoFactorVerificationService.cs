@@ -14,7 +14,7 @@ public class TwoFactorVerificationService
 
     private readonly IEmailSenderService _emailSender;
 
-    private readonly SendGridSettings _sendGridSettings;
+    private readonly SendGridSettings.EmailTemplateSettings _emailTemplates;
 
     private readonly OAuthSignInService _oAuthSignIn;
 
@@ -26,7 +26,7 @@ public class TwoFactorVerificationService
     {
         _userManager = userManager;
         _emailSender = emailSender;
-        _sendGridSettings = sendGridOptions.Value;
+        _emailTemplates = sendGridOptions.Value.EmailTemplates!;
         _oAuthSignIn = oAuthSignIn;
     }
 
@@ -39,7 +39,7 @@ public class TwoFactorVerificationService
         var token = await _userManager.GenerateTwoFactorTokenAsync(user, "Email");
         await _emailSender.SendTemplateEmailAsync(
             user.Email!,
-            _sendGridSettings.EmailTemplates!.TwoFactorVerification!,
+            _emailTemplates.TwoFactorVerification!,
             new { Code = token });
     }
 

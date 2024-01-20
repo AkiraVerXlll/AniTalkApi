@@ -15,7 +15,7 @@ public class EmailVerificationService
 
     private readonly IEmailSenderService _emailSender;
 
-    private readonly SendGridSettings _sendGridSettings;
+    private readonly SendGridSettings.EmailTemplateSettings _emailTemplates;
 
     public EmailVerificationService(
         UserManager<User> userManager,
@@ -25,7 +25,7 @@ public class EmailVerificationService
     {
         _userManager = userManager;
         _modalAuthSettings = modalAuthOptions.Value;
-        _sendGridSettings = sendGridOptions.Value;
+        _emailTemplates = sendGridOptions.Value.EmailTemplates!;
         _emailSender = emailSender;
     }
 
@@ -38,7 +38,7 @@ public class EmailVerificationService
 
         await _emailSender.SendTemplateEmailAsync(
             email,
-            _sendGridSettings.EmailTemplates!.EmailConfirmation!,
+            _emailTemplates.EmailConfirmation!,
             new { Link = confirmationLink });
     }
 

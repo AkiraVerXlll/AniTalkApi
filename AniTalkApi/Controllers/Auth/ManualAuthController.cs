@@ -44,6 +44,10 @@ public class ManualAuthController : ControllerBase
             { "username", modelData.Username! },
             { "password", modelData.Password! }
         };
+
+        if(!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         await _manualSignUp.SignUpAsync(claims);
         return Ok("User created successfully!");
     }

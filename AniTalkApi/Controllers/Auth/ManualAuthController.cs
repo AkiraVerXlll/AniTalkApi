@@ -49,7 +49,25 @@ public class ManualAuthController : ControllerBase
             return BadRequest(ModelState);
 
         await _manualSignUp.SignUpAsync(claims);
-        return Ok("User created successfully!");
+        return Ok();
+    }
+
+    [HttpGet]
+    [Route("email-exist/{email}")]
+    public async Task<IActionResult> IsEmailExist(string email)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        return Ok(user is not null);
+    }
+
+    [HttpGet]
+    [Route("username-exist/{username}")]
+    public async Task<IActionResult> IsUsernameExist(string username)
+    {
+        var normalizedName = _userManager.KeyNormalizer.NormalizeName(username);
+        var result = (await _userManager.FindByNameAsync(username) is not null ||
+                      normalizedName.StartsWith("USER-"));
+        return Ok(result);
     }
 
     [HttpPost]

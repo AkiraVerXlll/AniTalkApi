@@ -9,13 +9,12 @@ public class SignUpFormModel
     public string? Email { get; set; }
 
     [Required]
-    [MinLength(6)]
+    [MinLength(4)]
     [MaxLength(20)]
     [RegularExpression(@"^[a-zA-Z0-9.]+$")]
     public string? Username { get; set; }
 
     [Required]
-    [MinLength(6)]
-    [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*\\W)[a-zA-Z0-9\\W]{6,}$")]
+    [RegularExpression(@"^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*\W).{6,32}$")]
     public string? Password { get; set; }
 }

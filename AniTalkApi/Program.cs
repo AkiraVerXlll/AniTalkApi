@@ -30,12 +30,23 @@ public class Program
             .AddEntityFrameworkStores<AniTalkDbContext>()
             .AddDefaultTokenProviders();
 
+
         builder.Services.AddHttpClientHelper();
         builder.Services.AddEmailSenderService();
         builder.Services.AddCrud();
         builder.Services.AddCryptoGeneratorService();
         builder.Services.AddAuthServices();
         builder.Services.AddPhotoServices();
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("MyPolicy",
+                b =>
+                {
+                    b.WithOrigins(builder.Configuration["FrontUrl"]!)
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
+                });
+        });
 
         builder.Services.AddAuthentication(options =>
         {
@@ -92,6 +103,7 @@ public class Program
             app.UseSwaggerUI();
         }
 
+        app.UseCors("MyPolicy");
         app.UseSession();
         app.UseHttpsRedirection();
         app.UseRouting();

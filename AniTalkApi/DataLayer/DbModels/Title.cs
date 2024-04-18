@@ -12,14 +12,15 @@ public class Title
     public string? Name { get; set; }
 
     [Required]
+    public string? CoverUrl { get; set; }
+
+    [Required]
     public string? NormalizeName { get; set; }
 
     [Required]
     public string? Description { get; set; }
 
     #region Dependencies
-
-    public Image? Cover { get; init; }
 
     public List<TitleTypes>? TitleTypes { get; init; }
 

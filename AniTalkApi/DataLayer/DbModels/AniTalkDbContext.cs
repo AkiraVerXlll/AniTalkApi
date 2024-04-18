@@ -60,9 +60,6 @@ public class AniTalkDbContext : IdentityDbContext<User>
         modelBuilder.Entity<Review>()
             .HasKey(r => new { r.TitleId, r.UserId });
 
-        modelBuilder.Entity<ImagesInReview>()
-            .HasKey(it => new { it.ImageId, it.ReviewId });
-
         modelBuilder.Entity<UsersInDialog>()
             .HasKey(ud => new { ud.DialogId, ud.UserId });
 
@@ -116,10 +113,6 @@ public class AniTalkDbContext : IdentityDbContext<User>
 
         modelBuilder.Entity<Forum>()
             .HasIndex(f => f.DialogId)
-            .IsUnique();
-
-        modelBuilder.Entity<Image>()
-            .HasIndex(i => i.Url)
             .IsUnique();
 
         modelBuilder.Entity<TitleType>()
@@ -176,8 +169,6 @@ public class AniTalkDbContext : IdentityDbContext<User>
     public DbSet<Forum>? Forums { get; set; }
 
     public DbSet<Genre>? Genres { get; set; }
-
-    public DbSet<Image>? Images { get; set; }
 
     public DbSet<Message>? Messages { get; set; }
 

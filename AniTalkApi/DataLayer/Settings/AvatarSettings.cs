@@ -2,5 +2,5 @@
 
 public class AvatarSettings
 {
-    public int DefaultAvatarId { get; init; }
+    public string? DefaultAvatarUrl { get; init; }
 }

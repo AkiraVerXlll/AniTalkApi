@@ -26,22 +26,12 @@ public class ImageCrud : BaseCrud
         _cloudinarySettings = cloudinaryOptions.Value;
     }
 
-    public async Task<Image> CreateAsync(IFormFile uploadedFile, string folder = null!)
+    public async Task<string> CreateAsync(IFormFile uploadedFile, string folder = null!)
     {
-        var url = await _photoUploader.UploadAsync(uploadedFile, folder);
-
-        var image = new Image()
-        {
-            Url = url,
-        };
-
-        await DbContext.Images!.AddAsync(image);
-        await DbContext.SaveChangesAsync();
-
-        return image;
+       return await _photoUploader.UploadAsync(uploadedFile, folder);
     }
 
-    public async Task<Image> CreateAsync(string externalUrl, string folder = null!)
+    public async Task<string> CreateAsync(string externalUrl, string folder = null!)
     {
         var avatar = await _httpClient
             .GetImageAsFormFileAsync(externalUrl);
@@ -49,7 +39,7 @@ public class ImageCrud : BaseCrud
         return await CreateAsync(avatar, folder);
     }
 
-    public async Task<Image> CreateAvatarAsync(string externalUrl)
+    public async Task<string> CreateAvatarAsync(string externalUrl)
     {
         return await CreateAsync(externalUrl, _cloudinarySettings.Paths!.Avatar!);
     }

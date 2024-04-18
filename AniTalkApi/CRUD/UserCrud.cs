@@ -22,16 +22,16 @@ public class UserCrud
     public User CreateUser(
         string email,
         string username,
-        Image? avatar = null)
+        string? avatarUrl = null)
     {
-        var personalInformation = avatar is null
+        var personalInformation = avatarUrl is null
             ? new PersonalInformation()
             {
-                AvatarId = _avatarSettings.DefaultAvatarId,
+                AvatarUrl = _avatarSettings.DefaultAvatarUrl,
             }
             : new PersonalInformation()
             {
-                Avatar = avatar,
+                AvatarUrl = avatarUrl,
             };
         var user = new User()
         {

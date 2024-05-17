@@ -103,6 +103,7 @@ public class ManualAuthController : ControllerBase
         };
         var tokenModel = await _manualSignIn.SignInAsync(claims);
         HttpContext.Response.Cookies.Append(_cookieSettings.AccessToken, tokenModel.AccessToken);
+        HttpContext.Response.Cookies.Append(_cookieSettings.RefreshToken, tokenModel.RefreshToken);
         
         return Ok(tokenModel);
     }

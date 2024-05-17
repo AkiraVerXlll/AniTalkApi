@@ -1,8 +1,8 @@
 ﻿namespace AniTalkApi.DataLayer.Settings;
 
-public class AuthSettings
+public struct AuthSettings
 {
-    public string? EmailConfirmationLink { get; init; }
+    public string EmailConfirmationLink { get; init; }
 
-    public string? PasswordResetLink { get; init; }
+    public string PasswordResetLink { get; init; }
 }

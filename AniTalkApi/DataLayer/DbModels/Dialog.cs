@@ -12,11 +12,9 @@ public class Dialog
     public string? Name { get; set; }
 
     [Required]
-    public int AvatarId { get; set; }
+    public string? AvatarUrl { get; set; }
 
     #region Dependencies
-
-    public Image? Avatar { get; init; }
 
     public List<UsersInDialog>? UsersInDialogs { get; init; }
 

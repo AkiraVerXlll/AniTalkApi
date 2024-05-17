@@ -9,7 +9,7 @@ public class PersonalInformation
     public int Id { get; init; }
 
     [Required]
-    public int? AvatarId { get; init; }
+    public string? AvatarUrl { get; init; }
 
     [MaxLength(30)]
     public string? Name { get; set; }
@@ -36,8 +36,6 @@ public class PersonalInformation
     public User? User { get; init; }
 
     public Author? Author { get; init; } 
-
-    public Image? Avatar { get; init; }
 
     #endregion
 }

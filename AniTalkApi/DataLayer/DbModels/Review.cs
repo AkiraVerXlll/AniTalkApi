@@ -26,6 +26,11 @@ public class Review
 
     public string? Text { get; set; }
 
+    public string[]? ImageUrls { get; set; }
+
+    [DataType("timestamp with time zone")]
+    public DateTime? Date { get; set; }
+
     #region Dependencies
 
     public User? User { get; init; }

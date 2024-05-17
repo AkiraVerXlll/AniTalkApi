@@ -16,6 +16,8 @@ public class Message
     [Required]
     public string? Text { get; set; }
 
+    public string[]? ImageUrls { get; set; }
+
     [Required]
     public bool IsRead { get; set; }
 

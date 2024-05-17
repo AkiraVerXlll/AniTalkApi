@@ -19,14 +19,14 @@ public class OAuthSignUpService : BaseSignUpService
     public override async Task<User> SignUpAsync(Dictionary<string, string> claims)
     {
         var avatarExternalUrl = claims["picture"];
-        var avatar = await _imageCrud
+        var avatarUrl= await _imageCrud
             .CreateAvatarAsync(avatarExternalUrl);
 
         var username = claims["name"];
         if (await UserManager.FindByNameAsync(username) is not null)
             username = $"user-7200{UserManager.Users.Count() + 1}";
 
-        var user = UserCrud.CreateUser(claims["email"], username, avatar);
+        var user = UserCrud.CreateUser(claims["email"], username, avatarUrl);
         user.EmailConfirmed = true;
 
         await UserManager.CreateAsync(user);

@@ -2,13 +2,13 @@
 
 namespace AniTalkApi.DataLayer.Models.Auth;
 
-public class TokenModel
+public struct TokenModel
 {
     [JsonPropertyName("access_token")]
-    public string? AccessToken { get; set; }
+    public string AccessToken { get; set; }
 
     [JsonPropertyName("refresh_token")]
-    public string? RefreshToken { get; set; }
+    public string RefreshToken { get; set; }
 
     [JsonPropertyName("expires_in")]
     public DateTime ExpiresIn { get; set; }

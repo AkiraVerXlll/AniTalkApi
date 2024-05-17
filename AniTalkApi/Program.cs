@@ -5,10 +5,10 @@ using AniTalkApi.CRUD;
 using AniTalkApi.DataLayer.DbModels;
 using AniTalkApi.DataLayer.Settings;
 using AniTalkApi.Helpers;
-using AniTalkApi.ServiceLayer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 
 namespace AniTalkApi;
 
@@ -20,9 +20,35 @@ public class Program
 
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
+        builder.Services.AddSwaggerGen(opt =>
+        {
+            opt.SwaggerDoc("v1", new OpenApiInfo { Title = "MyAPI", Version = "v1" });
+            opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                In = ParameterLocation.Header,
+                Description = "Please enter token",
+                Name = "Authorization",
+                Type = SecuritySchemeType.Http,
+                BearerFormat = "JWT",
+                Scheme = "bearer"
+            });
+
+            opt.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type=ReferenceType.SecurityScheme,
+                            Id="Bearer"
+                        }
+                    },
+                    new string[]{}
+                }
+            });
+        });
         builder.Services.AddDistributedMemoryCache();
-        builder.Services.AddSession();
         builder.Services.AddHttpClient();
 
         builder.Services.AddDbContext<AniTalkDbContext>();
@@ -37,66 +63,16 @@ public class Program
         builder.Services.AddCryptoGeneratorService();
         builder.Services.AddAuthServices();
         builder.Services.AddPhotoServices();
-        builder.Services.AddCors(options =>
-        {
-            options.AddPolicy("MyPolicy",
-                b =>
-                {
-                    b.WithOrigins(builder.Configuration["FrontUrl"]!)
-                        .AllowAnyMethod()
-                        .AllowAnyHeader();
-                });
-        });
 
-        builder.Services.AddAuthentication(options =>
-        {
-            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-        }).AddJwtBearer(options =>
-            {
-                options.SaveToken = true;
-                options.RequireHttpsMetadata = false;
-                options.TokenValidationParameters = new TokenValidationParameters()
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ClockSkew = TimeSpan.Zero,
+        builder.MapSettings();
+        builder.ConfigureCors();
 
-                    ValidAudience = builder.Configuration["JWT:Audience"],
-                    ValidIssuer = builder.Configuration["JWT:Issuer"],
-                    IssuerSigningKey =
-                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]!))
-                };
-            }
-        );
         builder.Services.AddAuthorization();
-
-        builder.Services.Configure<CookiePolicyOptions>(options =>
-        {
-            options.MinimumSameSitePolicy = SameSiteMode.None;
-            options.HttpOnly = Microsoft.AspNetCore.CookiePolicy.HttpOnlyPolicy.Always;
-            options.Secure = CookieSecurePolicy.Always; 
-        });
-
-        builder.Services.Configure<SendGridSettings>
-            (options => builder.Configuration.GetSection("SendGridSettings").Bind(options));
-        builder.Services.Configure<JwtSettings>
-            (options => builder.Configuration.GetSection("JWT").Bind(options));
-        builder.Services.Configure<CloudinarySettings>
-            (options => builder.Configuration.GetSection("CloudinarySettings").Bind(options));
-        builder.Services.Configure<GoogleOAuthSettings>
-            (options => builder.Configuration.GetSection("GoogleOAuth2.0Settings").Bind(options));
-        builder.Services.Configure<AvatarSettings>
-            (options => builder.Configuration.GetSection("AvatarSettings").Bind(options));
-        builder.Services.Configure<AuthSettings>(
-            options => builder.Configuration.GetSection("Auth").Bind(options));
+        builder.ConfigureAuthentication();
+        builder.ConfigureCookiePolicy();
 
         var app = builder.Build();
 
-        
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();

@@ -38,7 +38,7 @@ public class GoogleOAuthController : ControllerBase
         HttpContext.Session.SetString("code_verifier", codeVerifier);
 
         var url = _googleOAuth.GetOAuthUrl(codeChallenge);
-        return Ok(url);
+        return Ok(new JsonResult(url));
     }
 
     [HttpGet]

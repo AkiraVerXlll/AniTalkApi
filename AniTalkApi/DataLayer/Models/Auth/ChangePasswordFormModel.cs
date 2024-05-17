@@ -1,6 +1,6 @@
 ﻿namespace AniTalkApi.DataLayer.Models.Auth;
 
-public class ChangePasswordFormModel
+public struct ChangePasswordFormModel
 {
     public string? OldPassword { get; set; }
 

@@ -6,7 +6,7 @@ using AniTalkApi.ServiceLayer.CryptoGeneratorServices;
 using AniTalkApi.ServiceLayer.EmailServices;
 using AniTalkApi.ServiceLayer.PhotoServices.PhotoUploaderServices;
 using AniTalkApi.ServiceLayer.PhotoServices.PhotoValidatorServices;
-namespace AniTalkApi.ServiceLayer;
+namespace AniTalkApi;
 
 public static class ApplicationServiceExtensions
 {
@@ -25,8 +25,8 @@ public static class ApplicationServiceExtensions
         services.AddScoped<ManualSignInService, ManualSignInService>();
         services.AddScoped<ManualSignUpService, ManualSignUpService>();
         services.AddScoped<GoogleOAuthService, GoogleOAuthService>();
-        services.AddScoped<TokenManagerService,  TokenManagerService>();
-        services.AddScoped<ResetPasswordService,  ResetPasswordService>();
+        services.AddScoped<TokenManagerService, TokenManagerService>();
+        services.AddScoped<ResetPasswordService, ResetPasswordService>();
     }
 
     public static void AddCryptoGeneratorService(this IServiceCollection services)

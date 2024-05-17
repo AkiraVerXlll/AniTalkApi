@@ -59,7 +59,7 @@ public class TokenManagerService
         );
     }
 
-    public ClaimsPrincipal? GetPrincipalFromExpiredToken(string? token)
+    public ClaimsPrincipal? GetPrincipalFromToken(string? token)
     {
         var tokenValidationParameters = new TokenValidationParameters
         {
@@ -94,7 +94,7 @@ public class TokenManagerService
         var accessToken = tokenModel.AccessToken;
         var refreshToken = tokenModel.RefreshToken;
 
-        var principal = GetPrincipalFromExpiredToken(accessToken);
+        var principal = GetPrincipalFromToken(accessToken);
         if (principal == null)
             throw new ArgumentException("Invalid access token or refresh token");
 
@@ -126,7 +126,7 @@ public class TokenManagerService
         var accessToken = tokenModel.AccessToken;
         var refreshToken = tokenModel.RefreshToken;
 
-        var principal = GetPrincipalFromExpiredToken(accessToken);
+        var principal = GetPrincipalFromToken(accessToken);
         if (principal == null)
             throw new ArgumentException("Invalid access token or refresh token");
 

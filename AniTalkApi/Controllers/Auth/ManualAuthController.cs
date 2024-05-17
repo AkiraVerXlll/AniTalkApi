@@ -2,10 +2,12 @@
 using AniTalkApi.Filters;
 using Microsoft.AspNetCore.Mvc;
 using AniTalkApi.DataLayer.Models.Auth;
+using AniTalkApi.DataLayer.Settings;
 using AniTalkApi.ServiceLayer.AuthServices;
 using AniTalkApi.ServiceLayer.AuthServices.SignInServices;
 using AniTalkApi.ServiceLayer.AuthServices.SignUpServices;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 
 namespace AniTalkApi.Controllers.Auth;
 
@@ -22,12 +24,16 @@ public class ManualAuthController : ControllerBase
 
     private readonly TwoFactorVerificationService _twoFactorVerification;
 
+    private readonly CookieSettings _cookieSettings;
+
     public ManualAuthController(
+        IOptions<CookieSettings> cookieOptions,
         ManualSignInService manualSignIn,
         ManualSignUpService manualSignUp,
         UserManager<User> userManager,
         TwoFactorVerificationService twoFactorVerification)
     {
+        _cookieSettings = cookieOptions.Value;
         _manualSignIn = manualSignIn;
         _manualSignUp = manualSignUp;
         _userManager = userManager;
@@ -96,6 +102,7 @@ public class ManualAuthController : ControllerBase
             { "password", formModelData.Password!}
         };
         var tokenModel = await _manualSignIn.SignInAsync(claims);
+        HttpContext.Response.Cookies.Append(_cookieSettings.AccessToken, tokenModel.AccessToken);
         
         return Ok(tokenModel);
     }

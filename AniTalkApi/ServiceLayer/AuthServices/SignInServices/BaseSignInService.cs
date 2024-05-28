@@ -42,8 +42,7 @@ public abstract class BaseSignInService
         return new TokenModel
         {
             AccessToken = new JwtSecurityTokenHandler().WriteToken(token),
-            RefreshToken = user.RefreshToken,
-            ExpiresIn = token.ValidTo
+            RefreshToken = user.RefreshToken
         };
     }
 

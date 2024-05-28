@@ -1,5 +1,7 @@
-﻿using System.Text;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Text;
 using AniTalkApi.DataLayer.Settings;
+using AniTalkApi.ServiceLayer.AuthServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -29,12 +31,14 @@ public static class ConfigureApplicationExtension
     {
         builder.Services.AddCors(options =>
         {
-            options.AddPolicy("AllowAll", builder =>
-            {
-                builder.AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader();
-            });
+            options.AddPolicy("MyPolicy",
+                b =>
+                {
+                    b.AllowCredentials();
+                    b.WithOrigins(builder.Configuration["FrontUrl"]!)
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
+                });
         });
     }
 
@@ -62,15 +66,34 @@ public static class ConfigureApplicationExtension
                     IssuerSigningKey =
                         new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]!))
                 };
+                options.Events = new JwtBearerEvents()
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Cookies[builder.Configuration["CookieSettings:AccessToken"]!];
+                        if (string.IsNullOrEmpty(accessToken))
+                            return Task.CompletedTask;
+                        context.Token = accessToken;
+                        var tokenManager = builder.Services
+                                .BuildServiceProvider()
+                                .GetRequiredService<TokenManagerService>();
+                        var username = tokenManager.GetPrincipalFromToken(accessToken)
+                            .Identity?.Name;
+                        context.HttpContext.Items["Username"] = username;
+                        return Task.CompletedTask;
+                    }
+                };
             }
+
         );
     }
 
     public static void ConfigureCookiePolicy(this WebApplicationBuilder builder)
     {
+        builder.Services.AddSession();
         builder.Services.Configure<CookiePolicyOptions>(options =>
         {
-            options.MinimumSameSitePolicy = SameSiteMode.None;
+            options.MinimumSameSitePolicy = Microsoft.AspNetCore.Http.SameSiteMode.Lax;
             options.HttpOnly = Microsoft.AspNetCore.CookiePolicy.HttpOnlyPolicy.Always;
             options.Secure = CookieSecurePolicy.Always;
         });

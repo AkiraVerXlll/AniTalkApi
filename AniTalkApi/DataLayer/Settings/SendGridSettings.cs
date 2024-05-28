@@ -1,6 +1,6 @@
 ﻿namespace AniTalkApi.DataLayer.Settings;
 
-public struct SendGridSettings
+public class SendGridSettings
 {
     public string? SenderEmail { get; init; }
     public string? SenderName { get; init; }

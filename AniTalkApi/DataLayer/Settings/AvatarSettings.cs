@@ -1,6 +1,6 @@
 ﻿namespace AniTalkApi.DataLayer.Settings;
 
-public struct AvatarSettings
+public class AvatarSettings
 {
     public string? DefaultAvatarUrl { get; init; }
 }

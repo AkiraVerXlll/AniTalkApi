@@ -1,6 +1,6 @@
 ﻿namespace AniTalkApi.DataLayer.Settings;
 
-public struct GoogleOAuthSettings
+public class GoogleOAuthSettings
 {
     public string? ClientId { get; init; }
 

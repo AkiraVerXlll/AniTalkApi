@@ -1,6 +1,6 @@
 ﻿namespace AniTalkApi.DataLayer.Settings;
 
-public struct AuthSettings
+public class AuthSettings
 {
     public string EmailConfirmationLink { get; init; }
 

@@ -18,14 +18,18 @@ public class TokenManagerService
 
     private readonly UserManager<User> _userManager;
 
+    private readonly CookieSettings _cookieSettings;
+
     public TokenManagerService(
         IOptions<JwtSettings> jwtSettings,
         ICryptoGeneratorService cryptoGenerator,
-        UserManager<User> userManager)
+        UserManager<User> userManager,
+        IOptions<CookieSettings> cookieSettings)
     {
         _jwtSettings = jwtSettings.Value;
         _cryptoGenerator = cryptoGenerator;
         _userManager = userManager;
+        _cookieSettings = cookieSettings.Value;
 
     }
 
@@ -59,7 +63,7 @@ public class TokenManagerService
         );
     }
 
-    public ClaimsPrincipal? GetPrincipalFromToken(string? token)
+    public ClaimsPrincipal GetPrincipalFromToken(string? token)
     {
         var tokenValidationParameters = new TokenValidationParameters
         {
@@ -113,16 +117,12 @@ public class TokenManagerService
         return new TokenModel()
         {
             AccessToken = new JwtSecurityTokenHandler().WriteToken(newAccessToken),
-            RefreshToken = newRefreshToken,
-            ExpiresIn = newAccessToken.ValidTo
+            RefreshToken = newRefreshToken
         };
     }
 
-    public async Task<TokenModel> SignOutAsync(TokenModel? tokenModel)
+    public async Task SignOutAsync(TokenModel tokenModel, string username)
     {
-        if (tokenModel is null)
-            throw new ArgumentException("Token model is null");
-
         var accessToken = tokenModel.AccessToken;
         var refreshToken = tokenModel.RefreshToken;
 
@@ -130,21 +130,13 @@ public class TokenManagerService
         if (principal == null)
             throw new ArgumentException("Invalid access token or refresh token");
 
-        var username = principal.Identity!.Name;
         var user = await _userManager.FindByNameAsync(username!);
 
         if (user is null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
             throw new ArgumentException("Invalid access token or refresh token");
 
         user.RefreshToken = null;
-        user.RefreshTokenExpiryTime = DateTime.Now;
+        user.RefreshTokenExpiryTime = DateTime.UtcNow;
         await _userManager.UpdateAsync(user);
-
-        return new TokenModel()
-        {
-            AccessToken = null,
-            RefreshToken = null,
-            ExpiresIn = DateTime.Now
-        };
     }
 }

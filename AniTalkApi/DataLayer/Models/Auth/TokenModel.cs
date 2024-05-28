@@ -1,15 +1,13 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace AniTalkApi.DataLayer.Models.Auth;
 
-public struct TokenModel
+public class TokenModel
 {
-    [JsonPropertyName("access_token")]
+    [Required]
     public string AccessToken { get; set; }
 
-    [JsonPropertyName("refresh_token")]
+    [Required]
     public string RefreshToken { get; set; }
-
-    [JsonPropertyName("expires_in")]
-    public DateTime ExpiresIn { get; set; }
 }

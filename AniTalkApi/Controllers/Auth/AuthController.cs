@@ -1,6 +1,8 @@
 ﻿using AniTalkApi.DataLayer.Models.Auth;
+using AniTalkApi.DataLayer.Settings;
 using AniTalkApi.ServiceLayer.AuthServices;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace AniTalkApi.Controllers.Auth;
 [Route("api/[controller]")]
@@ -15,16 +17,20 @@ public class AuthController : ControllerBase
 
     private readonly ResetPasswordService _resetPassword;
 
+    private readonly CookieSettings _cookieSettings;
+
     public AuthController(
         TokenManagerService tokenManager, 
         ResetPasswordService resetPassword, 
         EmailVerificationService emailVerification, 
-        TwoFactorVerificationService twoFactorVerification)
+        TwoFactorVerificationService twoFactorVerification,
+        IOptions<CookieSettings> cookieSettings)
     {
         _tokenManager = tokenManager;
         _resetPassword = resetPassword;
         _emailVerification = emailVerification;
         _twoFactorVerification = twoFactorVerification;
+        _cookieSettings = cookieSettings.Value;
     }
     [HttpPost]
     [Route("send-two-factor-code")]
@@ -106,9 +112,23 @@ public class AuthController : ControllerBase
 
     [HttpPost]
     [Route("sign-out")]
-    public async Task<IActionResult> SignOut(TokenModel? tokenModel)
+    public new async Task<IActionResult> SignOut()
     {
-        await _tokenManager.SignOutAsync(tokenModel);
-        return Ok("User signed out successfully!");
+        var username = HttpContext.Items["Username"]?.ToString();
+        if(string.IsNullOrEmpty(username))
+            throw new ArgumentException("Username is null or empty");
+        var accessToken = HttpContext.Request.Cookies[_cookieSettings.AccessToken];
+        var refreshToken = HttpContext.Request.Cookies[_cookieSettings.RefreshToken];
+        if (string.IsNullOrEmpty(accessToken) || string.IsNullOrEmpty(refreshToken))
+            throw new ArgumentException("Access token or refresh token is null or empty");
+        var tokenModel = new TokenModel
+        {
+            AccessToken = accessToken,
+            RefreshToken = refreshToken
+        };
+        await _tokenManager.SignOutAsync(tokenModel, username);
+        HttpContext.Response.Cookies.Delete(_cookieSettings.AccessToken);
+        HttpContext.Response.Cookies.Delete(_cookieSettings.RefreshToken);
+        return Ok();
     }
 }

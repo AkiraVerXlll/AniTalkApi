@@ -1,6 +1,6 @@
 ﻿namespace AniTalkApi.DataLayer.Settings;
 
-public struct CloudinarySettings
+public class CloudinarySettings
 {
     public string? CloudName { get; init; }
 
@@ -10,7 +10,7 @@ public struct CloudinarySettings
 
     public PathsSettings? Paths { get; init; }
 
-    public struct PathsSettings
+    public class PathsSettings
     {
         public string? Avatar { get; init; }
 

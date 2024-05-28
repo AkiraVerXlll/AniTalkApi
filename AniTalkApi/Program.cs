@@ -1,13 +1,10 @@
 #pragma warning disable ASP0014
 
-using System.Text;
 using AniTalkApi.CRUD;
 using AniTalkApi.DataLayer.DbModels;
-using AniTalkApi.DataLayer.Settings;
 using AniTalkApi.Helpers;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.OpenApi.Models;
 
 namespace AniTalkApi;
@@ -20,6 +17,8 @@ public class Program
 
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSpaStaticFiles(options => 
+            options.RootPath = builder.Configuration["FrontPath"]! + "/dist");
         builder.Services.AddSwaggerGen(opt =>
         {
             opt.SwaggerDoc("v1", new OpenApiInfo { Title = "MyAPI", Version = "v1" });
@@ -44,17 +43,17 @@ public class Program
                             Id="Bearer"
                         }
                     },
-                    new string[]{}
+                    Array.Empty<string>()
                 }
             });
         });
         builder.Services.AddDistributedMemoryCache();
         builder.Services.AddHttpClient();
-
         builder.Services.AddDbContext<AniTalkDbContext>();
         builder.Services.AddIdentity<User, IdentityRole>()
             .AddEntityFrameworkStores<AniTalkDbContext>()
             .AddDefaultTokenProviders();
+        builder.Services.AddSession();
 
 
         builder.Services.AddHttpClientHelper();
@@ -81,12 +80,25 @@ public class Program
 
         app.UseCors("MyPolicy");
         app.UseSession();
+        app.UseCookiePolicy();
         app.UseHttpsRedirection();
         app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();
-        app.UseEndpoints(configure => 
+        app.UseEndpoints(configure =>
             configure.MapControllers());
+        app.UseSpaStaticFiles();
+        app.UseSpa(spa =>
+        {
+            spa.Options.SourcePath = builder.Configuration["FrontPath"]!;
+            spa.Options.DevServerPort = int.Parse(builder.Configuration["FrontPort"]!);
+
+            if (app.Environment.IsDevelopment())
+            {
+                spa.UseAngularCliServer(npmScript: "start"); 
+                spa.UseProxyToSpaDevelopmentServer(builder.Configuration["FrontUrl"]!);
+            }
+        });
         app.Run();
     }
 }

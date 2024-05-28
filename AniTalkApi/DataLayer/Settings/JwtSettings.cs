@@ -1,6 +1,6 @@
 ﻿namespace AniTalkApi.DataLayer.Settings;
 
-public struct JwtSettings
+public class JwtSettings
 {
     public string? Audience { get; init; }
 

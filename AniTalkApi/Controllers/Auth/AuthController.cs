@@ -105,8 +105,17 @@ public class AuthController : ControllerBase
 
     [HttpPost]
     [Route("refresh-token")]
-    public async Task<IActionResult> RefreshToken(TokenModel? tokenModel)
+    public async Task<IActionResult> RefreshToken()
     {
+        var accessToken = HttpContext.Request.Cookies[_cookieSettings.AccessToken];
+        var refreshToken = HttpContext.Request.Cookies[_cookieSettings.RefreshToken];
+        if (string.IsNullOrEmpty(accessToken) || string.IsNullOrEmpty(refreshToken))
+            throw new ArgumentException("Access token or refresh token is null or empty");
+        var tokenModel = new TokenModel
+        {
+            AccessToken = accessToken,
+            RefreshToken = refreshToken
+        };
         return Ok(await _tokenManager.RefreshTokenAsync(tokenModel));
     }
 

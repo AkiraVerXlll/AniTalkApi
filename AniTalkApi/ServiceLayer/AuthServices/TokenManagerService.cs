@@ -99,7 +99,7 @@ public class TokenManagerService
         var refreshToken = tokenModel.RefreshToken;
 
         var principal = GetPrincipalFromToken(accessToken);
-        if (principal == null)
+        if (principal is null)
             throw new ArgumentException("Invalid access token or refresh token");
 
         var username = principal.Identity!.Name;
@@ -127,7 +127,7 @@ public class TokenManagerService
         var refreshToken = tokenModel.RefreshToken;
 
         var principal = GetPrincipalFromToken(accessToken);
-        if (principal == null)
+        if (principal is null)
             throw new ArgumentException("Invalid access token or refresh token");
 
         var user = await _userManager.FindByNameAsync(username!);
